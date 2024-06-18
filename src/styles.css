@@ -1,8 +1,110 @@
 /* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-html,
-body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
+@layer base {
+  :root {
+    /*color scheme*/
+    --surface-dark: 278deg 14% 15%;
+    --surface-light: 55deg 100% 95%;
+
+    --on-surface-dark: 278deg 37% 84%;
+    --on-surface-light: 278deg 14% 15%;
+
+    --primary-dark: 43deg 26% 55%;
+    --primary-light: 13deg 61% 27%;
+
+    --secondary-dark: 275deg 12% 47%;
+    --secondary-light: 279deg 76% 68%;
+
+    --on-primary-dark: 40deg 23% 18%;
+    --on-primary-light: 42deg 100% 91%;
+
+    --on-secondary-dark: 278deg 14% 15%;
+    --on-secondary-light: 278deg 14% 15%;
+
+    --container-dark: 279deg 8% 33%;
+    --container-light: 54deg 67% 85%;
+
+    --on-container-dark: 282deg 20% 10%;
+    --on-container-light: 278deg 14% 15%;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface: var(--surface-dark);
+      --on-surface: var(--on-surface-dark);
+
+      --primary: var(--primary-dark);
+      --on-primary: var(--on-primary-dark);
+
+      --secondary: var(--secondary-dark);
+      --on-secondary: var(--on-secondary-dark);
+
+      --container: var(--container-dark);
+      --on-container: var(--on-container-dark);
+    }
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --surface: var(--surface-light);
+      --on-surface: var(--on-surface-light);
+
+      --primary: var(--primary-light);
+      --on-primary: var(--on-primary-light);
+
+      --secondary: var(--secondary-light);
+      --on-secondary: var(--on-secondary-ligth);
+
+      --container: var(--container-light);
+      --on-container: var(--on-container-light);
+    }
+  }
+
+  body[data-theme="dark"] {
+    --surface: var(--surface-dark);
+    --on-surface: var(--on-surface-dark);
+
+    --primary: var(--primary-dark);
+    --on-primary: var(--on-primary-dark);
+
+    --secondary: var(--secondary-dark);
+    --on-secondary: var(--on-secondary-dark);
+
+    --container: var(--container-dark);
+    --on-container: var(--on-container-dark);
+  }
+  body[data-theme="light"] {
+    --surface: var(--surface-light);
+    --on-surface: var(--on-surface-light);
+
+    --primary: var(--primary-light);
+    --on-primary: var(--on-primary-light);
+
+    --secondary: var(--secondary-light);
+    --on-secondary: var(--on-secondary-ligth);
+
+    --container: var(--container-light);
+    --on-container: var(--on-container-light);
+  }
+  html,
+  body {
+    @apply m-0 h-full w-full;
+
+    font-family: "Ubuntu Condensed", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    @apply font-serif font-bold;
+  }
+
+  h1 {
+    @apply text-2xl;
+  }
 }

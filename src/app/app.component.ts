@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,8 +10,14 @@ export class AppComponent {
   title = 'intervalify';
   version = '0.0.1';
   isPanelVisible = false;
-
-  openSidePanel() {
+  isPushMode = false;
+  private router = inject(Router);
+  toggleSidePanel() {
     this.isPanelVisible = !this.isPanelVisible;
+  }
+
+  navigate(url: string) {
+    // this.router.navigate([url]);
+    this.toggleSidePanel();
   }
 }

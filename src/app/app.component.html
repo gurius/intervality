@@ -1,23 +1,52 @@
 <div
-  class="side-panel-portrait"
-  [ngClass]="{ 'slide-in-left ': isPanelVisible }"
+  class="side-panel-portrait z-10 flex h-full min-w-80 flex-col bg-container text-xl text-on-container"
+  [ngClass]="{
+    'slide-in-left': isPanelVisible,
+    'slide-out-left': !isPanelVisible,
+  }"
 >
-  <div class="app-info">
+  <div class="app-info text-on-primary">
     <h1>{{ title }}</h1>
     <div class="app-info__version">{{ version }}</div>
   </div>
   <nav>
-    <button type="button" routerLink="/settings">
+    <a
+      (click)="navigate('/settings')"
+      routerLinkActive="bg-secondary on-bg-secondary"
+      routerLink="/settings"
+      class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
+      ariaCurrentWhenActive="page"
+    >
       <i class="fa-solid fa-gear"></i>settings
-    </button>
-    <button type="button" routerLink="/playable">
+    </a>
+    <a
+      (click)="navigate('/playable')"
+      routerLinkActive="bg-secondary"
+      routerLink="/playable"
+      class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
+      ariaCurrentWhenActive="page"
+    >
       <i class="fa-solid fa-list-ul"></i>playable
-    </button>
+    </a>
   </nav>
 </div>
-<div class="main-view">
+
+@if (isPanelVisible && !isPushMode) {
+  <div
+    class="absolute inset-0 z-[1] backdrop-grayscale"
+    (click)="toggleSidePanel()"
+  ></div>
+}
+
+<div
+  class="absolute z-0"
+  [ngClass]="{
+    'inset-0': !isPanelVisible,
+    'bottom-0 left-80 right-0 top-0': isPushMode && isPanelVisible,
+  }"
+>
   <div class="heading">
-    <i class="fa-solid fa-bars" (click)="openSidePanel()"></i>
+    <i class="fa-solid fa-bars" (click)="toggleSidePanel()"></i>
 
     <h1>{{ title }}</h1>
   </div>

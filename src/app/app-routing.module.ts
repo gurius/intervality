@@ -17,6 +17,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./editor/editor.module').then((m) => m.EditorModule),
   },
+  {
+    path: 'settings',
+    loadChildren: () =>
+      import('./settings/settings.module').then((m) => m.SettingsModule),
+  },
 ];
 
 @NgModule({

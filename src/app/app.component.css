@@ -4,26 +4,12 @@
   width: 100%;
 }
 
-.side-panel-portrait {
-  min-width: 300px;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-}
 .app-info {
-  background: blueviolet;
+  @apply bg-primary pl-6 pt-6;
   height: 150px;
-  padding-left: 20px;
 }
 nav {
-  padding-left: 20px;
-  margin-top: 20px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: 10px;
+  @apply flex flex-col items-start gap-3 pl-6 pt-6;
 }
 .main-view {
   width: 100%;
@@ -38,21 +24,21 @@ nav {
   margin-left: 10px;
 }
 
-@media (orientation: portrait) {
-  .side-panel-portrait:not(.slide-in-left) {
-    position: absolute;
-    left: -300px;
-  }
-}
+/*@media (orientation: portrait) {*/
+/*  .side-panel-portrait:not(.slide-in-left) {*/
+/*    position: absolute;*/
+/*    left: -300px;*/
+/*  }*/
+/*}*/
 
 .slide-in-left {
-  -webkit-animation: slide-in-left 0.1s linear both;
-  animation: slide-in-left 0.1s linear both;
+  -webkit-animation: slide-in-left 0.3s linear both;
+  animation: slide-in-left 0.3s linear both;
 }
 .slide-out-left {
-  -webkit-animation: slide-in-left 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+  -webkit-animation: slide-in-left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)
     reverse both;
-  animation: slide-in-left 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse
+  animation: slide-in-left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse
     both;
 }
 /* ----------------------------------------------
