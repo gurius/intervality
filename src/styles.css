@@ -62,30 +62,34 @@
   }
 
   body[data-theme="dark"] {
-    --surface: var(--surface-dark);
-    --on-surface: var(--on-surface-dark);
+    :root {
+      --surface: var(--surface-dark);
+      --on-surface: var(--on-surface-dark);
 
-    --primary: var(--primary-dark);
-    --on-primary: var(--on-primary-dark);
+      --primary: var(--primary-dark);
+      --on-primary: var(--on-primary-dark);
 
-    --secondary: var(--secondary-dark);
-    --on-secondary: var(--on-secondary-dark);
+      --secondary: var(--secondary-dark);
+      --on-secondary: var(--on-secondary-dark);
 
-    --container: var(--container-dark);
-    --on-container: var(--on-container-dark);
+      --container: var(--container-dark);
+      --on-container: var(--on-container-dark);
+    }
   }
   body[data-theme="light"] {
-    --surface: var(--surface-light);
-    --on-surface: var(--on-surface-light);
+    :root {
+      --surface: var(--surface-light);
+      --on-surface: var(--on-surface-light);
 
-    --primary: var(--primary-light);
-    --on-primary: var(--on-primary-light);
+      --primary: var(--primary-light);
+      --on-primary: var(--on-primary-light);
 
-    --secondary: var(--secondary-light);
-    --on-secondary: var(--on-secondary-ligth);
+      --secondary: var(--secondary-light);
+      --on-secondary: var(--on-secondary-ligth);
 
-    --container: var(--container-light);
-    --on-container: var(--on-container-light);
+      --container: var(--container-light);
+      --on-container: var(--on-container-light);
+    }
   }
   html,
   body {

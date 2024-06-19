@@ -10,7 +10,7 @@ export class AppComponent {
   title = 'intervalify';
   version = '0.0.1';
   isPanelVisible = false;
-  isPushMode = false;
+  isPushMode = true;
   private router = inject(Router);
   toggleSidePanel() {
     this.isPanelVisible = !this.isPanelVisible;

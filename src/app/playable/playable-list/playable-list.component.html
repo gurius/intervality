@@ -1,1 +1,127 @@
-<p>playable-list works!</p>
+<form
+  onsubmit="return false"
+  class="mx-2 my-6 flex h-20 items-center justify-between rounded-md bg-primary py-8"
+>
+  <button type="button" mat-icon-button class="mx-4 text-on-primary">
+    <i class="fa-solid fa-filter"></i>
+  </button>
+  <input
+    type="text"
+    name="filter"
+    [formControl]="filter"
+    (keydown)="find($event)"
+    class="h-14 w-8/12 flex-auto rounded-md bg-surface px-4 text-xl selection:bg-primary selection:text-on-primary"
+  />
+  <button
+    type="button"
+    mat-icon-button
+    class="mx-4 text-on-primary"
+    (click)="find()"
+  >
+    <i class="fa-solid fa-search"></i>
+  </button>
+  @if (filter.value) {
+    <button
+      type="button"
+      mat-icon-button
+      class="absolute right-16 mx-4 text-primary"
+      (click)="filter.setValue('')"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  }
+</form>
+<ol class="scrollbar mb-5 flex w-full flex-col gap-3 px-2">
+  @if (data | async; as playable) {
+    @for (item of playable | filter: filter.value; track item.name) {
+      <li
+        class="flex h-28 flex-none items-center justify-between rounded-md bg-container px-5"
+      >
+        <div class="flex items-center gap-3">
+          @switch (item.playableType) {
+            @case (types.Stopwatch) {
+              <i class="fa-solid fa-stopwatch"></i>
+            }
+            @case (types.Countdown) {
+              <i class="fa-solid fa-hourglass-start"></i>
+            }
+
+            @case (types.Set) {
+              <i class="fa-solid fa-bars"></i>
+            }
+            @case (types.SuperSet) {
+              <i class="h-5 w-5">
+                <svg
+                  class="h-full w-full stroke-on-surface"
+                  width="118.53334"
+                  height="101.6"
+                  viewBox="0 0 118.53334 101.6"
+                  version="1.1"
+                  id="svg1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:svg="http://www.w3.org/2000/svg"
+                >
+                  <defs id="defs1" />
+                  <g id="layer1" transform="translate(-203.64614,-42.852948)">
+                    <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                    <path
+                      style="
+                        fill: none;
+                        stroke-width: 20;
+                        stroke-linecap: round;
+                        stroke-dasharray: none;
+                        stroke-opacity: 1;
+                      "
+                      d="m 213.64614,54.793872 h 98.53334"
+                      id="path1"
+                    />
+                    <path
+                      style="
+                        fill: none;
+                        stroke-width: 20;
+                        stroke-linecap: round;
+                        stroke-dasharray: none;
+                        stroke-opacity: 1;
+                      "
+                      d="m 213.64614,106.65742 h 98.53334"
+                      id="path2"
+                    />
+                    <path
+                      style="
+                        fill: none;
+                        stroke-width: 20;
+                        stroke-linecap: round;
+                        stroke-dasharray: none;
+                        stroke-opacity: 1;
+                      "
+                      d="m 243.16243,80.725645 h 63.02498"
+                      id="path4"
+                    />
+                    <path
+                      style="
+                        fill: none;
+                        stroke-width: 20;
+                        stroke-linecap: round;
+                        stroke-dasharray: none;
+                        stroke-opacity: 1;
+                      "
+                      d="m 243.16243,132.58919 h 63.02498"
+                      id="path6"
+                    />
+                  </g>
+                </svg>
+              </i>
+            }
+          }
+          <span>{{ item.name }}</span>
+        </div>
+
+        <i class="fa-solid fa-ellipsis-vertical"></i>
+      </li>
+    } @empty {
+      <li>Nothing found.</li>
+    }
+  } @else {
+    <li>There are no items.</li>
+  }
+</ol>

@@ -39,16 +39,25 @@
 }
 
 <div
-  class="absolute z-0"
+  class="absolute z-0 overflow-hidden"
   [ngClass]="{
-    'inset-0': !isPanelVisible,
+    'inset-0': !isPanelVisible || (isPanelVisible && !isPushMode),
     'bottom-0 left-80 right-0 top-0': isPushMode && isPanelVisible,
   }"
 >
-  <div class="heading">
-    <i class="fa-solid fa-bars" (click)="toggleSidePanel()"></i>
+  <div class="heading h-20">
+    <button
+      type="button"
+      mat-icon-button
+      (click)="toggleSidePanel()"
+      class="p-5"
+    >
+      <i class="fa-solid fa-bars"></i>
+    </button>
 
-    <h1>{{ title }}</h1>
+    <!-- <h1>{{ title }}</h1> -->
   </div>
-  <router-outlet />
+  <div class="outlet-wrapper w-full overflow-y-auto">
+    <router-outlet />
+  </div>
 </div>
