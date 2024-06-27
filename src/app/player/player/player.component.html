@@ -1,0 +1,127 @@
+@if (snapshot$ | async; as snapshot) {
+  <div class="flex items-center justify-between gap-4 px-2 py-4">
+    <!-- timer -->
+    <div
+      class="flex flex-shrink-0 flex-grow flex-col items-center justify-between rounded-2xl bg-container py-2 text-on-container"
+    >
+      <div>
+        <h4 class="font-sans text-xl font-light">past</h4>
+        <p class="text-3xl">{{ snapshot.past | timeStr: "mm:ss" }}</p>
+      </div>
+    </div>
+    <!-- timer -->
+    <div
+      class="flex flex-shrink-0 flex-grow flex-col items-center justify-between rounded-2xl bg-container py-2 text-on-container"
+    >
+      <div>
+        <h4 class="font-sans text-xl font-light">ahead</h4>
+        @if (snapshot.ahead < 0) {
+          <i class="fa-solid fa-stopwatch text-3xl text-on-container"></i>
+          <span class="text-3xl">{{ snapshot.ahead | timeStr: "ms" }}</span>
+        } @else {
+          <p class="text-3xl">{{ snapshot.ahead | timeStr: "mm:ss" }}</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="mx-2 mb-4 flex justify-center bg-container px-5"> -->
+  <!--   <span class="text-on-container">{{ snapshot.status }}</span> -->
+  <!-- </div> -->
+  <ol class="scrollbar mb-5 flex w-full flex-col gap-3 px-2">
+    @for (
+      item of snapshot.stepsInFocus;
+      track item.name + item.status + item.value
+    ) {
+      <li
+        class="flex {{
+          item.status === 'current' ? 'h-28 bg-secondary' : 'bg-container'
+        }} h-28 flex-grow flex-col items-stretch justify-start rounded-2xl px-5 pb-2 relative"
+      >
+        <div class="flex justify-between py-1">
+          <h4 class="font-sans text-xl font-light">
+            {{ item.status === "current" ? "" : item.status }}
+          </h4>
+          <span>x {{ item.remaining }}</span>
+        </div>
+        <p class="mb-3 flex justify-between text-3xl">
+          <span>{{ item.name }}</span>
+
+          <span>{{ item.value | timeStr }}</span>
+        </p>
+        @if (item.timerType === "stopwatch") {
+          <div class="absolute inset-0 flex content-center justify-center">
+            @if (item.status === "current") {
+              <button type="button" (click)="stopwatchStop()">
+                <i class="fa-solid fa-circle-stop text-5xl text-primary"></i>
+              </button>
+            } @else {
+              <button type="button">
+                <i class="fa-solid fa-stopwatch text-5xl text-on-container"></i>
+              </button>
+            }
+          </div>
+        }
+        @if (item.status === "current" && item.timerType !== "stopwatch") {
+          <input
+            class="accent-primary outline-primary"
+            type="range"
+            (change)="updateCureentStep()"
+            [(ngModel)]="snapshot.currentStepProgress"
+          />
+        }
+      </li>
+    }
+  </ol>
+  <div class="justify-centr flex flex-col items-center text-8xl">
+    <div class="flex flex-grow items-center justify-center">
+      <button
+        *ngIf="snapshot.state != 'playing'"
+        type="button"
+        class="mx-2 text-secondary"
+        (click)="previous()"
+      >
+        <i class="fa-solid fa-circle-chevron-left"></i>
+      </button>
+      <button
+        *ngIf="snapshot.state != 'playing'"
+        type="button"
+        class="mx-3 text-secondary"
+        (click)="play()"
+      >
+        <i class="fa-solid fa-circle-play"></i>
+      </button>
+      <button
+        *ngIf="snapshot.state == 'playing'"
+        type="button"
+        class="mx-4 text-secondary"
+      >
+        <i class="fa-solid fa-circle-pause" (click)="pause()"></i>
+      </button>
+
+      <button
+        *ngIf="snapshot.state != 'playing'"
+        type="button"
+        class="mx-2 text-secondary"
+        (click)="next()"
+      >
+        <i class="fa-solid fa-circle-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- <button -->
+    <!--   *ngIf="snapshot.state != 'playing'" -->
+    <!--   (click)="stop()" -->
+    <!--   type="button" -->
+    <!--   class="mt-4 text-secondary" -->
+    <!-- > -->
+    <!--   <i class="fa-solid fa-circle-stop"></i> -->
+    <!-- </button> -->
+  </div>
+} @else {
+  <div class="flex h-full flex-col items-center pt-7">
+    <h1>Something went wrong</h1>
+    <p class="mb-7">Try again</p>
+    <i class="fa-solid fa-robot text-9xl"></i>
+  </div>
+}

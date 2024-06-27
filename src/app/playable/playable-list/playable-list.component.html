@@ -2,7 +2,7 @@
   onsubmit="return false"
   class="mx-2 my-6 flex h-20 items-center justify-between rounded-md bg-primary py-8"
 >
-  <button type="button" mat-icon-button class="mx-4 text-on-primary">
+  <button type="button" class="mx-4 text-on-primary">
     <i class="fa-solid fa-filter"></i>
   </button>
   <input
@@ -12,18 +12,12 @@
     (keydown)="find($event)"
     class="h-14 w-8/12 flex-auto rounded-md bg-surface px-4 text-xl selection:bg-primary selection:text-on-primary"
   />
-  <button
-    type="button"
-    mat-icon-button
-    class="mx-4 text-on-primary"
-    (click)="find()"
-  >
+  <button type="button" class="mx-4 text-on-primary" (click)="find()">
     <i class="fa-solid fa-search"></i>
   </button>
   @if (filter.value) {
     <button
       type="button"
-      mat-icon-button
       class="absolute right-16 mx-4 text-primary"
       (click)="filter.setValue('')"
     >
@@ -35,6 +29,7 @@
   @if (data | async; as playable) {
     @for (item of playable | filter: filter.value; track item.name) {
       <li
+        [routerLink]="['/player', item.id]"
         class="flex h-28 flex-none items-center justify-between rounded-md bg-container px-5"
       >
         <div class="flex items-center gap-3">

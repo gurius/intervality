@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { PlayerService } from './player/player.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,9 +13,24 @@ export class AppComponent {
   version = '0.0.1';
   isPanelVisible = false;
   isPushMode = true;
-  private router = inject(Router);
+  isPlayer = false;
+  constructor(
+    private router: Router,
+    private player: PlayerService,
+  ) {
+    router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe((s) => {
+        console.log(s, this.router.url);
+        this.isPlayer = this.router.url.includes('player');
+      });
+  }
   toggleSidePanel() {
     this.isPanelVisible = !this.isPanelVisible;
+  }
+
+  playerStop() {
+    this.player.stop();
   }
 
   navigate(url: string) {

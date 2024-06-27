@@ -1,7 +1,7 @@
-import { DataSet } from './set.model';
-import { DataSuperSet } from './super-set.model';
-import { DataStopwatch } from './stopwatch.model';
-import { DataCountdown } from './countdown.model';
+import { TimerSet } from './set.model';
+import { SuperSet } from './super-set.model';
+import { Stopwatch } from './stopwatch.model';
+import { Countdown } from './countdown.model';
 
 // export type PlayableType =
 //   | DataSuperSet
@@ -16,19 +16,19 @@ export enum PlayableType {
   SuperSet = 'super-set',
 }
 
-export interface PlayableStopwatch extends DataStopwatch {
+export interface PlayableStopwatch extends Stopwatch {
   playableType: PlayableType.Stopwatch;
 }
 
-export interface PlayableCountdown extends DataCountdown {
+export interface PlayableCountdown extends Countdown {
   playableType: PlayableType.Countdown;
 }
 
-export interface PlayableSet extends DataSet {
+export interface PlayableSet extends TimerSet {
   playableType: PlayableType.Set;
 }
 
-export interface PlayableSuperSet extends DataSuperSet {
+export interface PlayableSuperSet extends SuperSet {
   playableType: PlayableType.SuperSet;
 }
 

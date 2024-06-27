@@ -22,6 +22,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./settings/settings.module').then((m) => m.SettingsModule),
   },
+  {
+    path: 'player/:id',
+    loadChildren: () =>
+      import('./player/player.module').then((m) => m.PlayerModule),
+  },
 ];
 
 @NgModule({

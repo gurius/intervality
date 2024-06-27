@@ -11,7 +11,7 @@ export default {
         'on-primary': 'hsl(var(--on-primary) / <alpha-value>)',
 
         secondary: 'hsl(var(--secondary) / <alpha-value>)',
-        'on-secondary': 'hsl(var(--on-secondary) / <alpha-value>',
+        'on-secondary': 'hsl(var(--on-secondary) / <alpha-value>)',
 
         container: 'hsl(var(--container) / <alpha-value>)',
         'on-container': 'hsl(var(--on-container) / <alpha-value>)',

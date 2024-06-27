@@ -13,7 +13,7 @@
     <a
       (click)="navigate('/settings')"
       routerLinkActive="bg-secondary on-bg-secondary"
-      routerLink="/settings"
+      routerLink="settings"
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
@@ -21,8 +21,9 @@
     </a>
     <a
       (click)="navigate('/playable')"
+      someStringProperty
       routerLinkActive="bg-secondary"
-      routerLink="/playable"
+      routerLink="playable"
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
@@ -45,17 +46,15 @@
     'bottom-0 left-80 right-0 top-0': isPushMode && isPanelVisible,
   }"
 >
-  <div class="heading h-20">
-    <button
-      type="button"
-      mat-icon-button
-      (click)="toggleSidePanel()"
-      class="p-5"
-    >
+  <div class="heading flex h-14 justify-between xl:h-20">
+    <button type="button" (click)="toggleSidePanel()" class="p-5">
       <i class="fa-solid fa-bars"></i>
     </button>
 
     <!-- <h1>{{ title }}</h1> -->
+    <button *ngIf="isPlayer" (click)="playerStop()" type="button" class="p-5">
+      <i class="fa-solid fa-circle-stop"></i>
+    </button>
   </div>
   <div class="outlet-wrapper w-full overflow-y-auto">
     <router-outlet />

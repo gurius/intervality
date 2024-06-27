@@ -1,9 +1,8 @@
-import { DataStopwatch } from './stopwatch.model';
+import { Timer } from './timer.model';
 
-export interface DataSet {
+export interface TimerSet {
   id: number;
   name: string;
-  timers: number[];
+  timers: Timer[];
   repetitions: number;
-  seqNo: number;
 }

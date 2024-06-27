@@ -1,14 +1,12 @@
-export interface DataStopwatch {
+export interface Stopwatch {
   id: number;
   name: string;
   value: number;
-  units: TimeUnits;
-  seqNo: number;
-  partTakesInSets: number[];
 }
 
-export enum TimeUnits {
-  Seconds = 'seconds',
-  Miliseconds = 'miliseconds',
-  Nanoseconds = 'nanoseconds',
+export interface StopwatchHistory {
+  id: number;
+  name: string;
+  value: number;
+  timestamp: number;
 }
