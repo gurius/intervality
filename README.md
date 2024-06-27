@@ -1,4 +1,15 @@
-# Intervalify
+# Intervality
+
+A compositor and runner for sequences of timers(countdown/stopwatch) with sound notifications, ability to quickly adjust any timer on the go.
+
+## Features planned
+
+- Set/Superset builder
+- Wake lock for comfortable mobile usage
+- User data export
+- Sound notifications
+- Quick adjustments of timer sets in player
+- PWA, Animations and visual improvements when everything is working
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.3.
 
