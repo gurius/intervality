@@ -9,7 +9,7 @@ import { filter } from 'rxjs';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'intervalify';
+  title = 'intervality';
   version = '0.0.1';
   isPanelVisible = false;
   isPushMode = true;

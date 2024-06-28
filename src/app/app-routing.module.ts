@@ -3,6 +3,11 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'playable',
+    pathMatch: 'full',
+  },
+  {
     path: 'playable',
     loadChildren: () =>
       import('./playable/playable.module').then((m) => m.PlayableModule),
