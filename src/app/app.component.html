@@ -51,6 +51,19 @@
       <i class="fa-solid fa-bars"></i>
     </button>
 
+    <button
+      class="p-5"
+      *ngIf="wakelockService.isSupported()"
+      type="button"
+      (click)="toggleWakelock()"
+    >
+      <i
+        class="fa-solid {{
+          wakelockService.isLocked() ? 'fa-lock' : 'fa-lock-open'
+        }}"
+      ></i>
+    </button>
+
     <!-- <h1>{{ title }}</h1> -->
     <button *ngIf="isPlayer" (click)="playerStop()" type="button" class="p-5">
       <i class="fa-solid fa-circle-stop"></i>

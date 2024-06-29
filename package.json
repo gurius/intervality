@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 192.168.8.105",
+    "start-ssl": "ng serve --host 192.168.8.105 --ssl true --ssl-key .ssl/key.pem --ssl-cert .ssl/cert.pem",
     "open": "ng serve --host 192.168.8.105 --open",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
