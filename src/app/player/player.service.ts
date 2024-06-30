@@ -207,52 +207,32 @@ export class PlayerService {
   goNext() {
     if (!(this.seqIdx + 1 >= this.sequence.length)) {
       ++this.seqIdx;
-      this.currentMs = this.sequence.at(this.seqIdx)!.value;
-
-      this.updateStepsInFocus();
-
-      this.getStepsStatuses(this.snapshot.stepsInFocus);
-
-      this.snapshot.past = this.sequence
-        .slice(0, this.seqIdx + 1)
-        .map((s) => s.value)
-        .reduce((acc, curr) => acc + curr, 0);
-
-      const ahead = this.sequence
-        .slice(this.seqIdx)
-        .map((s) => s.value)
-        .reduce((acc, curr) => acc + curr, 0);
-
-      this.snapshot.status = `step ${this.seqIdx + 1} of ${this.sequence.length}`;
-      this.snapshot.ahead = ahead;
-
-      this.snapshotSubject$.next(this.snapshot);
+      this.switchStep();
     }
   }
 
   goPrev() {
     if (this.seqIdx > 0) {
       --this.seqIdx;
-      this.currentMs = this.sequence.at(this.seqIdx)!.value;
-
-      this.updateStepsInFocus(false);
-
-      this.getStepsStatuses(this.snapshot.stepsInFocus);
-
-      this.snapshot.past = this.sequence
-        .slice(0, this.seqIdx + 1)
-        .map((s) => s.value)
-        .reduce((acc, curr) => acc + curr, 0);
-
-      const ahead = this.sequence
-        .slice(this.seqIdx)
-        .map((s) => s.value)
-        .reduce((acc, curr) => acc + curr, 0);
-      this.snapshot.status = `${this.seqIdx + 1} step of ${this.sequence.length}`;
-      this.snapshot.ahead = ahead;
-
-      this.snapshotSubject$.next(this.snapshot);
+      this.switchStep(false);
     }
+  }
+
+  switchStep(isToNext: boolean = true) {
+    const { stepsInFocus } = this.snapshot;
+    this.currentMs = this.sequence.at(this.seqIdx)!.value;
+
+    this.updateStepsInFocus(isToNext);
+
+    this.getStepsStatuses(this.snapshot.stepsInFocus);
+
+    this.updatePastAhead();
+
+    this.updateCurrentlyRunningStep(stepsInFocus);
+
+    this.snapshot.status = `step ${this.seqIdx + 1} of ${this.sequence.length}`;
+
+    this.snapshotSubject$.next(this.snapshot);
   }
 
   stopwatchStop() {
@@ -368,20 +348,37 @@ export class PlayerService {
   }
 
   calculateAhead(interval: number) {
-    return this.stopWatchMs > 0
-      ? this.snapshot.ahead + interval
-      : this.sequence.map((t) => t.value).reduce((acc, curr) => acc + curr, 0) -
-          this.snapshot.past;
-  }
-  onRewind() {
-    const currentInFocus = this.snapshot.stepsInFocus.find(
-      (step) => step.status === 'current',
-    );
-    const currentStep = this.sequence.at(this.seqIdx)!;
-    currentInFocus &&
-      (this.currentMs = currentInFocus.value =
-        (currentStep.value / 100) * (100 - this.snapshot.currentStepProgress));
+    const ahead =
+      this.stopWatchMs > 0
+        ? this.snapshot.ahead + interval
+        : this.sequence
+            .map((t) => t.value)
+            .reduce((acc, curr) => acc + curr, 0) - this.snapshot.past;
 
-    // this.snapshotSubject$.next(this.snapshot);
+    return ahead;
+  }
+
+  onRewind() {
+    const { stepsInFocus, currentStepProgress } = this.snapshot;
+    const currentInFocus = stepsInFocus.find((s) => s.status === 'current');
+
+    const step = this.sequence.at(this.seqIdx)!;
+    if (currentInFocus) {
+      this.currentMs = currentInFocus.value =
+        (step.value / 100) * (100 - currentStepProgress);
+    }
+    this.updatePastAhead();
+  }
+
+  updatePastAhead() {
+    this.snapshot.past = this.sequence
+      .slice(0, this.seqIdx)
+      .map((s) => s.value)
+      .reduce((acc, curr) => acc + curr, 0);
+
+    this.snapshot.ahead = this.sequence
+      .slice(this.seqIdx)
+      .map((s) => s.value)
+      .reduce((acc, curr) => acc + curr, 0);
   }
 }

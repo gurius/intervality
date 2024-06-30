@@ -43,41 +43,23 @@ export class PlayableService {
 
   countdown: PlayableCountdown[] = [
     {
-      id: 3619,
-      name: 'Jumps',
-      playableType: PlayableType.Countdown,
-      value: 5000,
-    },
-    {
-      id: 1761,
-      name: 'Rest',
-      playableType: PlayableType.Countdown,
-      value: 5000,
-    },
-    {
       id: 4798,
       name: 'Plank',
       playableType: PlayableType.Countdown,
-      value: 3194,
+      value: 300000,
     },
   ];
 
   stopwatch: PlayableStopwatch[] = [
     {
       id: 3682,
-      name: 'Stretching',
+      name: 'Sprint',
       playableType: PlayableType.Stopwatch,
       value: 0,
     },
     {
       id: 3605,
       name: 'Jumps',
-      playableType: PlayableType.Stopwatch,
-      value: 0,
-    },
-    {
-      id: 4597,
-      name: 'Pushups',
       playableType: PlayableType.Stopwatch,
       value: 0,
     },
@@ -90,12 +72,52 @@ export class PlayableService {
       name: 'Light Training',
       repetitions: 3,
       timers: [
-        { name: 'Pullups', timerType: 'countdown', value: 4500 },
+        {
+          name: 'Pullups',
+          timerType: 'stopwatch',
+          value: 0,
+          convertToCountdownAfterSet: true,
+        },
         {
           name: 'Rest',
           timerType: 'stopwatch',
           convertToCountdownAfterSet: true,
           value: 0,
+        },
+        {
+          name: 'Pushups',
+          timerType: 'stopwatch',
+          value: 0,
+          convertToCountdownAfterSet: true,
+        },
+        {
+          name: 'Rest',
+          timerType: 'stopwatch',
+          convertToCountdownAfterSet: true,
+          value: 0,
+        },
+      ],
+    },
+    {
+      playableType: PlayableType.Set,
+      id: 1392,
+      name: 'All countdowns',
+      repetitions: 3,
+      timers: [
+        {
+          name: 'One',
+          timerType: 'countdown',
+          value: 5000,
+        },
+        {
+          name: 'Two',
+          timerType: 'countdown',
+          value: 5000,
+        },
+        {
+          name: 'Three',
+          timerType: 'countdown',
+          value: 5000,
         },
       ],
     },
@@ -106,28 +128,33 @@ export class PlayableService {
       playableType: PlayableType.SuperSet,
       id: 4351,
       name: 'Light Legs Day',
-      repetitions: 2,
+      repetitions: 1,
       setsAndTimers: [
         {
           name: 'Warmup',
-          value: 5000,
+          value: 300000,
           timerType: 'countdown',
         },
         {
           name: 'Light Legs',
           repetitions: 3,
           timers: [
-            { name: 'Squats 10x', value: 5000, timerType: 'countdown' },
+            {
+              name: 'Squats 10x',
+              value: 0,
+              timerType: 'stopwatch',
+              convertToCountdownAfterSet: true,
+            },
             {
               name: 'Rest',
               timerType: 'stopwatch',
-              // saveAsCountdown: true,
+              // saveAsCountdown: true, // can't be tested for now
               convertToCountdownAfterSet: false,
               value: 0,
             },
           ],
         },
-        { name: 'Cooldown', value: 5000, timerType: 'countdown' },
+        { name: 'Stretching', value: 150000, timerType: 'countdown' },
       ],
     },
   ];
