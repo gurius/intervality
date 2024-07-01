@@ -149,7 +149,7 @@ export class PlayerService {
           const currentStep = this.sequence.at(this.seqIdx)!;
 
           // sotpwatch or countdown milliseconds update
-          if (currentStep.timerType === 'stopwatch' && !currentStep.value) {
+          if (currentStep.timerType !== 'countdown' && !currentStep.value) {
             this.stopWatchMs += interval;
           } else {
             this.currentMs -= interval;
@@ -237,10 +237,7 @@ export class PlayerService {
 
   stopwatchStop() {
     const currentStep = this.sequence[this.seqIdx];
-    if (
-      currentStep.timerType === 'stopwatch' &&
-      (currentStep as InitiallyStopwatchTimer).convertToCountdownAfterSet
-    ) {
+    if (currentStep.timerType === 'hybrid') {
       this.sequence.forEach((step) => {
         if (step.name === currentStep.name) {
           step.value = this.stopWatchMs;
@@ -296,7 +293,7 @@ export class PlayerService {
     );
     const currentStep = this.sequence.at(this.seqIdx)!;
     // update it's value
-    if (currentStep.timerType === 'stopwatch' && !currentStep.value) {
+    if (currentStep.timerType !== 'countdown' && !currentStep.value) {
       currentInFocus && (currentInFocus.value = this.stopWatchMs);
     } else {
       currentInFocus && (currentInFocus.value = this.currentMs);

@@ -49,7 +49,7 @@
 
           <span>{{ item.value | timeStr }}</span>
         </p>
-        @if (item.timerType === "stopwatch") {
+        @if (item.timerType !== "countdown") {
           <div class="absolute inset-0 flex content-center justify-center">
             @if (item.status === "current") {
               <button type="button" (click)="stopwatchStop()">
@@ -62,7 +62,7 @@
             }
           </div>
         }
-        @if (item.status === "current" && item.timerType !== "stopwatch") {
+        @if (item.status === "current" && item.timerType === "countdown") {
           <input
             class="accent-primary outline-primary"
             type="range"

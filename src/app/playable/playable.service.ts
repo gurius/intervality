@@ -30,15 +30,18 @@ export class PlayableService {
     return of(this.supersets);
   }
 
-  getPlayable(id?: number): Observable<Playable | undefined | Playable[]> {
+  getPlayable(id?: number): Observable<Playable | Playable[]> {
     const playable = [
       ...this.supersets,
       ...this.sets,
       ...this.stopwatch,
       ...this.countdown,
     ];
-    if (id) return of(playable.find((p) => p.id === id));
-    else return of(playable);
+    if (id) {
+      return of(playable.find((p) => p.id === id)) as Observable<Playable>;
+    } else {
+      return of(playable) as Observable<Playable[]>;
+    }
   }
 
   countdown: PlayableCountdown[] = [
@@ -74,26 +77,22 @@ export class PlayableService {
       timers: [
         {
           name: 'Pullups',
-          timerType: 'stopwatch',
+          timerType: 'hybrid',
           value: 0,
-          convertToCountdownAfterSet: true,
         },
         {
           name: 'Rest',
-          timerType: 'stopwatch',
-          convertToCountdownAfterSet: true,
+          timerType: 'hybrid',
           value: 0,
         },
         {
           name: 'Pushups',
-          timerType: 'stopwatch',
+          timerType: 'hybrid',
           value: 0,
-          convertToCountdownAfterSet: true,
         },
         {
           name: 'Rest',
-          timerType: 'stopwatch',
-          convertToCountdownAfterSet: true,
+          timerType: 'hybrid',
           value: 0,
         },
       ],
@@ -143,13 +142,10 @@ export class PlayableService {
               name: 'Squats 10x',
               value: 0,
               timerType: 'stopwatch',
-              convertToCountdownAfterSet: true,
             },
             {
               name: 'Rest',
               timerType: 'stopwatch',
-              // saveAsCountdown: true, // can't be tested for now
-              convertToCountdownAfterSet: false,
               value: 0,
             },
           ],
