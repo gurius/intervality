@@ -11,7 +11,7 @@
   </div>
   <nav>
     <a
-      (click)="navigate('/settings')"
+      (click)="toggleSidePanel()"
       routerLinkActive="bg-secondary on-bg-secondary"
       routerLink="settings"
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
@@ -20,7 +20,7 @@
       <i class="fa-solid fa-gear"></i>settings
     </a>
     <a
-      (click)="navigate('/playable')"
+      (click)="toggleSidePanel()"
       someStringProperty
       routerLinkActive="bg-secondary"
       routerLink="playable"
@@ -28,6 +28,17 @@
       ariaCurrentWhenActive="page"
     >
       <i class="fa-solid fa-list-ul"></i>playable
+    </a>
+
+    <a
+      (click)="toggleSidePanel()"
+      someStringProperty
+      routerLinkActive="bg-secondary"
+      [routerLink]="['/create', 'set']"
+      class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
+      ariaCurrentWhenActive="page"
+    >
+      <i class="fa-solid fa-bars"></i>Create new set
     </a>
   </nav>
 </div>

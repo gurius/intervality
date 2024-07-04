@@ -8,12 +8,13 @@ import {
   PlayableSuperSet,
   PlayableType,
 } from '../models/playable/playable.model';
+import { DataService } from '../data.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PlayableService {
-  constructor() {}
+  constructor(private dataService: DataService) {}
 
   getCountdowns(): Observable<PlayableCountdown[]> {
     return of(this.countdown);
@@ -30,15 +31,16 @@ export class PlayableService {
     return of(this.supersets);
   }
 
-  getPlayable(id?: number): Observable<Playable | Playable[]> {
-    const playable = [
-      ...this.supersets,
-      ...this.sets,
-      ...this.stopwatch,
-      ...this.countdown,
-    ];
+  getPlayable(id?: string): Observable<Playable | Playable[]> {
+    const playable = this.dataService.getAll();
+    // const playable = [
+    //   ...this.supersets,
+    //   ...this.sets,
+    //   ...this.stopwatch,
+    //   ...this.countdown,
+    // ];
     if (id) {
-      return of(playable.find((p) => p.id === id)) as Observable<Playable>;
+      return of(this.dataService.getById(id)) as Observable<Playable>;
     } else {
       return of(playable) as Observable<Playable[]>;
     }
@@ -46,7 +48,7 @@ export class PlayableService {
 
   countdown: PlayableCountdown[] = [
     {
-      id: 4798,
+      id: '4798',
       name: 'Plank',
       playableType: PlayableType.Countdown,
       value: 300000,
@@ -55,13 +57,13 @@ export class PlayableService {
 
   stopwatch: PlayableStopwatch[] = [
     {
-      id: 3682,
+      id: '3682',
       name: 'Sprint',
       playableType: PlayableType.Stopwatch,
       value: 0,
     },
     {
-      id: 3605,
+      id: '3605',
       name: 'Jumps',
       playableType: PlayableType.Stopwatch,
       value: 0,
@@ -71,7 +73,7 @@ export class PlayableService {
   sets: PlayableSet[] = [
     {
       playableType: PlayableType.Set,
-      id: 1986,
+      id: '1986',
       name: 'Light Training',
       repetitions: 3,
       timers: [
@@ -99,7 +101,7 @@ export class PlayableService {
     },
     {
       playableType: PlayableType.Set,
-      id: 1392,
+      id: '1392',
       name: 'All countdowns',
       repetitions: 3,
       timers: [
@@ -125,7 +127,7 @@ export class PlayableService {
   supersets: PlayableSuperSet[] = [
     {
       playableType: PlayableType.SuperSet,
-      id: 4351,
+      id: '4351',
       name: 'Light Legs Day',
       repetitions: 1,
       setsAndTimers: [

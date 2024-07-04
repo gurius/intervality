@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
   styleUrl: './player.component.css',
 })
 export class PlayerComponent implements OnInit, OnDestroy {
-  id!: number;
+  id!: string;
   snapshot$: Observable<PlayerSnapshot | null>;
   constructor(
     private playerService: PlayerService,
@@ -24,7 +24,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id = this.aroute.snapshot.paramMap.get('id');
     if (id) {
-      this.id = Number(id);
+      this.id = id;
       this.initPlayer(this.id);
     }
   }
@@ -33,7 +33,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.stop();
   }
 
-  initPlayer(id: number) {
+  initPlayer(id: string) {
     this.playableService.getPlayable(id).subscribe((p) => {
       this.playerService.initializeSequnce(p as Playable);
     });

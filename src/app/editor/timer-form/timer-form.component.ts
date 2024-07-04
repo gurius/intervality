@@ -10,7 +10,7 @@ import { Timer, TimerType } from '../../models/playable/timer.model';
 
 export type StopwatchForm = FormGroup<{
   name: FormControl<string>;
-  type: FormControl<string>;
+  timerType: FormControl<string>;
 }>;
 
 export type CountdownForm = FormGroup<{
@@ -93,16 +93,20 @@ export class TimerFormComponent implements OnInit {
 
     switch (type) {
       case 'countdown':
+        const value = t?.value ? t.value / 1000 : 5;
         timer = this.fb.group({
           name: [t?.name || '', Validators.required],
-          value: [t?.value || 5, Validators.required],
+          value: [value, Validators.required],
         });
         break;
 
       default:
         timer = this.fb.group({
           name: [t?.name || '', Validators.required],
-          type: [(t?.timerType as string) || 'hybrid', Validators.required],
+          timerType: [
+            (t?.timerType as string) || 'hybrid',
+            Validators.required,
+          ],
         });
         break;
     }

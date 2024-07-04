@@ -1,7 +1,7 @@
 import { Timer } from './timer.model';
 
 export interface TimerSet {
-  id: number;
+  id: string;
   name: string;
   timers: Timer[];
   repetitions: number;

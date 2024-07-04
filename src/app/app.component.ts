@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { PlayerService } from './player/player.service';
 import { filter } from 'rxjs';
@@ -13,8 +13,19 @@ export class AppComponent {
   title = 'intervality';
   version = '0.0.1';
   isPanelVisible = false;
-  isPushMode = true;
+  isPushMode = false;
   isPlayer = false;
+
+  @HostListener('window:resize', ['$event'])
+  getScreenSize() {
+    const { innerWidth } = window;
+    if (innerWidth < 640) {
+      this.isPushMode = false;
+    } else {
+      this.isPushMode = true;
+    }
+  }
+
   constructor(
     private router: Router,
     private player: PlayerService,
@@ -41,10 +52,5 @@ export class AppComponent {
     } else {
       this.wakelockService.requestLock();
     }
-  }
-
-  navigate(url: string) {
-    // this.router.navigate([url]);
-    this.toggleSidePanel();
   }
 }

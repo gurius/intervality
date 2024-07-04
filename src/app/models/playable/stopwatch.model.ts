@@ -1,11 +1,11 @@
 export interface Stopwatch {
-  id: number;
+  id: string;
   name: string;
   value: number;
 }
 
 export interface StopwatchHistory {
-  id: number;
+  id: string;
   name: string;
   value: number;
   timestamp: number;

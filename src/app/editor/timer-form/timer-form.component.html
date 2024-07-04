@@ -20,10 +20,10 @@
             </div>
           }
 
-          @if (getGroupHasCtrl(timerGroup, "type")) {
+          @if (getGroupHasCtrl(timerGroup, "timerType")) {
             <div class="flex w-28 flex-1 flex-col">
               <label for="type-{{ tIdx }}">Type</label>
-              <select id="type-{{ tIdx }}" formControlName="type">
+              <select id="type-{{ tIdx }}" formControlName="timerType">
                 @for (opt of timerTypes; track opt.value) {
                   <option [value]="opt.value">{{ opt.label }}</option>
                 }

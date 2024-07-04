@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Playable, PlayableType } from '../models/playable/playable.model';
+import {
+  Playable,
+  PlayableType,
+  blank,
+} from '../models/playable/playable.model';
 import { PlayableService } from '../playable/playable.service';
 import { first } from 'rxjs';
 
@@ -26,13 +30,18 @@ export class EditorComponent {
 
     if (id) {
       this.playableService
-        .getPlayable(Number(id))
+        .getPlayable(id)
         .pipe(first())
         .subscribe((playable) => {
           if (playable) {
             this.playable = playable as Playable;
           }
         });
+    } else if (!id && this.playableType) {
+      const set = blank(PlayableType.Set);
+      if (set) {
+        this.playable = set;
+      }
     }
     console.log(id, this.playableType);
   }

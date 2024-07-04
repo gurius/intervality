@@ -24,10 +24,7 @@ export class PlayableListComponent {
     if (!e || e.code === 'Enter') this.userInput.set(this.filter.value);
   }
 
-  data: Observable<Playable[]> = forkJoin([
-    this.service.getSets(),
-    this.service.getSuperSets(),
-    this.service.getCountdowns(),
-    this.service.getStopwatches(),
-  ]).pipe(map((result) => result.flat()));
+  data: Observable<Playable[]> = this.service.getPlayable() as Observable<
+    Playable[]
+  >;
 }

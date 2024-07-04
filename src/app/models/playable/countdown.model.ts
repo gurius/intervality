@@ -1,5 +1,5 @@
 export interface Countdown {
-  id: number;
+  id: string;
   name: string;
   value: number;
 }
