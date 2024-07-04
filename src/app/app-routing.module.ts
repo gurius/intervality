@@ -13,12 +13,12 @@ const routes: Routes = [
       import('./playable/playable.module').then((m) => m.PlayableModule),
   },
   {
-    path: 'edit',
+    path: 'edit/:playableType/:id',
     loadChildren: () =>
       import('./editor/editor.module').then((m) => m.EditorModule),
   },
   {
-    path: 'create',
+    path: 'create/:playableType',
     loadChildren: () =>
       import('./editor/editor.module').then((m) => m.EditorModule),
   },

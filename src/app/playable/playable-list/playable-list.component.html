@@ -1,6 +1,6 @@
 <form
   onsubmit="return false"
-  class="mx-2 my-6 flex h-20 items-center justify-between rounded-md bg-primary py-8"
+  class="mx-2 my-6 flex h-20 items-center justify-between rounded-md bg-secondary py-8"
 >
   <button type="button" class="mx-4 text-on-primary">
     <i class="fa-solid fa-filter"></i>
@@ -29,7 +29,6 @@
   @if (data | async; as playable) {
     @for (item of playable | filter: filter.value; track item.name) {
       <li
-        [routerLink]="['/player', item.id]"
         class="flex h-28 flex-none items-center justify-between rounded-md bg-container px-5"
       >
         <div class="flex items-center gap-3">
@@ -45,72 +44,15 @@
               <i class="fa-solid fa-bars"></i>
             }
             @case (types.SuperSet) {
-              <i class="h-5 w-5">
-                <svg
-                  class="h-full w-full stroke-on-surface"
-                  width="118.53334"
-                  height="101.6"
-                  viewBox="0 0 118.53334 101.6"
-                  version="1.1"
-                  id="svg1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:svg="http://www.w3.org/2000/svg"
-                >
-                  <defs id="defs1" />
-                  <g id="layer1" transform="translate(-203.64614,-42.852948)">
-                    <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-                    <path
-                      style="
-                        fill: none;
-                        stroke-width: 20;
-                        stroke-linecap: round;
-                        stroke-dasharray: none;
-                        stroke-opacity: 1;
-                      "
-                      d="m 213.64614,54.793872 h 98.53334"
-                      id="path1"
-                    />
-                    <path
-                      style="
-                        fill: none;
-                        stroke-width: 20;
-                        stroke-linecap: round;
-                        stroke-dasharray: none;
-                        stroke-opacity: 1;
-                      "
-                      d="m 213.64614,106.65742 h 98.53334"
-                      id="path2"
-                    />
-                    <path
-                      style="
-                        fill: none;
-                        stroke-width: 20;
-                        stroke-linecap: round;
-                        stroke-dasharray: none;
-                        stroke-opacity: 1;
-                      "
-                      d="m 243.16243,80.725645 h 63.02498"
-                      id="path4"
-                    />
-                    <path
-                      style="
-                        fill: none;
-                        stroke-width: 20;
-                        stroke-linecap: round;
-                        stroke-dasharray: none;
-                        stroke-opacity: 1;
-                      "
-                      d="m 243.16243,132.58919 h 63.02498"
-                      id="path6"
-                    />
-                  </g>
-                </svg>
-              </i>
+              <i class="fa-brands fa-web-awesome"></i>
             }
           }
           <span>{{ item.name }}</span>
         </div>
-
+        <div class="flex gap-2">
+          <a [routerLink]="['/player', item.id]">play</a>
+          <a [routerLink]="['/edit', item.playableType, item.id]">edit</a>
+        </div>
         <i class="fa-solid fa-ellipsis-vertical"></i>
       </li>
     } @empty {

@@ -98,6 +98,12 @@
     font-family: "Ubuntu Condensed", sans-serif;
     font-weight: 400;
     font-style: normal;
+
+    select,
+    input[type="text"],
+    input[type="number"] {
+      @apply h-12 rounded-md border-secondary bg-container text-2xl text-on-container;
+    }
   }
 
   h1,

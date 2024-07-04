@@ -1,0 +1,40 @@
+<form class="flex flex-wrap justify-center gap-3" [formGroup]="setFrom">
+  <div class="set-name flex min-w-32 flex-1 grow-4 flex-col">
+    <label for="set-name">Set name</label>
+    <input class="w-full" type="text" formControlName="name" id="set-name" />
+  </div>
+  <div class="reps mb-6 flex min-w-3 flex-1 flex-col">
+    <label for="set-repetitions">Reps</label>
+    <input
+      class="w-full"
+      type="number"
+      step="1"
+      formControlName="repetitions"
+      id="set-repetitions"
+    />
+  </div>
+  <app-timer-form [group]="setFrom" [timers]="set.timers"></app-timer-form>
+  <div class="justify-centr flex flex-col items-center text-4xl">
+    <div class="flex flex-grow items-center justify-center text-primary">
+      <button
+        type="button"
+        class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <button
+        type="button"
+        (click)="submit()"
+        class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
+      >
+        <i class="fa-solid fa-check"></i>
+      </button>
+      <button
+        type="button"
+        class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
+      >
+        <i class="fa-solid fa-play"></i>
+      </button>
+    </div>
+  </div>
+</form>
