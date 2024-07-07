@@ -99,10 +99,19 @@
     font-weight: 400;
     font-style: normal;
 
+    /*app-set-form select,*/
+    /*app-set-form input[type="text"],*/
+    /*app-set-form input[type="number"] {*/
+    /*  @apply h-12 rounded-md border-secondary bg-container text-2xl text-on-container;*/
+    /*}*/
     select,
     input[type="text"],
     input[type="number"] {
-      @apply h-12 rounded-md border-secondary bg-container text-2xl text-on-container;
+      @apply h-12 rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-secondary bg-surface from-container to-surface text-2xl text-on-surface focus:border-secondary focus:ring-0;
+    }
+    input[type="text"],
+    input[type="number"] {
+      @apply focus:rounded-xl focus:bg-gradient-to-t;
     }
   }
 

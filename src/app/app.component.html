@@ -12,15 +12,6 @@
   <nav>
     <a
       (click)="toggleSidePanel()"
-      routerLinkActive="bg-secondary on-bg-secondary"
-      routerLink="settings"
-      class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
-      ariaCurrentWhenActive="page"
-    >
-      <i class="fa-solid fa-gear"></i>settings
-    </a>
-    <a
-      (click)="toggleSidePanel()"
       someStringProperty
       routerLinkActive="bg-secondary"
       routerLink="playable"
@@ -29,23 +20,65 @@
     >
       <i class="fa-solid fa-list-ul"></i>playable
     </a>
+    <a
+      (click)="toggleSidePanel()"
+      routerLinkActive="bg-secondary on-bg-secondary"
+      routerLink="settings"
+      class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
+      ariaCurrentWhenActive="page"
+    >
+      <i class="fa-solid fa-gear"></i>settings
+    </a>
+
+    <h3>Create</h3>
+    <a
+      (click)="toggleSidePanel()"
+      someStringProperty
+      routerLinkActive="bg-secondary"
+      (click)="navigate(['create', 'set'])"
+      class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
+      ariaCurrentWhenActive="page"
+    >
+      <i class="fa-solid fa-bars"></i>Set
+    </a>
 
     <a
       (click)="toggleSidePanel()"
       someStringProperty
       routerLinkActive="bg-secondary"
-      [routerLink]="['/create', 'set']"
+      (click)="navigate(['create', 'super-set'])"
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <i class="fa-solid fa-bars"></i>Create new set
+      <i class="fa-brands fa-web-awesome"></i>Super Set
+    </a>
+
+    <a
+      (click)="toggleSidePanel()"
+      someStringProperty
+      routerLinkActive="bg-secondary"
+      (click)="navigate(['create', 'countdown'])"
+      class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
+      ariaCurrentWhenActive="page"
+    >
+      <i class="fa-solid fa-hourglass-start"></i>Countdown
+    </a>
+    <a
+      (click)="toggleSidePanel()"
+      someStringProperty
+      routerLinkActive="bg-secondary"
+      (click)="navigate(['create', 'stopwatch'])"
+      class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
+      ariaCurrentWhenActive="page"
+    >
+      <i class="fa-solid fa-stopwatch"></i>Stopwatch
     </a>
   </nav>
 </div>
 
 @if (isPanelVisible && !isPushMode) {
   <div
-    class="absolute inset-0 z-[1] backdrop-grayscale"
+    class="absolute inset-0 z-[1] backdrop-blur-sm"
     (click)="toggleSidePanel()"
   ></div>
 }
@@ -80,7 +113,9 @@
       <i class="fa-solid fa-circle-stop"></i>
     </button>
   </div>
-  <div class="outlet-wrapper w-full overflow-y-auto">
+  <div
+    class="outlet-wrapper h-[calc(100dvh-theme(height.14))] w-full overflow-y-auto xl:h-[calc(100dvh-theme(height.20))]"
+  >
     <router-outlet />
   </div>
 </div>

@@ -13,7 +13,7 @@ export class AppComponent {
   title = 'intervality';
   version = '0.0.1';
   isPanelVisible = false;
-  isPushMode = false;
+  isPushMode = !(window.innerWidth < 640);
   isPlayer = false;
 
   @HostListener('window:resize', ['$event'])
@@ -39,7 +39,13 @@ export class AppComponent {
       });
   }
   toggleSidePanel() {
-    this.isPanelVisible = !this.isPanelVisible;
+    if (!this.isPushMode || !this.isPanelVisible) {
+      this.isPanelVisible = !this.isPanelVisible;
+    }
+  }
+
+  navigate(path: string[]) {
+    this.router.navigate(path);
   }
 
   playerStop() {

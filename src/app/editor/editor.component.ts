@@ -1,48 +1,88 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   Playable,
+  PlayableSet,
+  PlayableSuperset,
   PlayableType,
   blank,
 } from '../models/playable/playable.model';
 import { PlayableService } from '../playable/playable.service';
-import { first } from 'rxjs';
+import { Subscription, first } from 'rxjs';
+import { FormGroup } from '@angular/forms';
+import { Location } from '@angular/common';
+import { SetFormComponent } from './set-form/set-form.component';
+import { SuperSetFormComponent } from './super-set-form/super-set-form.component';
+
+export interface Submittable {
+  submit: () => void;
+}
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.css',
 })
-export class EditorComponent {
+export class EditorComponent implements OnDestroy, OnInit {
   playable!: Playable;
 
-  playableType: PlayableType;
+  playableType!: PlayableType;
+
+  paramMapSubscription: Subscription;
+
+  form: FormGroup = new FormGroup({});
+
+  @ViewChild('submit') currentForm!: SetFormComponent | SuperSetFormComponent;
 
   constructor(
     private aroute: ActivatedRoute,
     private playableService: PlayableService,
+    private location: Location,
   ) {
-    const id = this.aroute.snapshot.paramMap.get('id');
+    this.paramMapSubscription = this.aroute.params.subscribe((p) => {
+      this.form = new FormGroup({});
 
-    this.playableType = this.aroute.snapshot.paramMap.get(
-      'playableType',
-    ) as PlayableType;
-
-    if (id) {
-      this.playableService
-        .getPlayable(id)
-        .pipe(first())
-        .subscribe((playable) => {
-          if (playable) {
-            this.playable = playable as Playable;
-          }
-        });
-    } else if (!id && this.playableType) {
-      const set = blank(PlayableType.Set);
-      if (set) {
-        this.playable = set;
+      this.playableType = p['playableType'];
+      const id = p['id'];
+      if (id) {
+        this.playableService
+          .getPlayable(id)
+          .pipe(first())
+          .subscribe((playable) => {
+            if (playable) {
+              this.playable = playable as Playable;
+            }
+          });
+      } else if (!id && this.playableType) {
+        const blankPlayable = blank(this.playableType);
+        if (blankPlayable) {
+          this.playable = blankPlayable;
+        }
       }
-    }
-    console.log(id, this.playableType);
+      console.log(id, this.playableType);
+    });
+  }
+
+  ngOnInit(): void {}
+
+  ngOnDestroy(): void {
+    this.paramMapSubscription.unsubscribe();
+  }
+
+  get set() {
+    return this.playable as PlayableSet;
+  }
+
+  get superSet() {
+    return this.playable as PlayableSuperset;
+  }
+
+  submit() {
+    this.currentForm.submit();
+  }
+
+  discard() {
+    this.form.reset();
+    this.location.back();
   }
 }

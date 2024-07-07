@@ -19,7 +19,7 @@ nav {
   @apply sticky flex flex-auto items-center gap-5 shadow-md;
 }
 .outlet-wrapper {
-  height: calc(100% - theme("height.20"));
+  @apply m-0 p-0;
 }
 /*@media (orientation: portrait) {*/
 /*  .side-panel-portrait:not(.slide-in-left) {*/

@@ -1,105 +1,31 @@
-@if (group && timers.length) {
-  <!-- parent form group -->
-  <div [formGroup]="group">
-    <div formArrayName="timers">
-      <!-- array start -->
-      @for (timerGroup of timersArray.controls; track tIdx; let tIdx = $index) {
-        <fieldset class="mb-5 flex gap-3" [formGroup]="timerGroup">
-          <div class="flex w-24 flex-1 flex-col">
-            <label for="name-{{ tIdx }}">Timer name</label>
-            <input type="text" formControlName="name" id="name-{{ tIdx }}" />
-          </div>
-          @if (getGroupHasCtrl(timerGroup, "value")) {
-            <div class="flex w-24 flex-1 flex-col">
-              <label for="value-{{ tIdx }}">Seconds</label>
-              <input
-                type="text"
-                formControlName="value"
-                id="value-{{ tIdx }}"
-              />
-            </div>
-          }
-
-          @if (getGroupHasCtrl(timerGroup, "timerType")) {
-            <div class="flex w-28 flex-1 flex-col">
-              <label for="type-{{ tIdx }}">Type</label>
-              <select id="type-{{ tIdx }}" formControlName="timerType">
-                @for (opt of timerTypes; track opt.value) {
-                  <option [value]="opt.value">{{ opt.label }}</option>
-                }
-              </select>
-            </div>
-          }
-          <button
-            type="button"
-            class="h-12 self-end"
-            (click)="removeTimer(tIdx)"
-          >
-            <i class="fa-regular fa-trash-can text-secondary"></i>
-          </button>
-        </fieldset>
-      }
-
-      <!-- array end -->
-    </div>
-    <div
-      title="add"
-      type="button"
-      (click)="openAddMenu()"
-      class="{{
-        isAddMenuVisible ? 'h-36' : 'h-12'
-      }} w-full rounded-md border-2 border-dashed border-secondary flex justify-center items-center"
-    >
-      @if (isAddMenuVisible) {
-        <div class="flex flex-wrap items-center justify-center gap-3 px-6">
-          <button
-            title="add stopwatch"
-            (click)="addTimer($event, 'stopwatch')"
-            type="button"
-            class="rounded-3xl border-2 border-secondary px-3 py-1"
-          >
-            <i class="fa-solid fa-stopwatch"></i>
-            <label class="pl-1">new </label>
-          </button>
-          <button
-            title="add countdown"
-            (click)="addTimer($event, 'countdown')"
-            type="button"
-            class="rounded-3xl border-2 border-secondary px-3 py-1"
-          >
-            <i class="fa-solid fa-hourglass-start"></i>
-            <label class="pl-1">new</label>
-          </button>
-          <!-- TODO: show a set of what can be added depending on the context  -->
-          <!-- <button -->
-          <!--   (click)="addTimer($event)" -->
-          <!--   type="button" -->
-          <!--   class="rounded-3xl border-2 border-secondary px-3 py-1" -->
-          <!-- > -->
-          <!--   <i class="fa-solid fa-bars"></i> -->
-          <!--   <label class="pl-1">S</label> -->
-          <!-- </button> -->
-          <!-- <button -->
-          <!--   (click)="addTimer($event)" -->
-          <!--   type="button" -->
-          <!--   class="rounded-3xl border-2 border-secondary px-3 py-1" -->
-          <!-- > -->
-          <!--   <i class="fa-brands fa-web-awesome"></i> -->
-          <!--   <label class="pl-1">SS</label> -->
-          <!-- </button> -->
-
-          <div class="flex flex-col">
-            <select title="add existing" id="existing" class="rounded-3xl">
-              @for (opt of existingTimers; track opt.value) {
-                <option [value]="opt.value">{{ opt.label }}</option>
-              }
-            </select>
-          </div>
-        </div>
-      } @else {
-        <i class="fa-solid fa-plus"></i>
-      }
-    </div>
+<form
+  class="mb-5 flex flex-wrap gap-3 overflow-hidden rounded-xl border-2 border-secondary p-2"
+  [formGroup]="group"
+>
+  <ng-content select="div.heading"></ng-content>
+  <div class="flex w-24 flex-1 flex-col">
+    <label for="name-{{ rnd }}-{{ idx }}">Name</label>
+    <input type="text" formControlName="name" id="name-{{ rnd }}-{{ idx }}" />
   </div>
-  <!-- parent form group end -->
-}
+  @if (isControllerInGroup(group, "value")) {
+    <div class="flex w-24 flex-1 flex-col">
+      <label for="value-{{ rnd }}-{{ idx }}">Seconds</label>
+      <input
+        type="text"
+        formControlName="value"
+        id="value-{{ rnd }}-{{ idx }}"
+      />
+    </div>
+  }
+
+  @if (isControllerInGroup(group, "timerType")) {
+    <div class="flex w-28 flex-1 flex-col">
+      <label for="type-{{ rnd }}-{{ idx }}">Type</label>
+      <select id="type-{{ rnd }}-{{ idx }}" formControlName="timerType">
+        @for (opt of timerTypes; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </div>
+  }
+</form>

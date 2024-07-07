@@ -1,46 +1,57 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import {
   PlayableSet,
   PlayableType,
 } from '../../models/playable/playable.model';
 import { DataService } from '../../data.service';
-import { Location } from '@angular/common';
+import { Submittable } from '../editor.component';
+import { TimerSet } from '../../models/playable/set.model';
 
 @Component({
   selector: 'app-set-form',
   templateUrl: './set-form.component.html',
   styleUrl: './set-form.component.css',
 })
-export class SetFormComponent implements OnInit {
-  @Input() set!: PlayableSet;
+export class SetFormComponent implements OnInit, OnDestroy, Submittable {
+  @Input() set!: PlayableSet | Omit<TimerSet, 'id'>;
 
-  setFrom!: FormGroup;
+  @Input() setForm!: FormGroup;
+
+  rnd!: string;
 
   constructor(
-    private fb: NonNullableFormBuilder,
     private dataService: DataService,
-    private location: Location,
+    private fb: NonNullableFormBuilder,
   ) {}
 
   ngOnInit(): void {
+    this.rnd = Math.random().toString(36).substring(2, 5);
+
     if (!this.set) return;
 
     const { name, repetitions } = this.set;
 
-    this.setFrom = this.fb.group({
-      name: [name, Validators.required],
-      repetitions: [repetitions, Validators.required],
-    });
+    this.setForm.addControl('name', this.fb.control(name, Validators.required));
+    this.setForm.addControl(
+      'repetitions',
+      this.fb.control(repetitions, Validators.required),
+    );
+  }
+
+  ngOnDestroy(): void {
+    console.log('set form destroyed');
   }
 
   submit() {
     const { timers, ...nameAndReps } =
-      this.setFrom.getRawValue() as PlayableSet;
+      this.setForm.getRawValue() as PlayableSet;
 
     const set: PlayableSet = {
       ...nameAndReps,
-      id: this.set.id,
+      ...((this.set as TimerSet).id
+        ? { id: (this.set as PlayableSet).id }
+        : {}),
       playableType: PlayableType.Set,
       timers: timers.map((t) => {
         t.value = t.value ? t.value * 1000 : 0;
@@ -51,10 +62,5 @@ export class SetFormComponent implements OnInit {
 
     console.log(set);
     this.dataService.updsertItem(set);
-  }
-
-  discard() {
-    this.setFrom.reset();
-    this.location.back();
   }
 }

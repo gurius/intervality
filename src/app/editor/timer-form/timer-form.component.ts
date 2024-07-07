@@ -1,62 +1,60 @@
-import { Component, Input, OnInit, SkipSelf, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
-  FormArray,
-  FormControl,
+  Form,
   FormGroup,
   NonNullableFormBuilder,
   Validators,
 } from '@angular/forms';
-import { Timer, TimerType } from '../../models/playable/timer.model';
-
-export type StopwatchForm = FormGroup<{
-  name: FormControl<string>;
-  timerType: FormControl<string>;
-}>;
-
-export type CountdownForm = FormGroup<{
-  name: FormControl<string>;
-  value: FormControl<number>;
-}>;
+import { Timer } from '../../models/playable/timer.model';
 
 @Component({
   selector: 'app-timer-form',
   templateUrl: './timer-form.component.html',
   styleUrl: './timer-form.component.css',
-  // viewProviders: [
-  //   {
-  //     provide: ControlContainer,
-  //     useFactory: () => inject(ControlContainer, { SkipSelf: true }),
-  //   },
-  // ],
 })
 export class TimerFormComponent implements OnInit {
-  @Input({ required: true }) group!: FormGroup;
-  @Input({ required: true }) timers!: Timer[];
+  @Input() group!: FormGroup;
+  @Input() timer!: Timer;
+  @Input() idx!: number;
+
+  rnd!: string;
 
   fb = inject(NonNullableFormBuilder);
 
-  isAddMenuVisible = false;
+  isControllerInGroup(g: FormGroup, prop: string) {
+    return g.controls.hasOwnProperty(prop);
+  }
 
   ngOnInit(): void {
-    this.group.addControl('timers', this.fb.array(this.timersMeta));
-  }
+    this.rnd = Math.random().toString(36).substring(2, 5);
+    switch (this.timer.timerType) {
+      case 'countdown':
+        const value = this.timer.value ? this.timer.value / 1000 : 5;
+        this.group.addControl(
+          'name',
+          this.fb.control(this.timer.name || '', Validators.required),
+        );
+        this.group.addControl(
+          'value',
+          this.fb.control(value, Validators.required),
+        );
+        break;
 
-  get timersArray() {
-    return this.group.get('timers') as FormArray<FormGroup>;
-  }
+      default:
+        this.group.addControl(
+          'name',
+          this.fb.control(this.timer.name || '', Validators.required),
+        );
 
-  getTimerMeta(idx: number) {
-    return this.timers.at(idx);
-  }
-
-  get timersMeta() {
-    return this.timers.map((t) => {
-      return this.createTimerForm(t.timerType, t);
-    });
-  }
-
-  getGroupHasCtrl(g: FormGroup, prop: string) {
-    return g.controls.hasOwnProperty(prop);
+        this.group.addControl(
+          'timerType',
+          this.fb.control(
+            (this.timer.timerType as string) || 'hybrid',
+            Validators.required,
+          ),
+        );
+        break;
+    }
   }
 
   get timerTypes() {
@@ -66,54 +64,5 @@ export class TimerFormComponent implements OnInit {
       { value: 'hybrid', label: 'Hybrid' },
       { value: 'converted', label: 'Converted' },
     ];
-  }
-
-  get existingTimers() {
-    return [
-      { value: 'run', label: 'Run' },
-      { value: 'jump', label: 'Jump' },
-      { value: 'plank', label: 'Plank' },
-      { value: 'stretching', label: 'Stretching' },
-    ];
-  }
-
-  openAddMenu() {
-    this.isAddMenuVisible = true;
-  }
-
-  addTimer(e: Event, type: TimerType) {
-    e.stopPropagation();
-
-    this.isAddMenuVisible = false;
-    this.timersArray.push(this.createTimerForm(type));
-  }
-
-  createTimerForm(type: TimerType, t?: Timer): StopwatchForm | CountdownForm {
-    let timer: StopwatchForm | CountdownForm;
-
-    switch (type) {
-      case 'countdown':
-        const value = t?.value ? t.value / 1000 : 5;
-        timer = this.fb.group({
-          name: [t?.name || '', Validators.required],
-          value: [value, Validators.required],
-        });
-        break;
-
-      default:
-        timer = this.fb.group({
-          name: [t?.name || '', Validators.required],
-          timerType: [
-            (t?.timerType as string) || 'hybrid',
-            Validators.required,
-          ],
-        });
-        break;
-    }
-    return timer;
-  }
-
-  removeTimer(idx: number) {
-    this.timersArray.removeAt(idx);
   }
 }

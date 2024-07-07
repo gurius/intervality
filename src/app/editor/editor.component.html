@@ -1,3 +1,49 @@
-@if (playable.playableType === "set") {
-  <app-set-form [set]="playable"></app-set-form>
-}
+<form class="mb-2">
+  @switch (playableType) {
+    @case ("set") {
+      <app-set-form #submit [set]="set" [setForm]="form">
+        <app-timers-form-array
+          [group]="form"
+          [timers]="set.timers"
+        ></app-timers-form-array>
+      </app-set-form>
+    }
+    @case ("super-set") {
+      <app-super-set-form #submit [super-set]="superSet" [supersetForm]="form">
+      </app-super-set-form>
+    }
+    <!-- @case ("countdown") { -->
+    <!--   <app-set-form [set]="playable"></app-set-form> -->
+    <!-- } -->
+    <!---->
+    <!-- @case ("stopwatch") { -->
+    <!--   <app-set-form [set]="playable"></app-set-form> -->
+    <!-- } -->
+  }
+</form>
+<div class="justify-centr sticky bottom-0 flex flex-col items-center text-4xl">
+  <div
+    class="mb-2 flex flex-grow items-center justify-center rounded-2xl bg-surface py-2 text-primary"
+  >
+    <button
+      type="button"
+      (click)="discard()"
+      class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <button
+      type="button"
+      (click)="submit()"
+      class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
+    >
+      <i class="fa-solid fa-check"></i>
+    </button>
+    <button
+      type="button"
+      class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
+    >
+      <i class="fa-solid fa-play"></i>
+    </button>
+  </div>
+</div>

@@ -5,7 +5,7 @@ import {
   PlayableCountdown,
   PlayableSet,
   PlayableStopwatch,
-  PlayableSuperSet,
+  PlayableSuperset,
   PlayableType,
 } from '../models/playable/playable.model';
 import { DataService } from '../data.service';
@@ -27,7 +27,7 @@ export class PlayableService {
   getSets(): Observable<PlayableSet[]> {
     return of(this.sets);
   }
-  getSuperSets(): Observable<PlayableSuperSet[]> {
+  getSuperSets(): Observable<PlayableSuperset[]> {
     return of(this.supersets);
   }
 
@@ -124,9 +124,9 @@ export class PlayableService {
     },
   ];
 
-  supersets: PlayableSuperSet[] = [
+  supersets: PlayableSuperset[] = [
     {
-      playableType: PlayableType.SuperSet,
+      playableType: PlayableType.Superset,
       id: '4351',
       name: 'Light Legs Day',
       repetitions: 1,

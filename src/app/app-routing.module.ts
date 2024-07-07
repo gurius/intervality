@@ -21,6 +21,7 @@ const routes: Routes = [
     path: 'create/:playableType',
     loadChildren: () =>
       import('./editor/editor.module').then((m) => m.EditorModule),
+    pathMatch: 'full',
   },
   {
     path: 'settings',

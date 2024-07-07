@@ -83,7 +83,7 @@ export class PlayerService {
         const set = times(repetitions, () => cloneDeep(timers)).flat();
         this.sequence = this.sequence.concat(set);
         break;
-      case PlayableType.SuperSet:
+      case PlayableType.Superset:
         const { repetitions: reps, setsAndTimers } = playable;
         const sset = times(reps, () => cloneDeep(setsAndTimers))
           .flat()
