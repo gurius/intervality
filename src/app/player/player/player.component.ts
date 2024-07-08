@@ -3,7 +3,7 @@ import { PlayerService, PlayerSnapshot } from '../player.service';
 import { ActivatedRoute } from '@angular/router';
 import { PlayableService } from '../../playable/playable.service';
 import { Playable } from '../../models/playable/playable.model';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-player',
@@ -13,12 +13,15 @@ import { Observable } from 'rxjs';
 export class PlayerComponent implements OnInit, OnDestroy {
   id!: string;
   snapshot$: Observable<PlayerSnapshot | null>;
+
+  destroy$ = new Subject<void>();
+
   constructor(
     private playerService: PlayerService,
     private playableService: PlayableService,
     private aroute: ActivatedRoute,
   ) {
-    this.snapshot$ = playerService.snapshot$;
+    this.snapshot$ = playerService.snapshot$.pipe(takeUntil(this.destroy$));
   }
 
   ngOnInit(): void {
@@ -30,7 +33,8 @@ export class PlayerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.stop();
+    this.destroy$.next();
+    this.playerService.reset();
   }
 
   initPlayer(id: string) {

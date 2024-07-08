@@ -378,4 +378,16 @@ export class PlayerService {
       .map((s) => s.value)
       .reduce((acc, curr) => acc + curr, 0);
   }
+
+  reset() {
+    this.sequence = [];
+    this.seqIdx = 0;
+    this.currentMs = 0;
+    this.stopWatchMs = 0;
+    this.timestamp = 0;
+    this.playing = false;
+    this.commenced = false;
+
+    this.snapshotSubject$.next(null);
+  }
 }
