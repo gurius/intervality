@@ -3,8 +3,17 @@
   [formGroup]="setForm"
 >
   <ng-content select="div.heading"></ng-content>
-  <div class="flex min-w-32 flex-1 grow-4 flex-col">
-    <label for="set-name-{{ rnd }}">Name</label>
+  <div class="flex min-w-32 flex-1 grow-3 flex-col">
+    <label
+      for="set-name-{{ rnd }}"
+      [ngClass]="{
+        'text-red-600': name.invalid && (name.dirty || name.touched),
+      }"
+      >Name
+      @if (name.hasError("required") && (name.dirty || name.touched)) {
+        <span>*</span>
+      }
+    </label>
     <input
       class="w-full"
       type="text"
@@ -12,8 +21,26 @@
       id="set-name-{{ rnd }}"
     />
   </div>
-  <div class="reps mb-6 flex min-w-3 flex-1 flex-col">
-    <label for="set-repetitions-{{ rnd }}">Reps</label>
+  <div class="reps mb-6 flex min-w-5 flex-1 flex-col">
+    <label
+      for="set-repetitions-{{ rnd }}"
+      [ngClass]="{
+        'text-red-600':
+          repetitions.invalid && (repetitions.dirty || repetitions.touched),
+      }"
+      >Reps
+      @if (
+        repetitions.hasError("required") &&
+        (repetitions.dirty || repetitions.touched)
+      ) {
+        <span>*</span>
+      } @else if (
+        repetitions.hasError("min") &&
+        (repetitions.dirty || repetitions.touched)
+      ) {
+        <span>min is 1</span>
+      }
+    </label>
     <input
       class="w-full"
       type="number"

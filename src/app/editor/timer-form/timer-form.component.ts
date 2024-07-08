@@ -1,5 +1,10 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  Validators,
+} from '@angular/forms';
 import { Submittable } from '../editor.component';
 import { DataService } from '../../data.service';
 import {
@@ -38,7 +43,7 @@ export class TimerFormComponent implements OnInit, Submittable {
         );
         this.group.addControl(
           'value',
-          this.fb.control(value, Validators.required),
+          this.fb.control(value, [Validators.required, Validators.min(1)]),
         );
         break;
 
@@ -57,6 +62,14 @@ export class TimerFormComponent implements OnInit, Submittable {
         );
         break;
     }
+  }
+
+  get name() {
+    return this.group.get('name') as FormControl;
+  }
+
+  get value() {
+    return this.group.get('value') as FormControl;
   }
 
   get timerTypes() {

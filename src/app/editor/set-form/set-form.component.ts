@@ -1,5 +1,10 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  Validators,
+} from '@angular/forms';
 import {
   PlayableSet,
   PlayableType,
@@ -35,12 +40,20 @@ export class SetFormComponent implements OnInit, OnDestroy, Submittable {
     this.setForm.addControl('name', this.fb.control(name, Validators.required));
     this.setForm.addControl(
       'repetitions',
-      this.fb.control(repetitions, Validators.required),
+      this.fb.control(repetitions, [Validators.required, Validators.min(1)]),
     );
   }
 
   ngOnDestroy(): void {
     console.log('set form destroyed');
+  }
+
+  get name() {
+    return this.setForm.get('name') as FormControl;
+  }
+
+  get repetitions() {
+    return this.setForm.get('repetitions') as FormControl;
   }
 
   submit() {

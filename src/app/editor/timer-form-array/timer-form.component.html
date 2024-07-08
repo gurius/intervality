@@ -6,7 +6,21 @@
       @for (timerGroup of timersArray.controls; track tIdx; let tIdx = $index) {
         <fieldset class="mb-5 flex gap-3" [formGroup]="timerGroup">
           <div class="flex w-24 flex-1 flex-col">
-            <label for="name-{{ rnd }}-{{ tIdx }}">Timer name</label>
+            <label
+              for="name-{{ rnd }}-{{ tIdx }}"
+              [ngClass]="{
+                'text-red-600':
+                  getNameAt(tIdx).invalid &&
+                  (getNameAt(tIdx).dirty || getNameAt(tIdx).touched),
+              }"
+              >Timer name
+              @if (
+                getNameAt(tIdx).hasError("required") &&
+                (getNameAt(tIdx).dirty || getNameAt(tIdx).touched)
+              ) {
+                <span>*</span>
+              }
+            </label>
             <input
               type="text"
               formControlName="name"
@@ -15,9 +29,28 @@
           </div>
           @if (isControllerInGroup(timerGroup, "value")) {
             <div class="flex w-24 flex-1 flex-col">
-              <label for="value-{{ rnd }}-{{ tIdx }}">Seconds</label>
+              <label
+                for="value-{{ rnd }}-{{ tIdx }}"
+                [ngClass]="{
+                  'text-red-600':
+                    getValueAt(tIdx).invalid &&
+                    (getValueAt(tIdx).dirty || getValueAt(tIdx).touched),
+                }"
+                >Seconds
+                @if (
+                  getValueAt(tIdx).hasError("required") &&
+                  (getValueAt(tIdx).dirty || getValueAt(tIdx).touched)
+                ) {
+                  <span>*</span>
+                } @else if (
+                  getValueAt(tIdx).hasError("min") &&
+                  (getValueAt(tIdx).dirty || getValueAt(tIdx).touched)
+                ) {
+                  <span>min is 1</span>
+                }
+              </label>
               <input
-                type="text"
+                type="number"
                 formControlName="value"
                 id="value-{{ rnd }}-{{ tIdx }}"
               />

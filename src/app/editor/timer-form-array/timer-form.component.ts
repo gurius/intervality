@@ -36,11 +36,25 @@ export class TimersFormArrayComponent implements OnInit {
   ngOnInit(): void {
     this.rnd = Math.random().toString(36).substring(2, 5);
 
-    this.group.addControl('timers', this.fb.array(this.timersFormGroups));
+    this.group.addControl(
+      'timers',
+      this.fb.array(this.timersFormGroups, [
+        Validators.required,
+        Validators.minLength(1),
+      ]),
+    );
   }
 
   get timersArray() {
     return this.group.get('timers') as FormArray<FormGroup>;
+  }
+
+  getNameAt(idx: number) {
+    return this.timersArray.at(idx).get('name') as FormControl;
+  }
+
+  getValueAt(idx: number) {
+    return this.timersArray.at(idx).get('value') as FormControl;
   }
 
   getTimerMeta(idx: number) {
@@ -66,16 +80,6 @@ export class TimersFormArrayComponent implements OnInit {
     ];
   }
 
-  // TODO: implement getting a real timers
-  get existingTimers() {
-    return [
-      { value: 'run', label: 'Run' },
-      { value: 'jump', label: 'Jump' },
-      { value: 'plank', label: 'Plank' },
-      { value: 'stretching', label: 'Stretching' },
-    ];
-  }
-
   get addMenuTypes() {
     return [PlayableType.Countdown, PlayableType.Stopwatch];
   }
@@ -95,7 +99,7 @@ export class TimersFormArrayComponent implements OnInit {
         const value = t?.value ? t.value / 1000 : 5;
         timer = this.fb.group({
           name: [t?.name || '', Validators.required],
-          value: [value, Validators.required],
+          value: [value, [Validators.required, Validators.min(1)]],
         });
         break;
 

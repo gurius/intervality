@@ -61,10 +61,6 @@
             <div class="flex">
               <button
                 class="h-10 w-10 rounded-md"
-                [ngClass]="{
-                  'text-surface': item.playableType === 'super-set',
-                }"
-                [disabled]="item.playableType === 'super-set'"
                 [routerLink]="['/player', item.id]"
               >
                 <i class="fa-solid fa-play"></i>

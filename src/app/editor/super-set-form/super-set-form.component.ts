@@ -59,12 +59,18 @@ export class SuperSetFormComponent implements Submittable, OnInit {
 
     this.supersetForm.addControl(
       'repetitions',
-      this.fb.control(repetitions || 1, Validators.required),
+      this.fb.control(repetitions || 1, [
+        Validators.required,
+        Validators.min(1),
+      ]),
     );
 
     this.supersetForm.addControl(
       'setsAndTimers',
-      this.fb.array(this.setsAndTimersFormGroups),
+      this.fb.array(this.setsAndTimersFormGroups, [
+        Validators.required,
+        Validators.minLength(1),
+      ]),
     );
   }
 
@@ -72,6 +78,14 @@ export class SuperSetFormComponent implements Submittable, OnInit {
     return this.superSet.setsAndTimers.map((st) => {
       return this.fb.group({});
     });
+  }
+
+  get name() {
+    return this.supersetForm.get('name') as FormControl;
+  }
+
+  get repetitions() {
+    return this.supersetForm.get('repetitions') as FormControl;
   }
 
   getIsSet(idx: number) {

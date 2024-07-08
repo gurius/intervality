@@ -3,12 +3,39 @@
   [formGroup]="supersetForm"
 >
   <div class="flex gap-3">
-    <div class="flex min-w-32 flex-1 grow-4 flex-col">
-      <label for="set-name">Superset name</label>
+    <div class="flex min-w-32 flex-1 grow-3 flex-col">
+      <label
+        for="set-name"
+        [ngClass]="{
+          'text-red-600': name.invalid && (name.dirty || name.touched),
+        }"
+        >Superset name
+        @if (name.hasError("required") && (name.dirty || name.touched)) {
+          <span>*</span>
+        }
+      </label>
       <input class="w-full" type="text" formControlName="name" id="set-name" />
     </div>
-    <div class="reps mb-6 flex min-w-3 flex-1 flex-col">
-      <label for="set-repetitions">Reps</label>
+    <div class="reps mb-6 flex min-w-5 flex-1 flex-col">
+      <label
+        for="set-repetitions"
+        [ngClass]="{
+          'text-red-600':
+            repetitions.invalid && (repetitions.dirty || repetitions.touched),
+        }"
+        >Reps
+        @if (
+          repetitions.hasError("required") &&
+          (repetitions.dirty || repetitions.touched)
+        ) {
+          <span>*</span>
+        } @else if (
+          repetitions.hasError("min") &&
+          (repetitions.dirty || repetitions.touched)
+        ) {
+          <span>min is 1</span>
+        }
+      </label>
       <input
         class="w-full"
         type="number"

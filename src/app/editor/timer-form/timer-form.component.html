@@ -4,14 +4,34 @@
 >
   <ng-content select="div.heading"></ng-content>
   <div class="flex w-24 flex-1 flex-col">
-    <label for="name-{{ rnd }}-{{ idx }}">Name</label>
+    <label
+      for="name-{{ rnd }}-{{ idx }}"
+      [ngClass]="{
+        'text-red-600': name.invalid && (name.dirty || name.touched),
+      }"
+      >Name
+      @if (name.hasError("required") && (name.dirty || name.touched)) {
+        <span>*</span>
+      }
+    </label>
     <input type="text" formControlName="name" id="name-{{ rnd }}-{{ idx }}" />
   </div>
   @if (isControllerInGroup(group, "value")) {
     <div class="flex w-24 flex-1 flex-col">
-      <label for="value-{{ rnd }}-{{ idx }}">Seconds</label>
+      <label
+        for="value-{{ rnd }}-{{ idx }}"
+        [ngClass]="{
+          'text-red-600': value.invalid && (value.dirty || value.touched),
+        }"
+        >Seconds
+        @if (value.hasError("required") && (value.dirty || value.touched)) {
+          <span>*</span>
+        } @else if (value.hasError("min") && (value.dirty || value.touched)) {
+          <span>min is 1</span>
+        }
+      </label>
       <input
-        type="text"
+        type="number"
         formControlName="value"
         id="value-{{ rnd }}-{{ idx }}"
       />

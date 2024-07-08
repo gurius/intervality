@@ -96,6 +96,7 @@ export class EditorComponent implements OnDestroy, OnInit {
   }
 
   submit() {
+    if (this.form.invalid) return;
     this.currentForm.submit();
   }
 

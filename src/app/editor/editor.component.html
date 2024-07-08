@@ -39,6 +39,9 @@
       <i class="fa-solid fa-xmark"></i>
     </button>
     <button
+      [ngClass]="{
+        'border-container text-container': form.touched && form.invalid,
+      }"
       type="button"
       (click)="submit()"
       class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
