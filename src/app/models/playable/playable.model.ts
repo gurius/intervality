@@ -41,6 +41,7 @@ export function blank(type: PlayableType): Playable {
     case PlayableType.Countdown:
       return {
         playableType: PlayableType.Countdown,
+        timerType: 'countdown',
         name: '',
         id: uid(),
         value: 0,
@@ -49,6 +50,7 @@ export function blank(type: PlayableType): Playable {
     case PlayableType.Stopwatch:
       return {
         playableType: PlayableType.Stopwatch,
+        timerType: 'stopwatch',
         name: '',
         id: uid(),
         value: 0,

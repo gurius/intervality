@@ -2,7 +2,9 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   Playable,
+  PlayableCountdown,
   PlayableSet,
+  PlayableStopwatch,
   PlayableSuperset,
   PlayableType,
   blank,
@@ -25,6 +27,8 @@ export interface Submittable {
 })
 export class EditorComponent implements OnDestroy, OnInit {
   playable!: Playable;
+
+  timer!: PlayableCountdown | PlayableStopwatch;
 
   playableType!: PlayableType;
 
@@ -51,12 +55,26 @@ export class EditorComponent implements OnDestroy, OnInit {
           .subscribe((playable) => {
             if (playable) {
               this.playable = playable as Playable;
+              if (
+                this.playableType === PlayableType.Countdown ||
+                this.playableType === PlayableType.Stopwatch
+              ) {
+                this.timer = this.playable as
+                  | PlayableCountdown
+                  | PlayableStopwatch;
+              }
             }
           });
       } else if (!id && this.playableType) {
         const blankPlayable = blank(this.playableType);
         if (blankPlayable) {
           this.playable = blankPlayable;
+          if (
+            this.playableType === PlayableType.Countdown ||
+            this.playableType === PlayableType.Stopwatch
+          ) {
+            this.timer = this.playable as PlayableCountdown | PlayableStopwatch;
+          }
         }
       }
       console.log(id, this.playableType);

@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import {
+  PlayableCountdown,
+  PlayableStopwatch,
   PlayableSuperset,
   PlayableType,
   PlayableTypeStr,
@@ -89,7 +91,13 @@ export class SuperSetFormComponent implements Submittable, OnInit {
     if (!st || st.hasOwnProperty('timers')) {
       throw new Error('missing timer or unexpected set item');
     }
-    return st as Timer;
+    return {
+      ...st,
+      playableType:
+        (st as Timer).timerType === 'countdown'
+          ? PlayableType.Countdown
+          : PlayableType.Stopwatch,
+    } as PlayableStopwatch | PlayableCountdown;
   }
 
   get setsAndTimersArray() {

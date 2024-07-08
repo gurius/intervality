@@ -12,13 +12,19 @@
       <app-super-set-form #submit [super-set]="superSet" [supersetForm]="form">
       </app-super-set-form>
     }
-    <!-- @case ("countdown") { -->
-    <!--   <app-set-form [set]="playable"></app-set-form> -->
-    <!-- } -->
-    <!---->
-    <!-- @case ("stopwatch") { -->
-    <!--   <app-set-form [set]="playable"></app-set-form> -->
-    <!-- } -->
+    @case ("countdown") {
+      <div class="flex w-full flex-col items-center justify-start px-2 pt-5">
+        <app-timer-form [idx]="0" [group]="form" [timer]="timer" #submit>
+        </app-timer-form>
+      </div>
+    }
+
+    @case ("stopwatch") {
+      <div class="flex w-full flex-col items-center justify-start px-2 pt-5">
+        <app-timer-form [idx]="0" [group]="form" [timer]="timer" #submit>
+        </app-timer-form>
+      </div>
+    }
   }
 </form>
 <div class="justify-centr sticky bottom-0 flex flex-col items-center text-4xl">

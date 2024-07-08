@@ -27,7 +27,11 @@
 </form>
 <ol class="scrollbar flex w-full flex-col gap-3 p-2">
   @if (data | async; as playable) {
-    @for (item of playable | filter: filter.value; track item.name) {
+    @for (
+      item of playable | filter: filter.value;
+      track item.name;
+      let idx = $index
+    ) {
       <li
         class="flex h-28 flex-none items-center justify-between rounded-md bg-container px-5"
       >
@@ -49,11 +53,31 @@
           }
           <span>{{ item.name }}</span>
         </div>
-        <div class="flex gap-2">
-          <a [routerLink]="['/player', item.id]">play</a>
-          <a [routerLink]="['/edit', item.playableType, item.id]">edit</a>
+        <div class="flex items-center gap-2">
+          @if (visibleIdx === idx) {
+            <div class="flex gap-4">
+              <a [routerLink]="['/player', item.id]"
+                ><i class="fa-solid fa-play"></i
+              ></a>
+              <a [routerLink]="['/edit', item.playableType, item.id]"
+                ><i class="fa-regular fa-pen-to-square"></i
+              ></a>
+              <button type="button">
+                <i
+                  class="fa-regular fa-trash-can"
+                  (click)="remove(item.id)"
+                ></i>
+              </button>
+            </div>
+          }
+          <button
+            type="button"
+            (click)="toggleItemMenu(idx)"
+            class="h-10 w-10 rounded-md"
+          >
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
         </div>
-        <i class="fa-solid fa-ellipsis-vertical"></i>
       </li>
     } @empty {
       <li>Nothing found.</li>

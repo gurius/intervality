@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Playable } from './models/playable/playable.model';
-import { update } from 'lodash-es';
 
 @Injectable({
   providedIn: 'root',

@@ -50,6 +50,7 @@ export class PlayableService {
     {
       id: '4798',
       name: 'Plank',
+      timerType: 'countdown',
       playableType: PlayableType.Countdown,
       value: 300000,
     },
@@ -60,12 +61,14 @@ export class PlayableService {
       id: '3682',
       name: 'Sprint',
       playableType: PlayableType.Stopwatch,
+      timerType: 'stopwatch',
       value: 0,
     },
     {
       id: '3605',
       name: 'Jumps',
       playableType: PlayableType.Stopwatch,
+      timerType: 'stopwatch',
       value: 0,
     },
   ];

@@ -1,25 +1,27 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
+import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { Submittable } from '../editor.component';
+import { DataService } from '../../data.service';
 import {
-  Form,
-  FormGroup,
-  NonNullableFormBuilder,
-  Validators,
-} from '@angular/forms';
-import { Timer } from '../../models/playable/timer.model';
+  PlayableCountdown,
+  PlayableStopwatch,
+  PlayableType,
+} from '../../models/playable/playable.model';
 
 @Component({
   selector: 'app-timer-form',
   templateUrl: './timer-form.component.html',
   styleUrl: './timer-form.component.css',
 })
-export class TimerFormComponent implements OnInit {
+export class TimerFormComponent implements OnInit, Submittable {
   @Input() group!: FormGroup;
-  @Input() timer!: Timer;
+  @Input() timer!: PlayableCountdown | PlayableStopwatch;
   @Input() idx!: number;
 
   rnd!: string;
 
-  fb = inject(NonNullableFormBuilder);
+  private fb = inject(NonNullableFormBuilder);
+  private dataService = inject(DataService);
 
   isControllerInGroup(g: FormGroup, prop: string) {
     return g.controls.hasOwnProperty(prop);
@@ -64,5 +66,21 @@ export class TimerFormComponent implements OnInit {
       { value: 'hybrid', label: 'Hybrid' },
       { value: 'converted', label: 'Converted' },
     ];
+  }
+
+  submit() {
+    const timer = this.group.getRawValue();
+    timer.id = this.timer.id;
+    timer.value = timer.value ? timer.value * 1000 : 0;
+    if (!timer.timerType) {
+      timer.playableType = PlayableType.Countdown;
+      timer.timerType = 'countdown';
+    } else {
+      timer.playableType = PlayableType.Stopwatch;
+    }
+
+    console.log(timer);
+
+    this.dataService.updsertItem(timer);
   }
 }
