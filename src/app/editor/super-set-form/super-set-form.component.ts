@@ -23,6 +23,7 @@ import {
 import { TimerSet } from '../../models/playable/set.model';
 import { Timer } from '../../models/playable/timer.model';
 import { DataService } from '../../data.service';
+import { AssetType } from '../add-menu-button/add-menu-button.component';
 
 export type SetFormGroup = FormGroup<{
   name: FormControl<string>;
@@ -104,14 +105,20 @@ export class SuperSetFormComponent implements Submittable, OnInit {
     return this.supersetForm.get('setsAndTimers') as SetsAndTimersFormArray;
   }
 
-  addTimer(e: Event, type: PlayableTypeStr) {
-    e.stopPropagation();
+  addTimer(assetType: AssetType) {
+    const { type, item } = assetType;
 
     this.isAddMenuVisible = false;
-    this.superSet.setsAndTimers.push(this.createItem(type));
+
+    const sat = item ?? this.createItem(type);
+    this.superSet.setsAndTimers.push(sat as Omit<TimerSet, 'id'> | Timer);
     (this.supersetForm.get('setsAndTimers') as FormArray).push(
       this.fb.group({}),
     );
+  }
+
+  get addMenuTypes() {
+    return [PlayableType.Countdown, PlayableType.Stopwatch, PlayableType.Set];
   }
 
   createItem(type: PlayableTypeStr): Omit<TimerSet, 'id'> | Timer {

@@ -7,6 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Timer, TimerType } from '../../models/playable/timer.model';
+import { PlayableType } from '../../models/playable/playable.model';
+import { AssetType } from '../add-menu-button/add-menu-button.component';
 
 export type StopwatchForm = FormGroup<{
   name: FormControl<string>;
@@ -30,8 +32,6 @@ export class TimersFormArrayComponent implements OnInit {
   fb = inject(NonNullableFormBuilder);
 
   rnd!: string;
-
-  isAddMenuVisible = false;
 
   ngOnInit(): void {
     this.rnd = Math.random().toString(36).substring(2, 5);
@@ -76,15 +76,15 @@ export class TimersFormArrayComponent implements OnInit {
     ];
   }
 
-  openAddMenu() {
-    this.isAddMenuVisible = true;
+  get addMenuTypes() {
+    return [PlayableType.Countdown, PlayableType.Stopwatch];
   }
 
-  addTimer(e: Event, type: TimerType) {
-    e.stopPropagation();
-
-    this.isAddMenuVisible = false;
-    this.timersArray.push(this.createTimerForm(type));
+  addTimer(aType: AssetType) {
+    const { type, item } = aType;
+    this.timersArray.push(
+      this.createTimerForm(type as TimerType, item as Timer),
+    );
   }
 
   createTimerForm(type: TimerType, t?: Timer): StopwatchForm | CountdownForm {

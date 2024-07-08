@@ -1,0 +1,64 @@
+<div
+  title="add"
+  class="{{
+    showMenu ? 'h-36' : 'h-12'
+  }} w-full rounded-md border-2 border-dashed border-secondary flex justify-center items-center"
+>
+  @if (showMenu) {
+    <div class="flex flex-wrap items-center justify-center gap-3 px-6">
+      @if (getShowStopwatch()) {
+        <button
+          title="add stopwatch"
+          (click)="addNewItem('stopwatch')"
+          type="button"
+          class="rounded-3xl border-2 border-secondary px-3 py-1"
+        >
+          <i class="fa-solid fa-stopwatch"></i>
+          <label class="pl-1">new </label>
+        </button>
+      }
+      @if (getShowCountdown()) {
+        <button
+          title="add countdown"
+          (click)="addNewItem('countdown')"
+          type="button"
+          class="rounded-3xl border-2 border-secondary px-3 py-1"
+        >
+          <i class="fa-solid fa-hourglass-start"></i>
+          <label class="pl-1">new</label>
+        </button>
+      }
+      @if (getShowSet()) {
+        <button
+          title="add countdown"
+          (click)="addNewItem('set')"
+          type="button"
+          class="rounded-3xl border-2 border-secondary px-3 py-1"
+        >
+          <i class="fa-solid fa-bars"></i>
+          <label class="pl-1">new</label>
+        </button>
+      }
+      <div class="flex w-48 flex-col">
+        <select
+          title="add existing"
+          id="existing"
+          class="text-ellipsis rounded-3xl"
+          (change)="addExistingItem()"
+          [(ngModel)]="selectedExisting"
+        >
+          <option value="null" disabled selected>select from existing</option>
+          @for (opt of existingItems; track opt.value) {
+            <option [ngValue]="opt">
+              {{ opt.label }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+  } @else {
+    <button type="button" (click)="openAddMenu()" class="h-full w-full">
+      <i class="fa-solid fa-plus"></i>
+    </button>
+  }
+</div>

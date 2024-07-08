@@ -8,9 +8,10 @@ import { SharedModule } from '../shared/shared.module';
 import { TimersFormArrayComponent } from './timer-form-array/timer-form.component';
 import { SuperSetFormComponent } from './super-set-form/super-set-form.component';
 import { TimerFormComponent } from './timer-form/timer-form.component';
+import { AddMenuButtonComponent } from './add-menu-button/add-menu-button.component';
 
 @NgModule({
-  declarations: [EditorComponent, SetFormComponent, TimersFormArrayComponent, SuperSetFormComponent, TimerFormComponent],
+  declarations: [EditorComponent, SetFormComponent, TimersFormArrayComponent, SuperSetFormComponent, TimerFormComponent, AddMenuButtonComponent],
   imports: [CommonModule, EditorRoutingModule, SharedModule],
 })
 export class EditorModule {}

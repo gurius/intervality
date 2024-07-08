@@ -51,18 +51,31 @@
               <i class="fa-brands fa-web-awesome"></i>
             }
           }
-          <span>{{ item.name }}</span>
+          <span
+            class="max-h-20 max-w-32 overflow-hidden text-ellipsis whitespace-nowrap"
+            >{{ item.name }}</span
+          >
         </div>
         <div class="flex items-center gap-2">
           @if (visibleIdx === idx) {
-            <div class="flex gap-4">
-              <a [routerLink]="['/player', item.id]"
-                ><i class="fa-solid fa-play"></i
-              ></a>
-              <a [routerLink]="['/edit', item.playableType, item.id]"
-                ><i class="fa-regular fa-pen-to-square"></i
-              ></a>
-              <button type="button">
+            <div class="flex">
+              <button
+                class="h-10 w-10 rounded-md"
+                [ngClass]="{
+                  'text-surface': item.playableType === 'super-set',
+                }"
+                [disabled]="item.playableType === 'super-set'"
+                [routerLink]="['/player', item.id]"
+              >
+                <i class="fa-solid fa-play"></i>
+              </button>
+              <button
+                [routerLink]="['/edit', item.playableType, item.id]"
+                class="h-10 w-10 rounded-md"
+              >
+                <i class="fa-regular fa-pen-to-square"></i>
+              </button>
+              <button type="button" class="h-10 w-10 rounded-md">
                 <i
                   class="fa-regular fa-trash-can"
                   (click)="remove(item.id)"
