@@ -16,17 +16,19 @@ export interface CountdownTimer extends Omit<Countdown, 'id'> {
   timerType: 'countdown';
 }
 
+// is alway a regular stopwatch
 export interface StopwatchTimer extends Omit<Stopwatch, 'id'> {
   timerType: 'stopwatch';
 }
 
-// can remain a stopwatch or be converted to countdown after being stopped first time
+// remains a stopwatch throughout launches and converted to countdown
+// after being stopped the first time for the rest of the sequence
 export interface InitiallyStopwatchTimer extends Omit<Stopwatch, 'id'> {
   timerType: 'hybrid';
 }
 
 // can be run only once as a stopwatch
-// after that it is converted to countdown for every next set/superset run
+// after that it is converted to countdown for all next launches
 export interface EventuallyCountdownTimer extends Omit<Stopwatch, 'id'> {
   timerType: 'converted';
 }
