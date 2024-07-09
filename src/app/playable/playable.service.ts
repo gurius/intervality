@@ -9,6 +9,11 @@ import {
   PlayableType,
 } from '../models/playable/playable.model';
 import { DataService } from '../data.service';
+import {
+  CountdownTimer,
+  EventuallyCountdownTimer,
+} from '../models/playable/timer.model';
+import { TimerSet } from '../models/playable/set.model';
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +49,63 @@ export class PlayableService {
     } else {
       return of(playable) as Observable<Playable[]>;
     }
+  }
+
+  updateAsCountdownByName(
+    playableId: string,
+    stopwatchName: string,
+    value: number,
+  ) {
+    let playable = this.dataService.getById(playableId);
+
+    let upadte;
+
+    switch (playable.playableType) {
+      case PlayableType.Stopwatch:
+        playable = {
+          ...playable,
+          ...this.swToCd(playable as EventuallyCountdownTimer, value),
+          playableType: PlayableType.Countdown,
+        };
+        break;
+      case PlayableType.Set:
+        const idx = playable.timers.findIndex((t) => (t.name = stopwatchName));
+        if (idx !== -1) {
+          upadte = this.swToCd(
+            playable.timers[idx] as EventuallyCountdownTimer,
+            value,
+          );
+          playable.timers[idx] = upadte;
+        }
+        break;
+      case PlayableType.Superset:
+        const sotIdx = playable.setsAndTimers.findIndex((sot) => {
+          if ((sot as TimerSet).timers) {
+            return (sot as TimerSet).timers.find(
+              (t) => (t.name = stopwatchName),
+            );
+          } else {
+            return (sot.name = stopwatchName);
+          }
+        });
+        if (sotIdx) {
+          upadte = this.swToCd(
+            playable.setsAndTimers[sotIdx] as EventuallyCountdownTimer,
+            value,
+          );
+          playable.setsAndTimers[sotIdx] = upadte;
+        }
+        break;
+    }
+
+    this.dataService.updsertItem(playable);
+  }
+
+  swToCd<T extends EventuallyCountdownTimer, N extends CountdownTimer>(
+    p: T,
+    value: number,
+  ): N {
+    return { ...p, timerType: 'countdown', value } as N;
   }
 
   countdown: PlayableCountdown[] = [

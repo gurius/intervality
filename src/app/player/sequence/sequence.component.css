@@ -1,0 +1,3 @@
+:host {
+  @apply mb-3 flex h-[23rem] w-full flex-col gap-3 px-2;
+}

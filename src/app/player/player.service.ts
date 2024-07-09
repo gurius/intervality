@@ -8,11 +8,20 @@ import {
   tap,
   timeInterval,
 } from 'rxjs';
-import { Playable, PlayableType } from '../models/playable/playable.model';
-import { InitiallyStopwatchTimer, Timer } from '../models/playable/timer.model';
-import { cloneDeep, drop, dropRight, omit, take, times } from 'lodash-es';
-import { TimerSet } from '../models/playable/set.model';
+import { Playable } from '../models/playable/playable.model';
+import { Timer } from '../models/playable/timer.model';
+import { cloneDeep } from 'lodash-es';
 import { INTERVAL_MS, PRESTART_DELAY } from '../config';
+import { Sequence } from './sequence/sequence';
+import { PlayableService } from '../playable/playable.service';
+
+export type State =
+  | 'prestart'
+  | 'playing'
+  | 'paused'
+  | 'stoped'
+  | 'commenced'
+  | 'complete';
 
 export type StepStatus = 'current' | 'done' | 'next';
 export type StepInFocus = Timer & {
@@ -24,16 +33,11 @@ export interface PlayerSnapshot {
   past: number;
   ahead: number;
   currStepIdx: number;
-  stepsInFocus: StepInFocus[];
+  currentMs: number;
+  stopWatchMs: number;
   status: string;
   currentStepProgress: number;
-  state:
-    | 'prestart'
-    | 'playing'
-    | 'paused'
-    | 'stoped'
-    | 'commenced'
-    | 'complete';
+  state: State;
 }
 
 const snapshotTemplate: PlayerSnapshot = {
@@ -42,7 +46,8 @@ const snapshotTemplate: PlayerSnapshot = {
   ahead: 0,
   currentStepProgress: 0,
   status: '',
-  stepsInFocus: [],
+  currentMs: 0,
+  stopWatchMs: 0,
   state: 'prestart',
 };
 
@@ -52,8 +57,17 @@ const snapshotTemplate: PlayerSnapshot = {
 export class PlayerService {
   private snapshotSubject$ = new BehaviorSubject<PlayerSnapshot | null>(null);
   snapshot$ = this.snapshotSubject$.asObservable();
-  sequence: Timer[] = [];
-  seqIdx = 0;
+
+  doStepEmitter$ = new Subject<{ direction: 'forward' | 'backward' }>();
+  onStep$ = this.doStepEmitter$.asObservable();
+
+  stageEmitter$: BehaviorSubject<State> = new BehaviorSubject(
+    'prestart' as State,
+  );
+
+  stage$ = this.stageEmitter$.asObservable();
+
+  sequence!: Sequence;
   currentMs = 0;
   stopWatchMs = 0;
 
@@ -68,65 +82,26 @@ export class PlayerService {
 
   playable!: Playable;
 
-  constructor() {}
+  constructor(private playableService: PlayableService) {}
 
   initializeSequnce(playable: Playable) {
     this.playable = playable;
-    this.sequence = [];
-    switch (playable.playableType) {
-      case PlayableType.Countdown:
-      case PlayableType.Stopwatch:
-        this.sequence.push(omit(playable, ['playableType', 'id']) as Timer);
-        break;
-      case PlayableType.Set:
-        const { repetitions, timers } = playable;
-        const set = times(repetitions, () => cloneDeep(timers)).flat();
-        this.sequence = this.sequence.concat(set);
-        break;
-      case PlayableType.Superset:
-        const { repetitions: reps, setsAndTimers } = playable;
-        const sset = times(reps, () => cloneDeep(setsAndTimers))
-          .flat()
-          .map((setOrTimer) => {
-            if (!(setOrTimer as TimerSet).timers) {
-              return cloneDeep(setOrTimer);
-            } else {
-              const { repetitions, timers } = setOrTimer as TimerSet;
-              return times(repetitions, () => cloneDeep(timers)).flat();
-            }
-          })
-          .flat();
-
-        this.sequence = this.sequence.concat(sset as Timer[]);
-        break;
-    }
-
-    // drop last rest
-    if (
-      this.sequence.length > 1 &&
-      this.sequence.at(-1)?.name.toLowerCase().includes('rest')
-    ) {
-      this.sequence = dropRight(this.sequence);
-    }
+    this.sequence = new Sequence(playable);
 
     const total = this.sequence
       .map((t) => t.value)
       .reduce((acc, curr) => acc + curr, 0);
 
-    const stepsInFocus = this.getStepsStatuses(
-      cloneDeep(take(this.sequence, 3)),
-    );
-
     this.initialSnapshot = {
       ...snapshotTemplate,
       ahead: total,
       status: `step 1 of ${this.sequence.length}`,
-      stepsInFocus: this.calculateRemainingRepetitions(stepsInFocus),
+      currentMs: this.sequence.step.value,
     };
 
     this.snapshotSubject$.next(this.initialSnapshot);
     this.snapshot = cloneDeep(this.initialSnapshot);
-    this.currentMs = this.sequence.at(this.seqIdx)!.value;
+    this.currentMs = this.sequence.step.value;
   }
 
   commenceSequence(prestart: number) {
@@ -145,8 +120,7 @@ export class PlayerService {
       .pipe(
         timeInterval(animationFrameScheduler),
         tap(({ interval }) => {
-          const { stepsInFocus } = this.snapshot;
-          const currentStep = this.sequence.at(this.seqIdx)!;
+          const currentStep = this.sequence.step;
 
           // sotpwatch or countdown milliseconds update
           if (currentStep.timerType !== 'countdown' && !currentStep.value) {
@@ -157,27 +131,24 @@ export class PlayerService {
 
           // when countdown reaches zero - stop playing
           if (currentStep.value && this.currentMs <= 0) {
-            if (this.seqIdx + 1 === this.sequence.length) {
+            if (this.sequence.isLastStep) {
               this.stop();
               return;
             }
 
-            this.seqIdx += 1;
-            if (this.seqIdx >= 2) {
-              this.updateStepsInFocus();
-              this.getStepsStatuses(stepsInFocus);
-              this.updateCurrentlyRunningStep(stepsInFocus);
-            }
-            // getting the next timer's milliseconds
-            this.currentMs = this.sequence.at(this.seqIdx)!.value;
-          } else {
-            this.getStepsStatuses(stepsInFocus);
-            this.updateCurrentlyRunningStep(stepsInFocus);
+            this.sequence.goForward(() => {
+              this.doStepEmitter$.next({ direction: 'forward' });
+            });
+            this.currentMs = this.sequence.step.value;
           }
 
           this.snapshot.past += interval;
-          this.snapshot.status = `step ${this.seqIdx + 1} of ${this.sequence.length}`;
+          this.snapshot.status = `step ${this.sequence.idx + 1} of ${this.sequence.length}`;
           this.snapshot.ahead = this.calculateAhead(interval);
+          this.snapshot.currentMs = this.currentMs;
+          this.snapshot.stopWatchMs = this.stopWatchMs;
+          this.snapshot.currentStepProgress =
+            100 - (100 / currentStep.value) * this.currentMs;
 
           this.snapshotSubject$.next(this.snapshot);
         }),
@@ -197,151 +168,57 @@ export class PlayerService {
   }
 
   stop() {
-    this.seqIdx = 0;
-    this.currentMs = this.sequence.at(this.seqIdx)!.value;
+    this.sequence.reset();
+    this.currentMs = this.sequence.step.value;
     this.stopWatchMs = 0;
     this.initializeSequnce(this.playable);
+    this.snapshot.state = 'stoped';
     this.stop$.next();
+
+    this.stageEmitter$.next('stoped');
   }
 
   goNext() {
-    if (!(this.seqIdx + 1 >= this.sequence.length)) {
-      ++this.seqIdx;
-      this.switchStep();
-    }
+    this.sequence.goForward(() => {
+      const { value } = this.sequence.step;
+      this.currentMs = value;
+      this.updatePastAhead();
+      this.snapshot.currentStepProgress = 100 - (100 / value) * this.currentMs;
+      this.doStepEmitter$.next({ direction: 'forward' });
+    });
   }
 
   goPrev() {
-    if (this.seqIdx > 0) {
-      --this.seqIdx;
-      this.switchStep(false);
-    }
-  }
-
-  switchStep(isToNext: boolean = true) {
-    const { stepsInFocus } = this.snapshot;
-    this.currentMs = this.sequence.at(this.seqIdx)!.value;
-
-    this.updateStepsInFocus(isToNext);
-
-    this.getStepsStatuses(this.snapshot.stepsInFocus);
-
-    this.updatePastAhead();
-
-    this.updateCurrentlyRunningStep(stepsInFocus);
-
-    this.snapshot.status = `step ${this.seqIdx + 1} of ${this.sequence.length}`;
-
-    this.snapshotSubject$.next(this.snapshot);
+    this.sequence.goBackwards(() => {
+      const { value } = this.sequence.step;
+      this.currentMs = value;
+      this.updatePastAhead();
+      this.snapshot.currentStepProgress = 100 - (100 / value) * this.currentMs;
+      this.doStepEmitter$.next({ direction: 'backward' });
+    });
   }
 
   stopwatchStop() {
-    const currentStep = this.sequence[this.seqIdx];
-    if (currentStep.timerType === 'hybrid') {
-      this.sequence.forEach((step) => {
-        if (step.name === currentStep.name) {
-          step.value = this.stopWatchMs;
-          step.timerType = 'countdown';
-        }
+    this.sequence
+      .isTransformable()
+      ?.transformToCountdown(this.stopWatchMs, () => {
+        this.playableService.updateAsCountdownByName(
+          this.playable.id,
+          this.sequence.step.name,
+          this.stopWatchMs,
+        );
       });
-    }
+
     this.stopWatchMs = 0;
 
-    if (this.seqIdx + 1 === this.sequence.length) {
+    if (this.sequence.isLastStep) {
       this.stop();
       return;
     }
 
-    this.seqIdx += 1;
+    this.sequence.goForward();
 
-    this.currentMs = this.sequence.at(this.seqIdx)!.value;
-
-    if (this.seqIdx >= 2) {
-      this.updateStepsInFocus();
-    }
-  }
-
-  updateStepsInFocus(dropFirst = true) {
-    if (
-      this.sequence.length <= this.seqIdx + 1 ||
-      (!dropFirst && this.sequence.length <= this.seqIdx + 2) ||
-      (dropFirst && this.seqIdx <= 1) ||
-      (!dropFirst && this.seqIdx <= 0)
-    )
-      return;
-
-    const { stepsInFocus } = this.snapshot;
-    const update = dropFirst ? drop(stepsInFocus) : dropRight(stepsInFocus);
-    const idx = dropFirst ? this.seqIdx + 1 : this.seqIdx - 1;
-    const newStep: StepInFocus = {
-      ...cloneDeep(this.sequence.at(idx)!),
-      status: 'next',
-      remaining: 0,
-    };
-    if (dropFirst) {
-      update.push(newStep);
-    } else {
-      update.unshift(newStep);
-    }
-    this.snapshot.stepsInFocus = this.calculateRemainingRepetitions(update);
-  }
-
-  updateCurrentlyRunningStep(stepsInFocus: StepInFocus[]) {
-    // gett current step
-    const currentInFocus = stepsInFocus.find(
-      (step) => step.status === 'current',
-    );
-    const currentStep = this.sequence.at(this.seqIdx)!;
-    // update it's value
-    if (currentStep.timerType !== 'countdown' && !currentStep.value) {
-      currentInFocus && (currentInFocus.value = this.stopWatchMs);
-    } else {
-      currentInFocus && (currentInFocus.value = this.currentMs);
-      this.snapshot.currentStepProgress =
-        100 - (100 / currentStep.value) * this.currentMs;
-    }
-  }
-
-  getStatus(i: number): StepStatus {
-    const states: {
-      first: StepStatus[];
-      middle: StepStatus[];
-      last: StepStatus[];
-    } = {
-      first: ['current', 'next', 'next'],
-      middle: ['done', 'current', 'next'],
-      last: ['done', 'done', 'current'],
-    };
-    const isFirst = this.seqIdx === 0;
-    const isLast = this.seqIdx + 1 === this.sequence.length;
-    switch (true) {
-      case isLast && !isFirst:
-        return states.last.at(i)!;
-      case isFirst && !isLast:
-        return states.first.at(i)!;
-      default:
-        return states.middle.at(i)!;
-    }
-  }
-
-  getStepsStatuses<T extends Timer | StepInFocus>(steps: T[]) {
-    steps.forEach((step, i) => {
-      Object.assign(step, {
-        status: this.getStatus(i),
-      });
-    });
-    return steps as StepInFocus[];
-  }
-
-  calculateRemainingRepetitions(stepsInFocus: StepInFocus[]) {
-    stepsInFocus.forEach((step) => {
-      step.remaining = this.sequence
-        .slice(this.seqIdx)
-        .filter((s) => s.name === step.name)
-        .map(() => 1)
-        .reduce((acc, curr) => acc + curr, 0);
-    });
-    return stepsInFocus;
+    this.currentMs = this.sequence.step.value;
   }
 
   calculateAhead(interval: number) {
@@ -356,32 +233,33 @@ export class PlayerService {
   }
 
   onRewind() {
-    const { stepsInFocus, currentStepProgress } = this.snapshot;
-    const currentInFocus = stepsInFocus.find((s) => s.status === 'current');
+    const { currentStepProgress } = this.snapshot;
 
-    const step = this.sequence.at(this.seqIdx)!;
-    if (currentInFocus) {
-      this.currentMs = currentInFocus.value =
-        (step.value / 100) * (100 - currentStepProgress);
+    const step = this.sequence.step;
+    if (step) {
+      this.currentMs = (step.value / 100) * (100 - currentStepProgress);
     }
+
+    this.snapshot.currentMs = this.currentMs;
     this.updatePastAhead();
+
+    this.snapshotSubject$.next(this.snapshot);
   }
 
   updatePastAhead() {
     this.snapshot.past = this.sequence
-      .slice(0, this.seqIdx)
+      .slice(0, this.sequence.idx)
       .map((s) => s.value)
       .reduce((acc, curr) => acc + curr, 0);
 
     this.snapshot.ahead = this.sequence
-      .slice(this.seqIdx)
+      .slice(this.sequence.idx)
       .map((s) => s.value)
       .reduce((acc, curr) => acc + curr, 0);
   }
 
   reset() {
-    this.sequence = [];
-    this.seqIdx = 0;
+    this.sequence.reset();
     this.currentMs = 0;
     this.stopWatchMs = 0;
     this.timestamp = 0;

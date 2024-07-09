@@ -132,6 +132,10 @@
     ::-webkit-scrollbar-track {
       @apply bg-surface;
     }
+
+    .hide-scrollbar::-webkit-scrollbar {
+      @apply w-0;
+    }
   }
 
   h1,
