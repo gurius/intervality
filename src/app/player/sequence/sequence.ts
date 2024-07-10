@@ -163,7 +163,7 @@ export class Sequence {
 
   transformToCountdown(value: number, onSuccess?: () => void) {
     const { name, timerType } = this.step;
-    let convertable = this.steps.some(
+    let convertible = this.steps.some(
       (step) => step.timerType === 'converted' && step.name === name,
     );
     this.steps.forEach((step) => {
@@ -172,7 +172,7 @@ export class Sequence {
         step.timerType = 'countdown';
       }
     });
-    if (convertable && onSuccess) {
+    if (convertible && onSuccess) {
       onSuccess();
     }
   }

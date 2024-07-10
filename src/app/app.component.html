@@ -18,7 +18,7 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <i class="fa-solid fa-list-ul"></i>Playlist
+      <fa-icon [icon]="['fas', 'list-ul']"></fa-icon>Playlist
     </a>
     <a
       (click)="toggleSidePanel()"
@@ -27,7 +27,7 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <i class="fa-solid fa-gear"></i>Setting
+      <fa-icon [icon]="['fas', 'gear']"></fa-icon>Settings
     </a>
 
     <h3>Create</h3>
@@ -39,7 +39,7 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <i class="fa-solid fa-bars"></i>Set
+      <fa-icon [icon]="['fas', 'bars']"></fa-icon>Set
     </a>
 
     <a
@@ -50,7 +50,7 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <i class="fa-brands fa-web-awesome"></i>Super Set
+      <fa-icon [icon]="['fab', 'web-awesome']"></fa-icon>Super Set
     </a>
 
     <a
@@ -61,7 +61,7 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <i class="fa-solid fa-hourglass-start"></i>Countdown
+      <fa-icon [icon]="['fas', 'hourglass-start']"></fa-icon>Countdown
     </a>
     <a
       (click)="toggleSidePanel()"
@@ -71,7 +71,7 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <i class="fa-solid fa-stopwatch"></i>Stopwatch
+      <fa-icon [icon]="['fas', 'stopwatch']"></fa-icon>Stopwatch
     </a>
   </nav>
 </div>
@@ -92,27 +92,32 @@
 >
   <div class="heading flex h-14 justify-between xl:h-20">
     <button type="button" (click)="toggleSidePanel()" class="p-5">
-      <i class="fa-solid fa-bars"></i>
+      <fa-icon [icon]="['fas', 'bars']"></fa-icon>
     </button>
 
-    <button
-      class="mr-4 flex gap-2 rounded-md border-2 border-secondary p-2"
-      *ngIf="wakelockService.isSupported()"
-      type="button"
-      (click)="toggleWakelock()"
-    >
-      <i
-        class="fa-solid {{
-          wakelockService.isLocked() ? 'fa-eye' : 'fa-eye-slash'
-        }}"
-      ></i>
-      <i class="fa-solid fa-display"></i>
-    </button>
+    <div class="mr-4 flex items-center justify-center gap-2">
+      <button
+        class="flex h-11 w-11 items-center justify-center gap-2 rounded-md border-2 border-secondary"
+        *ngIf="wakelockService.isSupported()"
+        type="button"
+        (click)="toggleWakelock()"
+      >
+        @if (wakelockService.isLocked()) {
+          <fa-icon [icon]="['fas', 'mug-hot']"></fa-icon>
+        } @else {
+          <fa-icon [icon]="['fas', 'coffee']"></fa-icon>
+        }
+      </button>
 
-    <!-- <h1>{{ title }}</h1> -->
-    <button *ngIf="isPlayer" (click)="playerStop()" type="button" class="p-5">
-      <i class="fa-solid fa-circle-stop"></i>
-    </button>
+      <button
+        *ngIf="isPlayer"
+        (click)="playerStop()"
+        type="button"
+        class="flex h-11 w-11 items-center justify-center rounded-md border-2 border-secondary"
+      >
+        <fa-icon [icon]="['fas', 'circle-stop']"></fa-icon>
+      </button>
+    </div>
   </div>
   <div
     class="outlet-wrapper h-[calc(100dvh-theme(height.14))] w-full overflow-y-auto xl:h-[calc(100dvh-theme(height.20))]"

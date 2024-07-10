@@ -36,7 +36,7 @@
       (click)="discard()"
       class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
     >
-      <i class="fa-solid fa-xmark"></i>
+      <fa-icon [icon]="['fas', 'xmark']"></fa-icon>
     </button>
     <button
       [ngClass]="{
@@ -46,14 +46,14 @@
       (click)="submit()"
       class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
     >
-      <i class="fa-solid fa-check"></i>
+      <fa-icon [icon]="['fas', 'check']"></fa-icon>
     </button>
     <button
       [routerLink]="['/player', playable.id]"
       type="button"
       class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
     >
-      <i class="fa-solid fa-play"></i>
+      <fa-icon [icon]="['fas', 'play']"></fa-icon>
     </button>
   </div>
 </div>

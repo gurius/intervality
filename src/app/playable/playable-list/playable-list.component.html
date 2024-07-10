@@ -3,7 +3,7 @@
   class="mx-2 my-6 flex h-20 items-center justify-between rounded-md bg-secondary py-8"
 >
   <button type="button" class="mx-4 text-on-primary">
-    <i class="fa-solid fa-filter"></i>
+    <fa-icon [icon]="['fas', 'filter']"></fa-icon>
   </button>
   <input
     type="text"
@@ -13,7 +13,7 @@
     class="h-14 w-8/12 flex-auto rounded-md bg-surface px-4 text-xl selection:bg-primary selection:text-on-primary"
   />
   <button type="button" class="mx-4 text-on-primary" (click)="find()">
-    <i class="fa-solid fa-search"></i>
+    <fa-icon [icon]="['fas', 'search']"></fa-icon>
   </button>
   @if (filter.value) {
     <button
@@ -21,7 +21,7 @@
       class="absolute right-16 mx-4 text-primary"
       (click)="filter.setValue('')"
     >
-      <i class="fa-solid fa-xmark"></i>
+      <fa-icon [icon]="['fas', 'xmark']"></fa-icon>
     </button>
   }
 </form>
@@ -38,17 +38,17 @@
         <div class="flex items-center gap-3">
           @switch (item.playableType) {
             @case (types.Stopwatch) {
-              <i class="fa-solid fa-stopwatch"></i>
+              <fa-icon [icon]="['fas', 'stopwatch']"></fa-icon>
             }
             @case (types.Countdown) {
-              <i class="fa-solid fa-hourglass-start"></i>
+              <fa-icon [icon]="['fas', 'hourglass-start']"></fa-icon>
             }
 
             @case (types.Set) {
-              <i class="fa-solid fa-bars"></i>
+              <fa-icon [icon]="['fas', 'bars']"></fa-icon>
             }
             @case (types.Superset) {
-              <i class="fa-brands fa-web-awesome"></i>
+              <fa-icon [icon]="['fab', 'web-awesome']"></fa-icon>
             }
           }
           <span
@@ -63,19 +63,21 @@
                 class="h-10 w-10 rounded-md"
                 [routerLink]="['/player', item.id]"
               >
-                <i class="fa-solid fa-play"></i>
+                <fa-icon [icon]="['fas', 'play']"></fa-icon>
               </button>
               <button
                 [routerLink]="['/edit', item.playableType, item.id]"
                 class="h-10 w-10 rounded-md"
               >
+                <fa-icon [icon]="['far', 'pen-to-square']"></fa-icon>
                 <i class="fa-regular fa-pen-to-square"></i>
               </button>
-              <button type="button" class="h-10 w-10 rounded-md">
-                <i
-                  class="fa-regular fa-trash-can"
-                  (click)="remove(item.id)"
-                ></i>
+              <button
+                type="button"
+                class="h-10 w-10 rounded-md"
+                (click)="remove(item.id)"
+              >
+                <fa-icon [icon]="['far', 'trash-can']"></fa-icon>
               </button>
             </div>
           }
@@ -84,7 +86,7 @@
             (click)="toggleItemMenu(idx)"
             class="h-10 w-10 rounded-md"
           >
-            <i class="fa-solid fa-ellipsis-vertical"></i>
+            <fa-icon [icon]="['fas', 'ellipsis-vertical']"></fa-icon>
           </button>
         </div>
       </li>

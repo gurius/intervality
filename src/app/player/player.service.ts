@@ -69,7 +69,7 @@ export class PlayerService {
 
   sequence!: Sequence;
   currentMs = 0;
-  stopWatchMs = 0;
+  stopwatchMs = 0;
 
   stop$ = new Subject<void>();
   timestamp!: number;
@@ -121,7 +121,7 @@ export class PlayerService {
 
           // sotpwatch or countdown milliseconds update
           if (currentStep.timerType !== 'countdown' && !currentStep.value) {
-            this.stopWatchMs += interval;
+            this.stopwatchMs += interval;
           } else {
             this.currentMs -= interval;
           }
@@ -143,7 +143,7 @@ export class PlayerService {
           this.snapshot.status = `step ${this.sequence.idx + 1} of ${this.sequence.length}`;
           this.snapshot.ahead = this.calculateAhead(interval);
           this.snapshot.currentMs = this.currentMs;
-          this.snapshot.stopWatchMs = this.stopWatchMs;
+          this.snapshot.stopWatchMs = this.stopwatchMs;
           this.snapshot.currentStepProgress =
             100 - (100 / currentStep.value) * this.currentMs;
           this.snapshotSubject$.next(this.snapshot);
@@ -169,7 +169,7 @@ export class PlayerService {
     this.sequence.reset();
     this.updatePastAhead();
     this.currentMs = this.sequence.step.value;
-    this.stopWatchMs = 0;
+    this.stopwatchMs = 0;
     this.playing = false;
     this.snapshot.state = 'stoped';
     this.stageEmitter$.next('stoped');
@@ -198,15 +198,15 @@ export class PlayerService {
   stopwatchStop() {
     this.sequence
       .isTransformable()
-      ?.transformToCountdown(this.stopWatchMs, () => {
+      ?.transformToCountdown(this.stopwatchMs, () => {
         this.playableService.updateAsCountdownByName(
           this.playable.id,
           this.sequence.step.name,
-          this.stopWatchMs,
+          this.stopwatchMs,
         );
       });
 
-    this.stopWatchMs = 0;
+    this.stopwatchMs = 0;
 
     if (this.sequence.isLastStep) {
       this.stop();
@@ -222,7 +222,7 @@ export class PlayerService {
 
   calculateAhead(interval: number) {
     const ahead =
-      this.stopWatchMs > 0
+      this.stopwatchMs > 0
         ? this.snapshot.ahead + interval
         : this.sequence.total - this.snapshot.past;
 
@@ -251,7 +251,7 @@ export class PlayerService {
   reset() {
     this.sequence.reset();
     this.currentMs = 0;
-    this.stopWatchMs = 0;
+    this.stopwatchMs = 0;
     this.timestamp = 0;
     this.playing = false;
     this.commenced = false;

@@ -16,7 +16,10 @@
       <div>
         <h4 class="font-sans text-xl font-light">ahead</h4>
         @if (snapshot.ahead < 0) {
-          <i class="fa-solid fa-stopwatch text-3xl text-on-container"></i>
+          <fa-icon
+            [icon]="['fas', 'stopwatch']"
+            class="text-3xl text-on-container"
+          ></fa-icon>
           <span class="text-3xl">{{ snapshot.ahead | timeStr: "ms" }}</span>
         } @else {
           <p class="text-3xl">{{ snapshot.ahead | timeStr: "mm:ss" }}</p>
@@ -39,7 +42,7 @@
         class="mx-2 text-secondary"
         (click)="previous()"
       >
-        <i class="fa-solid fa-circle-chevron-left"></i>
+        <fa-icon [icon]="['fas', 'chevron-circle-left']"></fa-icon>
       </button>
       <button
         *ngIf="snapshot.state != 'playing'"
@@ -47,14 +50,15 @@
         class="mx-3 text-secondary"
         (click)="play()"
       >
-        <i class="fa-solid fa-circle-play"></i>
+        <fa-icon [icon]="['fas', 'circle-play']"></fa-icon>
       </button>
       <button
         *ngIf="snapshot.state == 'playing'"
         type="button"
         class="mx-4 text-secondary"
+        (click)="pause()"
       >
-        <i class="fa-solid fa-circle-pause" (click)="pause()"></i>
+        <fa-icon [icon]="['fas', 'circle-pause']"></fa-icon>
       </button>
 
       <button
@@ -63,23 +67,14 @@
         class="mx-2 text-secondary"
         (click)="next()"
       >
-        <i class="fa-solid fa-circle-chevron-right"></i>
+        <fa-icon [icon]="['fas', 'chevron-circle-right']"></fa-icon>
       </button>
     </div>
-
-    <!-- <button -->
-    <!--   *ngIf="snapshot.state != 'playing'" -->
-    <!--   (click)="stop()" -->
-    <!--   type="button" -->
-    <!--   class="mt-4 text-secondary" -->
-    <!-- > -->
-    <!--   <i class="fa-solid fa-circle-stop"></i> -->
-    <!-- </button> -->
   </div>
 } @else {
   <div class="flex h-full flex-col items-center pt-7">
     <h1>Something went wrong</h1>
+    <fa-icon [icon]="['fas', 'robot']" class="text-6xl"></fa-icon>
     <p class="mb-7">Try again</p>
-    <i class="fa-solid fa-robot text-9xl"></i>
   </div>
 }

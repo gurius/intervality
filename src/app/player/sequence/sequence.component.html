@@ -41,11 +41,17 @@
                 [disabled]="snapshot.state !== 'playing'"
                 (click)="stopwatchStop()"
               >
-                <i class="fa-solid fa-circle-stop text-5xl"></i>
+                <fa-icon
+                  [icon]="['fas', 'circle-stop']"
+                  class="text-5xl"
+                ></fa-icon>
               </button>
             } @else {
               <button type="button">
-                <i class="fa-solid fa-stopwatch text-5xl text-surface"></i>
+                <fa-icon
+                  [icon]="['fas', 'stopwatch']"
+                  class="text-5xl"
+                ></fa-icon>
               </button>
             }
           </div>

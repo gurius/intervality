@@ -13,7 +13,6 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 export class PlayerComponent implements OnInit, OnDestroy {
   id!: string;
   snapshot$: Observable<PlayerSnapshot | null>;
-
   destroy$ = new Subject<void>();
 
   constructor(
