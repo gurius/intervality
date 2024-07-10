@@ -29,8 +29,8 @@ export class SequenceComponent implements OnInit, OnDestroy {
   sequence: StepInFocus[] = [];
 
   ngOnInit(): void {
-    this.sequence = this.playerService.sequence;
-    this.playerService.onStep$
+    this.sequence = this.playerService.sequence.steps;
+    this.playerService.step$
       .pipe(takeUntil(this.destroy$))
       .subscribe(({ direction }) => {
         if (direction === 'backward' && this.playerService.sequence.idx >= 1) {

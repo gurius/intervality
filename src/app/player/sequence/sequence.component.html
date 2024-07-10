@@ -11,7 +11,7 @@
       >
         <div class="flex justify-between py-1">
           <h4 class="font-sans text-xl font-light">
-            {{ item.status === "current" ? "" : item.status }}
+            {{ item.status === "current" ? snapshot.status : item.status }}
           </h4>
           <span>x {{ item.remaining }}</span>
         </div>
@@ -22,7 +22,9 @@
           <span>
             {{
               item.status === "current"
-                ? item.timerType === "hybrid" || item.timerType === "converted"
+                ? item.timerType === "hybrid" ||
+                  item.timerType === "converted" ||
+                  item.timerType === "stopwatch"
                   ? (this.snapshot.stopWatchMs | timeStr)
                   : (this.snapshot.currentMs | timeStr)
                 : (item.value | timeStr)
@@ -32,19 +34,25 @@
         @if (item.timerType !== "countdown") {
           <div class="absolute inset-0 flex content-center justify-center">
             @if (item.status === "current") {
-              <button type="button" (click)="stopwatchStop()">
-                <i class="fa-solid fa-circle-stop text-5xl text-primary"></i>
+              <button
+                type="button"
+                [class.text-surface]="snapshot.state === 'playing'"
+                [class.text-container]="snapshot.state !== 'playing'"
+                [disabled]="snapshot.state !== 'playing'"
+                (click)="stopwatchStop()"
+              >
+                <i class="fa-solid fa-circle-stop text-5xl"></i>
               </button>
             } @else {
               <button type="button">
-                <i class="fa-solid fa-stopwatch text-5xl text-on-container"></i>
+                <i class="fa-solid fa-stopwatch text-5xl text-surface"></i>
               </button>
             }
           </div>
         }
         @if (item.status === "current" && item.timerType === "countdown") {
           <input
-            class="accent-primary outline-primary"
+            class="slider accent-secondary outline-container"
             type="range"
             step="0.004"
             (change)="updateCureentStep()"

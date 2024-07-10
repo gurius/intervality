@@ -5,22 +5,23 @@ import { StepInFocus, StepStatus } from '../player.service';
 import { TimerSet } from '../../models/playable/set.model';
 import { REMOVE_LAST_REST } from '../../config';
 
-export class Sequence extends Array<StepInFocus> {
+export class Sequence {
   private currentIdx = 0;
 
+  steps: Array<StepInFocus>;
+
   constructor(playable: Playable) {
-    super();
     switch (playable.playableType) {
       case PlayableType.Countdown:
       case PlayableType.Stopwatch:
-        this.push(new Step(playable));
+        this.steps = [new Step(playable)];
         break;
       case PlayableType.Set:
         const { repetitions, timers } = playable;
         const set = times(repetitions, () => cloneDeep(timers))
           .flat()
           .map((t) => new Step(t));
-        this.push(...set);
+        this.steps = set;
         break;
       case PlayableType.Superset:
         const { repetitions: reps, setsAndTimers } = playable;
@@ -38,33 +39,36 @@ export class Sequence extends Array<StepInFocus> {
           })
           .flat();
 
-        this.push(...sset);
+        this.steps = sset;
         break;
     }
 
-    const first = this.at(0);
+    const first = this.steps.at(0);
     if (first) first.status = 'current';
 
     // remove last step if it's rest since it's the end of an exercise
     if (
       REMOVE_LAST_REST &&
-      this.length > 1 &&
-      this.at(-1)?.name.toLowerCase().includes('rest')
+      this.steps.length > 1 &&
+      this.steps.at(-1)?.name.toLowerCase().includes('rest')
     ) {
-      this.splice(-1);
+      this.steps.splice(-1);
     }
 
     this.initializeEachRemaining();
   }
 
   private initializeEachRemaining() {
-    this.forEach((step) => {
-      step.remaining = this.filter(
-        (s) => s.name === step.name && s.remaining === 0,
-      )
+    this.steps.forEach((step) => {
+      step.remaining = this.steps
+        .filter((s) => s.name === step.name && s.remaining === 0)
         .map(() => 1)
         .reduce((acc, curr) => acc + curr, 0);
     });
+  }
+
+  get length() {
+    return this.steps.length;
   }
 
   get idx() {
@@ -72,7 +76,7 @@ export class Sequence extends Array<StepInFocus> {
   }
 
   get step() {
-    const step = this.at(this.currentIdx);
+    const step = this.steps.at(this.currentIdx);
     if (step) {
       return step;
     } else {
@@ -82,8 +86,26 @@ export class Sequence extends Array<StepInFocus> {
     }
   }
 
+  get passed() {
+    return this.steps
+      .slice(0, this.idx)
+      .map((s) => s.value)
+      .reduce((acc, curr) => acc + curr, 0);
+  }
+
+  get ahead() {
+    return this.steps
+      .slice(this.idx)
+      .map((s) => s.value)
+      .reduce((acc, curr) => acc + curr, 0);
+  }
+
+  get total() {
+    return this.steps.map((s) => s.value).reduce((acc, curr) => acc + curr, 0);
+  }
+
   set updateStepValue(value: number) {
-    const step = this.at(this.currentIdx);
+    const step = this.steps.at(this.currentIdx);
     if (step) {
       step.value = value;
     } else {
@@ -94,7 +116,7 @@ export class Sequence extends Array<StepInFocus> {
   }
 
   get isLastStep() {
-    return this.currentIdx + 1 >= this.length;
+    return this.currentIdx + 1 >= this.steps.length;
   }
 
   goBackwards(onSuccess?: () => void) {
@@ -106,7 +128,7 @@ export class Sequence extends Array<StepInFocus> {
   }
 
   goForward(onSuccess?: () => void) {
-    if (!(this.currentIdx + 1 >= this.length)) {
+    if (!(this.currentIdx + 1 >= this.steps.length)) {
       this.currentIdx++;
       this.updateStepsStatuses();
       if (onSuccess) onSuccess();
@@ -114,7 +136,7 @@ export class Sequence extends Array<StepInFocus> {
   }
 
   updateStepsStatuses() {
-    this.forEach((step, i) => {
+    this.steps.forEach((step, i) => {
       if (i < this.currentIdx) {
         step.status = 'done';
       } else if (i > this.currentIdx) {
@@ -127,23 +149,25 @@ export class Sequence extends Array<StepInFocus> {
 
   reset() {
     this.currentIdx = 0;
-    this.initializeEachRemaining();
     this.updateStepsStatuses();
   }
 
   isTransformable(): Sequence | void {
-    if (this.step.timerType === 'hybrid') {
-      return this;
-    } else if (this.step.timerType === 'converted') {
+    if (
+      this.step.timerType === 'hybrid' ||
+      this.step.timerType === 'converted'
+    ) {
       return this;
     }
   }
 
   transformToCountdown(value: number, onSuccess?: () => void) {
-    let convertable = false;
-    this.forEach((step) => {
-      if (step.name === this.step.name) {
-        convertable = step.timerType === 'converted';
+    const { name, timerType } = this.step;
+    let convertable = this.steps.some(
+      (step) => step.timerType === 'converted' && step.name === name,
+    );
+    this.steps.forEach((step) => {
+      if (step.name === name && step.timerType === timerType) {
         step.value = value;
         step.timerType = 'countdown';
       }

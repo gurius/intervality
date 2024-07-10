@@ -12,8 +12,10 @@ import { DataService } from '../data.service';
 import {
   CountdownTimer,
   EventuallyCountdownTimer,
+  Timer,
 } from '../models/playable/timer.model';
 import { TimerSet } from '../models/playable/set.model';
+import { Time } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -69,7 +71,9 @@ export class PlayableService {
         };
         break;
       case PlayableType.Set:
-        const idx = playable.timers.findIndex((t) => (t.name = stopwatchName));
+        const idx = playable.timers.findIndex(
+          (t) => t.name === stopwatchName && t.timerType === 'converted',
+        );
         if (idx !== -1) {
           upadte = this.swToCd(
             playable.timers[idx] as EventuallyCountdownTimer,
@@ -79,22 +83,25 @@ export class PlayableService {
         }
         break;
       case PlayableType.Superset:
-        const sotIdx = playable.setsAndTimers.findIndex((sot) => {
+        const sotIdx = playable.setsAndTimers.forEach((sot, idx) => {
           if ((sot as TimerSet).timers) {
-            return (sot as TimerSet).timers.find(
-              (t) => (t.name = stopwatchName),
-            );
+            (sot as TimerSet).timers.forEach((t, i) => {
+              if (t.name === stopwatchName && t.timerType === 'converted') {
+                (sot as TimerSet).timers[i] = this.swToCd(t, value);
+              }
+            });
           } else {
-            return (sot.name = stopwatchName);
+            if (
+              sot.name === stopwatchName &&
+              (sot as Timer).timerType === 'converted'
+            ) {
+              (playable as PlayableSuperset).setsAndTimers[idx] = this.swToCd(
+                sot as EventuallyCountdownTimer,
+                value,
+              );
+            }
           }
         });
-        if (sotIdx) {
-          upadte = this.swToCd(
-            playable.setsAndTimers[sotIdx] as EventuallyCountdownTimer,
-            value,
-          );
-          playable.setsAndTimers[sotIdx] = upadte;
-        }
         break;
     }
 

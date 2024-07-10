@@ -58,10 +58,10 @@ export class PlayerService {
   private snapshotSubject$ = new BehaviorSubject<PlayerSnapshot | null>(null);
   snapshot$ = this.snapshotSubject$.asObservable();
 
-  doStepEmitter$ = new Subject<{ direction: 'forward' | 'backward' }>();
-  onStep$ = this.doStepEmitter$.asObservable();
+  private stepEmitter$ = new Subject<{ direction: 'forward' | 'backward' }>();
+  step$ = this.stepEmitter$.asObservable();
 
-  stageEmitter$: BehaviorSubject<State> = new BehaviorSubject(
+  private stageEmitter$: BehaviorSubject<State> = new BehaviorSubject(
     'prestart' as State,
   );
 
@@ -88,13 +88,9 @@ export class PlayerService {
     this.playable = playable;
     this.sequence = new Sequence(playable);
 
-    const total = this.sequence
-      .map((t) => t.value)
-      .reduce((acc, curr) => acc + curr, 0);
-
     this.initialSnapshot = {
       ...snapshotTemplate,
-      ahead: total,
+      ahead: this.sequence.ahead,
       status: `step 1 of ${this.sequence.length}`,
       currentMs: this.sequence.step.value,
     };
@@ -115,6 +111,7 @@ export class PlayerService {
     this.timestamp = new Date().getTime();
 
     this.snapshot.state = 'playing';
+    this.playing = true;
 
     interval(INTERVAL_MS)
       .pipe(
@@ -130,14 +127,14 @@ export class PlayerService {
           }
 
           // when countdown reaches zero - stop playing
-          if (currentStep.value && this.currentMs <= 0) {
+          if (currentStep.timerType === 'countdown' && this.currentMs <= 0) {
             if (this.sequence.isLastStep) {
               this.stop();
               return;
             }
 
             this.sequence.goForward(() => {
-              this.doStepEmitter$.next({ direction: 'forward' });
+              this.stepEmitter$.next({ direction: 'forward' });
             });
             this.currentMs = this.sequence.step.value;
           }
@@ -149,7 +146,6 @@ export class PlayerService {
           this.snapshot.stopWatchMs = this.stopWatchMs;
           this.snapshot.currentStepProgress =
             100 - (100 / currentStep.value) * this.currentMs;
-
           this.snapshotSubject$.next(this.snapshot);
         }),
         takeUntil(this.stop$),
@@ -168,13 +164,14 @@ export class PlayerService {
   }
 
   stop() {
-    this.sequence.reset();
-    this.currentMs = this.sequence.step.value;
-    this.stopWatchMs = 0;
-    this.initializeSequnce(this.playable);
-    this.snapshot.state = 'stoped';
     this.stop$.next();
 
+    this.sequence.reset();
+    this.updatePastAhead();
+    this.currentMs = this.sequence.step.value;
+    this.stopWatchMs = 0;
+    this.playing = false;
+    this.snapshot.state = 'stoped';
     this.stageEmitter$.next('stoped');
   }
 
@@ -184,7 +181,7 @@ export class PlayerService {
       this.currentMs = value;
       this.updatePastAhead();
       this.snapshot.currentStepProgress = 100 - (100 / value) * this.currentMs;
-      this.doStepEmitter$.next({ direction: 'forward' });
+      this.stepEmitter$.next({ direction: 'forward' });
     });
   }
 
@@ -194,7 +191,7 @@ export class PlayerService {
       this.currentMs = value;
       this.updatePastAhead();
       this.snapshot.currentStepProgress = 100 - (100 / value) * this.currentMs;
-      this.doStepEmitter$.next({ direction: 'backward' });
+      this.stepEmitter$.next({ direction: 'backward' });
     });
   }
 
@@ -216,7 +213,9 @@ export class PlayerService {
       return;
     }
 
-    this.sequence.goForward();
+    this.sequence.goForward(() => {
+      this.stepEmitter$.next({ direction: 'forward' });
+    });
 
     this.currentMs = this.sequence.step.value;
   }
@@ -225,9 +224,7 @@ export class PlayerService {
     const ahead =
       this.stopWatchMs > 0
         ? this.snapshot.ahead + interval
-        : this.sequence
-            .map((t) => t.value)
-            .reduce((acc, curr) => acc + curr, 0) - this.snapshot.past;
+        : this.sequence.total - this.snapshot.past;
 
     return ahead;
   }
@@ -247,15 +244,8 @@ export class PlayerService {
   }
 
   updatePastAhead() {
-    this.snapshot.past = this.sequence
-      .slice(0, this.sequence.idx)
-      .map((s) => s.value)
-      .reduce((acc, curr) => acc + curr, 0);
-
-    this.snapshot.ahead = this.sequence
-      .slice(this.sequence.idx)
-      .map((s) => s.value)
-      .reduce((acc, curr) => acc + curr, 0);
+    this.snapshot.past = this.sequence.passed;
+    this.snapshot.ahead = this.sequence.ahead;
   }
 
   reset() {
@@ -265,7 +255,7 @@ export class PlayerService {
     this.timestamp = 0;
     this.playing = false;
     this.commenced = false;
-
+    this.stop();
     this.snapshotSubject$.next(null);
   }
 }

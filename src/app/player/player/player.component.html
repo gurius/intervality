@@ -31,54 +31,6 @@
 
   <app-sequence [snapshot]="snapshot"></app-sequence>
 
-  <!-- <ol class="scrollbar mb-5 flex w-full flex-col gap-3 px-2">
-    @for (
-      item of snapshot.stepsInFocus;
-      track item.name + item.status + item.value
-    ) {
-      <li
-        class="flex {{
-          item.status === 'current' ? 'h-28 bg-secondary' : 'bg-container'
-        }} h-28 flex-grow flex-col items-stretch justify-start rounded-2xl px-5 pb-2 relative"
-      >
-        <div class="flex justify-between py-1">
-          <h4 class="font-sans text-xl font-light">
-            {{ item.status === "current" ? "" : item.status }}
-          </h4>
-          <span>x {{ item.remaining }}</span>
-        </div>
-        <p class="mb-3 flex justify-between text-3xl">
-          <span class="overflow-hidden text-ellipsis whitespace-nowrap">{{
-            item.name
-          }}</span>
-
-          <span>{{ item.value | timeStr }}</span>
-        </p>
-        @if (item.timerType !== "countdown") {
-          <div class="absolute inset-0 flex content-center justify-center">
-            @if (item.status === "current") {
-              <button type="button" (click)="stopwatchStop()">
-                <i class="fa-solid fa-circle-stop text-5xl text-primary"></i>
-              </button>
-            } @else {
-              <button type="button">
-                <i class="fa-solid fa-stopwatch text-5xl text-on-container"></i>
-              </button>
-            }
-          </div>
-        }
-        @if (item.status === "current" && item.timerType === "countdown") {
-          <input
-            class="accent-primary outline-primary"
-            type="range"
-            step="0.004"
-            (change)="updateCureentStep()"
-            [(ngModel)]="snapshot.currentStepProgress"
-          />
-        }
-      </li>
-    }
-  </ol> -->
   <div class="justify-centr flex flex-col items-center text-8xl">
     <div class="flex flex-grow items-center justify-center">
       <button
