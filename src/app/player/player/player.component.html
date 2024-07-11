@@ -47,10 +47,18 @@
       <button
         *ngIf="snapshot.state != 'playing'"
         type="button"
-        class="mx-3 text-secondary"
+        [class.bg-secondary]="snapshot.state === 'commenced'"
+        class="mx-3 h-24 w-24 rounded-full text-secondary"
         (click)="play()"
       >
-        <fa-icon [icon]="['fas', 'circle-play']"></fa-icon>
+        @if (snapshot.state === "commenced") {
+          <span
+            class="flex items-center justify-center text-6xl font-bold text-surface"
+            >{{ snapshot.prestart | timeStr: "second" }}</span
+          >
+        } @else {
+          <fa-icon [icon]="['fas', 'circle-play']"></fa-icon>
+        }
       </button>
       <button
         *ngIf="snapshot.state == 'playing'"

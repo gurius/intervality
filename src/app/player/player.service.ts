@@ -11,7 +11,7 @@ import {
 import { Playable } from '../models/playable/playable.model';
 import { Timer } from '../models/playable/timer.model';
 import { cloneDeep } from 'lodash-es';
-import { INTERVAL_MS, PRESTART_DELAY } from '../config';
+import { INTERVAL_MS, PRESTART_DELAY_MS } from '../config';
 import { Sequence } from './sequence/sequence';
 import { PlayableService } from '../playable/playable.service';
 
@@ -38,6 +38,7 @@ export interface PlayerSnapshot {
   status: string;
   currentStepProgress: number;
   state: State;
+  prestart: number;
 }
 
 const snapshotTemplate: PlayerSnapshot = {
@@ -49,6 +50,7 @@ const snapshotTemplate: PlayerSnapshot = {
   currentMs: 0,
   stopWatchMs: 0,
   state: 'prestart',
+  prestart: PRESTART_DELAY_MS,
 };
 
 @Injectable({
@@ -103,10 +105,29 @@ export class PlayerService {
   commenceSequence(prestart: number) {
     this.commenced = true;
     this.snapshot.state = 'commenced';
+    this.snapshot.prestart = prestart;
+    const s = interval(INTERVAL_MS)
+      .pipe(
+        timeInterval(animationFrameScheduler),
+        tap(({ interval }) => {
+          const currentStep = this.sequence.step;
+          this.snapshot.prestart -= interval;
+          this.snapshotSubject$.next(this.snapshot);
+          if (this.snapshot.prestart <= 1000) {
+            // stop prestart and switch to playing
+            s.unsubscribe();
+            this.play();
+          }
+        }),
+      )
+      .subscribe();
   }
 
-  play(prestart: number = PRESTART_DELAY) {
-    if (!this.commenced) this.commenceSequence(prestart);
+  play(prestart: number = PRESTART_DELAY_MS) {
+    if (!this.commenced) {
+      this.commenceSequence(prestart);
+      return;
+    }
 
     this.timestamp = new Date().getTime();
 
@@ -171,6 +192,7 @@ export class PlayerService {
     this.currentMs = this.sequence.step.value;
     this.stopwatchMs = 0;
     this.playing = false;
+    this.commenced = false;
     this.snapshot.state = 'stoped';
     this.stageEmitter$.next('stoped');
   }

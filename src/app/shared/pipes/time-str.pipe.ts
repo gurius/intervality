@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { INTERVAL_MS } from '../../config';
-export type Fromat = 'mm:ss' | 'mm:ss.sss' | 'ms';
+export type Fromat = 'mm:ss' | 'mm:ss.sss' | 'ms' | 'second';
 @Pipe({
   name: 'timeStr',
 })
@@ -19,6 +19,8 @@ export class TimeStrPipe implements PipeTransform {
 
       case 'ms':
         return ms ? new Date(ms).toISOString().substring(19, 22) : '.00';
+      case 'second':
+        return ms ? new Date(ms).toISOString().substring(18, 19) : '0';
 
       default:
         return ms ? new Date(ms).toISOString().substring(14, 22) : '00:00.00';
