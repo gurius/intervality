@@ -10,8 +10,8 @@ import { WakelockService } from './shared/services/wakelock.service';
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'intervality';
-  version = '0.0.1';
+  title = 'Intervality';
+  version = '0.9.0';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = false;

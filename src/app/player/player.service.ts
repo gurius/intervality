@@ -111,6 +111,7 @@ export class PlayerService {
     this.commenced = true;
     this.snapshot.state = 'commenced';
     this.snapshot.prestart = prestart;
+
     const s = interval(INTERVAL_MS)
       .pipe(
         timeInterval(animationFrameScheduler),
@@ -292,8 +293,9 @@ export class PlayerService {
   }
 
   updatePastAhead() {
-    this.snapshot.past = this.sequence.passed;
-    this.snapshot.ahead = this.sequence.ahead;
+    const passed = this.sequence.step.value - this.currentMs;
+    this.snapshot.past = this.sequence.passed + passed;
+    this.snapshot.ahead = this.sequence.ahead - passed;
   }
 
   reset() {
