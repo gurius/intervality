@@ -11,9 +11,10 @@ import {
 import { Playable } from '../models/playable/playable.model';
 import { Timer } from '../models/playable/timer.model';
 import { cloneDeep } from 'lodash-es';
-import { INTERVAL_MS, PRESTART_DELAY_MS } from '../config';
+import { INTERVAL_MS, PRESTART_DELAY_MS, SOUND_NOTIFICATION } from '../config';
 import { Sequence } from './sequence/sequence';
 import { PlayableService } from '../playable/playable.service';
+import { AudioService } from '../shared/services/audio.service';
 
 export type State =
   | 'prestart'
@@ -84,7 +85,10 @@ export class PlayerService {
 
   playable!: Playable;
 
-  constructor(private playableService: PlayableService) {}
+  constructor(
+    private playableService: PlayableService,
+    private audioService: AudioService,
+  ) {}
 
   initializeSequnce(playable: Playable) {
     this.playable = playable;
@@ -101,6 +105,7 @@ export class PlayerService {
     this.snapshot = cloneDeep(this.initialSnapshot);
     this.currentMs = this.sequence.step.value;
   }
+  startBefore: number = PRESTART_DELAY_MS;
 
   commenceSequence(prestart: number) {
     this.commenced = true;
@@ -110,17 +115,32 @@ export class PlayerService {
       .pipe(
         timeInterval(animationFrameScheduler),
         tap(({ interval }) => {
-          const currentStep = this.sequence.step;
           this.snapshot.prestart -= interval;
           this.snapshotSubject$.next(this.snapshot);
+
+          this.soundSignal(this.snapshot.prestart);
+
           if (this.snapshot.prestart <= 1000) {
             // stop prestart and switch to playing
             s.unsubscribe();
+            this.startBefore = PRESTART_DELAY_MS;
             this.play();
           }
         }),
       )
       .subscribe();
+  }
+
+  soundSignal(currentMs: number) {
+    if (!SOUND_NOTIFICATION) return;
+    const pred = Math.floor(currentMs / this.startBefore);
+    if (!(pred >= 1) && this.startBefore > 0) {
+      this.audioService.play(
+        this.startBefore === 1000 ? 'before-next' : 'recurring',
+      );
+
+      this.startBefore -= 1000;
+    }
   }
 
   play(prestart: number = PRESTART_DELAY_MS) {
@@ -147,10 +167,15 @@ export class PlayerService {
             this.currentMs -= interval;
           }
 
+          this.soundSignal(this.currentMs);
+
           // when countdown reaches zero - stop playing
           if (currentStep.timerType === 'countdown' && this.currentMs <= 0) {
             if (this.sequence.isLastStep) {
               this.stop();
+              if (SOUND_NOTIFICATION) {
+                this.audioService.play('finish');
+              }
               return;
             }
 
@@ -158,6 +183,7 @@ export class PlayerService {
               this.stepEmitter$.next({ direction: 'forward' });
             });
             this.currentMs = this.sequence.step.value;
+            this.startBefore = PRESTART_DELAY_MS;
           }
 
           this.snapshot.past += interval;
