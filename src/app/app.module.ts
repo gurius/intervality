@@ -33,6 +33,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faWebAwesome } from '@fortawesome/free-brands-svg-icons';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import { superSet } from './icons';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -79,6 +80,7 @@ export class AppModule {
       faCheck,
       faPenToSquare,
       faTrashCan,
+      superSet,
     );
   }
 }
