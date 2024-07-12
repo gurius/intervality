@@ -230,7 +230,9 @@ export class PlayerService {
       this.currentMs = value;
       this.updatePastAhead();
       this.snapshot.currentStepProgress = 100 - (100 / value) * this.currentMs;
+      this.snapshot.status = `step ${this.sequence.idx + 1} of ${this.sequence.length}`;
       this.stepEmitter$.next({ direction: 'forward' });
+      this.snapshotSubject$.next(this.snapshot);
     });
   }
 
@@ -240,7 +242,9 @@ export class PlayerService {
       this.currentMs = value;
       this.updatePastAhead();
       this.snapshot.currentStepProgress = 100 - (100 / value) * this.currentMs;
+      this.snapshot.status = `step ${this.sequence.idx + 1} of ${this.sequence.length}`;
       this.stepEmitter$.next({ direction: 'backward' });
+      this.snapshotSubject$.next(this.snapshot);
     });
   }
 
