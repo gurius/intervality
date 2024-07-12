@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { PlayerService } from './player/player.service';
 import { filter } from 'rxjs';
 import { WakelockService } from './shared/services/wakelock.service';
+import { SettingsService } from './settings/settings.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,7 @@ import { WakelockService } from './shared/services/wakelock.service';
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.9.0';
+  version = '0.10.0';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = false;
@@ -30,6 +31,7 @@ export class AppComponent {
     private router: Router,
     private player: PlayerService,
     protected wakelockService: WakelockService,
+    private settingsService: SettingsService,
   ) {
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
@@ -37,6 +39,8 @@ export class AppComponent {
         console.log(s, this.router.url);
         this.isPlayer = this.router.url.includes('player');
       });
+
+    this.settingsService.applyTheme();
   }
   toggleSidePanel() {
     if (!this.isPushMode || !this.isPanelVisible) {

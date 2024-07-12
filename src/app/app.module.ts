@@ -30,6 +30,8 @@ import {
   faPlus,
   faRectangleXmark,
   faCheck,
+  faToggleOff,
+  faToggleOn,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWebAwesome } from '@fortawesome/free-brands-svg-icons';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -81,6 +83,8 @@ export class AppModule {
       faPenToSquare,
       faTrashCan,
       superSet,
+      faToggleOff,
+      faToggleOn,
     );
   }
 }

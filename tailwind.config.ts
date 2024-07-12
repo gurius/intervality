@@ -1,11 +1,14 @@
 import type { Config } from 'tailwindcss';
 export default {
   content: ['./src/**/*.{html,ts}'],
+  darkMode: ['selector', '[data-mode="dark"]'],
   theme: {
     extend: {
       colors: {
         surface: 'hsl(var(--surface) / <alpha-value>)',
         'on-surface': 'hsl(var(--on-surface) / <alpha-value>)',
+
+        'on-surface-dim': 'hsl(var(--on-surface-dim) / <alpha-value>)',
 
         primary: 'hsl(var(--primary) / <alpha-value>)',
         'on-primary': 'hsl(var(--on-primary) / <alpha-value>)',

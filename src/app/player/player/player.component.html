@@ -49,7 +49,7 @@
         type="button"
         [class.bg-secondary]="snapshot.state === 'commenced'"
         class="mx-3 h-24 w-24 rounded-full text-secondary"
-        (click)="play()"
+        (click)="snapshot.state !== 'commenced' && play()"
       >
         @if (snapshot.state === "commenced") {
           <span

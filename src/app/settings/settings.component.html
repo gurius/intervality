@@ -1,3 +1,73 @@
-<p class="font-sans ...">The quick brown fox ...</p>
-<p class="font-serif ...">The quick brown fox ...</p>
-<p class="font-mono ...">The quick brown fox ...</p>
+@if (settingsService.config) {
+  <form [formGroup]="settingsForm" (change)="submit()">
+    @for (point of settingsService.config; let idx = $index; track idx) {
+      <section class="m-7 flex flex-col content-stretch justify-start">
+        <h2>{{ point.label }}</h2>
+        <p class="flex items-center justify-between">
+          <label
+            class="text-on-surface-dim"
+            for="{{ point.id }}-{{ idx }}"
+            [ngClass]="{
+              'text-red-600':
+                settingsForm.get(point.id)?.invalid &&
+                (settingsForm.get(point.id)?.dirty ||
+                  settingsForm.get(point.id)?.touched),
+            }"
+            >{{ point.description }}
+            @if (
+              settingsForm.get(point.id)?.dirty ||
+              settingsForm.get(point.id)?.touched
+            ) {
+              @if (settingsForm.get(point.id)?.hasError("required")) {
+                <span>*</span>
+              } @else if (settingsForm.get(point.id)?.hasError("min")) {
+                <span>(Negative values are not allowed)</span>
+              }
+            }
+          </label>
+
+          @switch (point.controlType) {
+            @case ("select") {
+              <select [formControlName]="point.id">
+                @for (opt of point.options; track opt.value) {
+                  <option [value]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            }
+            @case ("value") {
+              <div class="flex max-w-28 flex-1 flex-col">
+                <input
+                  type="number"
+                  [formControlName]="point.id"
+                  id="{{ point.id }}-{{ idx }}"
+                />
+              </div>
+            }
+            @case ("toggle") {
+              <button type="button" (click)="toggle.click()" class="text-3xl">
+                <input
+                  #toggle
+                  class="hidden"
+                  type="checkbox"
+                  [formControlName]="point.id"
+                  [(ngModel)]="point.value"
+                />
+                @if (point.value) {
+                  <fa-icon [icon]="['fas', 'toggle-on']"></fa-icon>
+                } @else {
+                  <fa-icon [icon]="['fas', 'toggle-off']"></fa-icon>
+                }
+              </button>
+            }
+          }
+        </p>
+      </section>
+    }
+  </form>
+} @else {
+  <div class="flex h-full flex-col items-center pt-7">
+    <h1>Something went wrong</h1>
+    <fa-icon [icon]="['fas', 'robot']" class="text-6xl"></fa-icon>
+    <p class="mb-7">Try again</p>
+  </div>
+}

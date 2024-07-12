@@ -13,15 +13,13 @@ A compositor and runner for sequences of timers(countdown/stopwatch) with sound 
 7. Wake lock for comfortable mobile usage
 8. Sound notifications(bug: doesn't work without internet connection and has issues overall so turned off for now)
 9. PWA
+10. Settings
 
 ## Features planned
 
+- Alert/Notification
 - User data export
 - Animations and visual improvements when everything is working
-- Settings
-  - Theme switcher
-  - Sound notification toggle
-  - Start delay
 - Translations
 - Help or FAQ or both pages
 

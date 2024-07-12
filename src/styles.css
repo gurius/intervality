@@ -29,9 +29,11 @@
 
     --on-container-dark: 282deg 20% 10%;
     --on-container-light: 278deg 14% 15%;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
+
+    --on-surface-dim-light: 54deg 23% 67%;
+    --on-surface-dim-dark: 279deg 8% 33%;
+
+    body.dark {
       --surface: var(--surface-dark);
       --on-surface: var(--on-surface-dark);
 
@@ -43,10 +45,9 @@
 
       --container: var(--container-dark);
       --on-container: var(--on-container-dark);
+      --on-surface-dim: var(--on-surface-dim-dark);
     }
-  }
-  @media (prefers-color-scheme: light) {
-    :root {
+    body.light {
       --surface: var(--surface-light);
       --on-surface: var(--on-surface-light);
 
@@ -58,39 +59,10 @@
 
       --container: var(--container-light);
       --on-container: var(--on-container-light);
+      --on-surface-dim: var(--on-surface-dim-light);
     }
   }
 
-  body[data-theme="dark"] {
-    :root {
-      --surface: var(--surface-dark);
-      --on-surface: var(--on-surface-dark);
-
-      --primary: var(--primary-dark);
-      --on-primary: var(--on-primary-dark);
-
-      --secondary: var(--secondary-dark);
-      --on-secondary: var(--on-secondary-dark);
-
-      --container: var(--container-dark);
-      --on-container: var(--on-container-dark);
-    }
-  }
-  body[data-theme="light"] {
-    :root {
-      --surface: var(--surface-light);
-      --on-surface: var(--on-surface-light);
-
-      --primary: var(--primary-light);
-      --on-primary: var(--on-primary-light);
-
-      --secondary: var(--secondary-light);
-      --on-secondary: var(--on-secondary-ligth);
-
-      --container: var(--container-light);
-      --on-container: var(--on-container-light);
-    }
-  }
   html,
   body {
     @apply m-0 h-full w-full;
@@ -110,6 +82,9 @@
     }
 
     app-editor select,
+    app-settings select,
+    app-settings input[type="text"],
+    app-settings input[type="number"],
     app-editor input[type="text"],
     app-editor input[type="number"] {
       @apply h-12 rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-secondary bg-surface from-container to-surface text-2xl text-on-surface focus:border-secondary focus:ring-0;

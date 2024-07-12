@@ -6,6 +6,7 @@
   <div class="flex w-24 flex-1 flex-col">
     <label
       for="name-{{ rnd }}-{{ idx }}"
+      class="text-on-surface-dim"
       [ngClass]="{
         'text-red-600': name.invalid && (name.dirty || name.touched),
       }"
@@ -19,6 +20,7 @@
   @if (isControllerInGroup(group, "value")) {
     <div class="flex w-24 flex-1 flex-col">
       <label
+        class="text-on-surface-dim"
         for="value-{{ rnd }}-{{ idx }}"
         [ngClass]="{
           'text-red-600': value.invalid && (value.dirty || value.touched),
@@ -40,7 +42,9 @@
 
   @if (isControllerInGroup(group, "timerType")) {
     <div class="flex w-28 flex-1 flex-col">
-      <label for="type-{{ rnd }}-{{ idx }}">Type</label>
+      <label class="text-on-surface-dim" for="type-{{ rnd }}-{{ idx }}"
+        >Type</label
+      >
       <select id="type-{{ rnd }}-{{ idx }}" formControlName="timerType">
         @for (opt of timerTypes; track opt.value) {
           <option [value]="opt.value">{{ opt.label }}</option>
