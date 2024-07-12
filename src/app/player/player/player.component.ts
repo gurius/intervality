@@ -23,6 +23,10 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.snapshot$ = playerService.snapshot$.pipe(takeUntil(this.destroy$));
   }
 
+  running() {
+    return this.playerService.playing;
+  }
+
   ngOnInit(): void {
     const id = this.aroute.snapshot.paramMap.get('id');
     if (id) {

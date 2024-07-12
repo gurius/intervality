@@ -1,8 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PlayerComponent } from './player/player.component';
+import { canLeaveGuard } from './player/can-leave.guard';
 
-const routes: Routes = [{ path: '', component: PlayerComponent }];
+const routes: Routes = [
+  { path: '', component: PlayerComponent, canDeactivate: [canLeaveGuard] },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
