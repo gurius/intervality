@@ -32,27 +32,37 @@
           </span>
         </p>
         @if (item.timerType !== "countdown") {
-          <div class="absolute inset-0 flex content-center justify-center">
+          <div
+            class="absolute inset-0 flex content-center items-center justify-center"
+          >
             @if (item.status === "current") {
-              <button
-                type="button"
-                [class.text-surface]="snapshot.state === 'playing'"
-                [class.text-container]="snapshot.state !== 'playing'"
-                [disabled]="snapshot.state !== 'playing'"
-                (click)="stopwatchStop()"
+              <div
+                class="one flex h-14 w-14 content-center justify-center rounded-full bg-secondary"
               >
-                <fa-icon
-                  [icon]="['fas', 'circle-stop']"
-                  class="text-5xl"
-                ></fa-icon>
-              </button>
+                <button
+                  type="button"
+                  [class.text-surface]="snapshot.state === 'playing'"
+                  [class.text-container]="snapshot.state !== 'playing'"
+                  [disabled]="snapshot.state !== 'playing'"
+                  (click)="stopwatchStop()"
+                >
+                  <fa-icon
+                    [icon]="['fas', 'circle-stop']"
+                    class="text-5xl"
+                  ></fa-icon>
+                </button>
+              </div>
             } @else {
-              <button type="button">
-                <fa-icon
-                  [icon]="['fas', 'stopwatch']"
-                  class="text-5xl"
-                ></fa-icon>
-              </button>
+              <div
+                class="two flex h-14 w-14 content-center justify-center rounded-full bg-container"
+              >
+                <button type="button">
+                  <fa-icon
+                    [icon]="['fas', 'stopwatch']"
+                    class="text-5xl"
+                  ></fa-icon>
+                </button>
+              </div>
             }
           </div>
         }
