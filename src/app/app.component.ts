@@ -1,5 +1,5 @@
 import { Component, HostListener, inject } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { PlayerService } from './player/player.service';
 import { filter } from 'rxjs';
 import { WakelockService } from './shared/services/wakelock.service';
@@ -29,7 +29,7 @@ export class AppComponent {
 
   constructor(
     private router: Router,
-    private player: PlayerService,
+    private playerService: PlayerService,
     protected wakelockService: WakelockService,
     private settingsService: SettingsService,
   ) {
@@ -53,7 +53,22 @@ export class AppComponent {
   }
 
   playerStop() {
-    this.player.stop();
+    this.playerService.stop();
+  }
+
+  get currentlyPlayingName() {
+    const { name = null } = this.playerService.playable ?? {};
+    return name;
+  }
+  get currentlyPlayingType() {
+    const { playableType = null } = this.playerService.playable ?? {};
+    return playableType;
+  }
+
+  editCurrentlyPlaying() {
+    const { id, playableType } = this.playerService.playable ?? {};
+    this.isPanelVisible = false;
+    this.navigate(['/edit', playableType, id]);
   }
 
   toggleWakelock() {
