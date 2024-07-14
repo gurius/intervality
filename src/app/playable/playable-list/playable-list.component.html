@@ -78,6 +78,13 @@
               >
                 <fa-icon [icon]="['far', 'trash-can']"></fa-icon>
               </button>
+              <button
+                type="button"
+                class="h-10 w-10 rounded-md"
+                (click)="export(item)"
+              >
+                <fa-icon [icon]="['fas', 'file-arrow-down']"></fa-icon>
+              </button>
             </div>
           }
           <button

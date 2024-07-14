@@ -14,11 +14,13 @@ A compositor and runner for sequences of timers(countdown/stopwatch) with sound 
 8. Sound notifications(bug: doesn't work without internet connection and has issues overall so turned off for now)
 9. PWA
 10. Settings
+11. Basic data export/import
 
 ## Features planned
 
+- Previewer
+- Dashboard
 - Alert/Notification
-- User data export
 - Animations and visual improvements when everything is working
 - Translations
 - Help or FAQ or both pages

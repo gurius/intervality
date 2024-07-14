@@ -12,7 +12,7 @@ import { SettingsService } from './settings/settings.service';
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.10.0';
+  version = '0.11.0';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = false;

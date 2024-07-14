@@ -1,7 +1,9 @@
-import { Component, inject } from '@angular/core';
-import { Change, ConfigNames, SettingsService } from './settings.service';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { Change, SettingsService } from './settings.service';
 import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { values } from 'lodash-es';
+import { FileService } from '../shared/services/file/file.service';
+import { DataService } from '../data.service';
+import { Playable } from '../models/playable/playable.model';
 
 @Component({
   selector: 'app-settings',
@@ -10,11 +12,21 @@ import { values } from 'lodash-es';
 })
 export class SettingsComponent {
   protected settingsService = inject(SettingsService);
-  private fb = inject(NonNullableFormBuilder);
   settingsForm: FormGroup;
-  constructor() {
+
+  @ViewChild('importInput') importInput!: ElementRef<HTMLInputElement>;
+  constructor(
+    private fileService: FileService,
+    private dataService: DataService,
+    private fb: NonNullableFormBuilder,
+  ) {
     this.settingsForm = this.fb.group({});
     this.initFormControls();
+    this.fileService.uploadStrem$.subscribe((file) => {
+      const data = JSON.parse(file);
+      this.dataService.merge(data as Playable[]);
+    });
+    this.settingsForm.addControl('fileInput', this.fb.control(''));
   }
 
   initFormControls() {
@@ -29,10 +41,27 @@ export class SettingsComponent {
     });
   }
 
+  export() {
+    const data = localStorage.getItem('intervality-data');
+    if (data) {
+      this.fileService.saveFile(
+        new Blob([data], { type: 'application/json' }),
+        'intervality-data',
+      );
+    } else {
+      alert('Seems there are no data');
+    }
+  }
+
+  onImport(e: any) {
+    const file = e.target.files[0];
+    this.fileService.upladFile(file);
+    this.settingsForm.get('fileInput')?.reset();
+  }
+
   submit() {
     const changed = Object.entries(this.settingsForm.controls)
       .map((e) => {
-        console.log(e[0], e[1].getRawValue());
         const [id, { value }] = e;
         if (id === 'prestart-delay' && value < 0) return {} as Change;
         return { id, value } as Change;

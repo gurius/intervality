@@ -5,7 +5,7 @@
         <h2>{{ point.label }}</h2>
         <p class="flex items-center justify-between">
           <label
-            class="text-on-surface-dim"
+            class="self-end text-on-surface-dim"
             for="{{ point.id }}-{{ idx }}"
             [ngClass]="{
               'text-red-600':
@@ -64,6 +64,46 @@
       </section>
     }
   </form>
+
+  <div class="flex flex-col content-stretch justify-start">
+    <div class="m-7 flex flex-col content-stretch justify-start">
+      <h2 class="mb-3">Save and resotre data</h2>
+      <div class="flex items-center justify-between gap-3">
+        <span class="text-on-surface-dim"
+          >Imported data is merged with existing data</span
+        >
+        <div class="flex items-center justify-end gap-3">
+          <button
+            type="button"
+            (click)="export()"
+            class="rounded-xl border-2 border-on-surface-dim bg-container p-2 px-3"
+          >
+            Export
+            <fa-icon [icon]="['fas', 'file-arrow-down']"></fa-icon>
+          </button>
+          <button
+            [formGroup]="settingsForm"
+            type="button"
+            (click)="this.importInput.click()"
+            class="rounded-xl border-2 border-on-surface-dim bg-container p-2 px-3"
+          >
+            <input
+              #importInput
+              formControlName="fileInput"
+              type="file"
+              id="importFileInput"
+              multiple
+              accept="application/json"
+              (change)="onImport($event)"
+              style="display: none"
+            />
+            <fa-icon [icon]="['fas', 'file-arrow-up']"></fa-icon>
+            Import
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 } @else {
   <div class="flex h-full flex-col items-center pt-7">
     <h1>Something went wrong</h1>

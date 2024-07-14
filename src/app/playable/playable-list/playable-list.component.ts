@@ -9,6 +9,7 @@ import { FormControl } from '@angular/forms';
 import { PlayableService } from '../playable.service';
 import { Observable, forkJoin, map } from 'rxjs';
 import { DataService } from '../../data.service';
+import { FileService } from '../../shared/services/file/file.service';
 
 @Component({
   selector: 'app-playable-list',
@@ -23,19 +24,19 @@ export class PlayableListComponent {
 
   filter = new FormControl();
 
-  service = inject(PlayableService);
+  playableService = inject(PlayableService);
 
   visibleIdx: number | null = null;
 
   private dataService = inject(DataService);
+  private fileService = inject(FileService);
 
   find(e?: KeyboardEvent) {
     if (!e || e.code === 'Enter') this.userInput.set(this.filter.value);
   }
 
-  data: Observable<Playable[]> = this.service.getPlayable() as Observable<
-    Playable[]
-  >;
+  data: Observable<Playable[]> =
+    this.playableService.getPlayable() as Observable<Playable[]>;
 
   toggleItemMenu(idx: number) {
     this.visibleIdx = this.visibleIdx === idx ? null : idx;
@@ -43,6 +44,18 @@ export class PlayableListComponent {
 
   remove(id: string) {
     this.dataService.deleteItem(id);
-    this.data = this.service.getPlayable() as Observable<Playable[]>;
+    this.data = this.playableService.getPlayable() as Observable<Playable[]>;
+  }
+
+  export(item: Playable) {
+    const data = JSON.stringify([item]);
+    if (data) {
+      this.fileService.saveFile(
+        new Blob([data], { type: 'application/json' }),
+        item.name,
+      );
+    } else {
+      alert('Seems there are no data');
+    }
   }
 }
