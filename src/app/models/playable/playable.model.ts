@@ -5,29 +5,24 @@ import { Countdown } from './countdown.model';
 import { uid } from '../../utils';
 import { Timer } from './timer.model';
 
-export enum PlayableType {
-  Countdown = 'countdown',
-  Stopwatch = 'stopwatch',
-  Set = 'set',
-  Superset = 'super-set',
-}
+export type PlayableType = 'countdown' | 'stopwatch' | 'set' | 'superset';
 
-export type PlayableTypeStr = 'countdown' | 'stopwatch' | 'set';
+export type SupersetNestable = 'countdown' | 'stopwatch' | 'set';
 
 export interface PlayableStopwatch extends Stopwatch {
-  playableType: PlayableType.Stopwatch;
+  playableType: 'stopwatch';
 }
 
 export interface PlayableCountdown extends Countdown {
-  playableType: PlayableType.Countdown;
+  playableType: 'countdown';
 }
 
 export interface PlayableSet extends TimerSet {
-  playableType: PlayableType.Set;
+  playableType: 'set';
 }
 
 export interface PlayableSuperset extends Superset {
-  playableType: PlayableType.Superset;
+  playableType: 'superset';
 }
 
 export type Playable =
@@ -38,36 +33,36 @@ export type Playable =
 
 export function blank(type: PlayableType): Playable {
   switch (type) {
-    case PlayableType.Countdown:
+    case 'countdown':
       return {
-        playableType: PlayableType.Countdown,
+        playableType: 'countdown',
         timerType: 'countdown',
         name: '',
         id: uid(),
         value: 0,
       } as PlayableCountdown;
 
-    case PlayableType.Stopwatch:
+    case 'stopwatch':
       return {
-        playableType: PlayableType.Stopwatch,
+        playableType: 'stopwatch',
         timerType: 'stopwatch',
         name: '',
         id: uid(),
         value: 0,
       } as PlayableStopwatch;
 
-    case PlayableType.Superset:
+    case 'superset':
       return {
-        playableType: PlayableType.Superset,
+        playableType: 'superset',
         id: uid(),
         name: '',
         setsAndTimers: [],
         repetitions: 1,
       } as PlayableSuperset;
-    case PlayableType.Set:
+    case 'set':
     default:
       return {
-        playableType: PlayableType.Set,
+        playableType: 'set',
         id: uid(),
         name: '',
         timers: [{ name: '', value: 0, timerType: 'hybrid' }],
@@ -76,7 +71,7 @@ export function blank(type: PlayableType): Playable {
   }
 }
 
-export function blankSt(type: PlayableTypeStr): Omit<TimerSet, 'id'> | Timer {
+export function blankSt(type: SupersetNestable): Omit<TimerSet, 'id'> | Timer {
   switch (type) {
     case 'countdown':
       return { name: '', value: 0, timerType: 'countdown' } as Timer;

@@ -79,15 +79,15 @@ export class AppComponent {
   get currentlyPlayingType() {
     const { playableType = null } = this.playerService.playable ?? {};
     switch (playableType) {
-      case PlayableType.Superset:
+      case 'superset':
         return this.translateService.instant('NavPanel.Superset').toLowerCase();
-      case PlayableType.Set:
+      case 'set':
         return this.translateService.instant('NavPanel.Set').toLowerCase();
-      case PlayableType.Stopwatch:
+      case 'stopwatch':
         return this.translateService
           .instant('NavPanel.Stopwatch')
           .toLowerCase();
-      case PlayableType.Countdown:
+      case 'countdown':
         return this.translateService
           .instant('NavPanel.Countdown')
           .toLowerCase();

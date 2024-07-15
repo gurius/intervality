@@ -1,13 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, combineLatest, of } from 'rxjs';
-import {
-  Playable,
-  PlayableCountdown,
-  PlayableSet,
-  PlayableStopwatch,
-  PlayableSuperset,
-  PlayableType,
-} from '../models/playable/playable.model';
+import { Observable, of } from 'rxjs';
+import { Playable, PlayableSuperset } from '../models/playable/playable.model';
 import { DataService } from '../data.service';
 import {
   CountdownTimer,
@@ -41,14 +34,14 @@ export class PlayableService {
     let upadte;
 
     switch (playable.playableType) {
-      case PlayableType.Stopwatch:
+      case 'stopwatch':
         playable = {
           ...playable,
           ...this.swToCd(playable as EventuallyCountdownTimer, value),
-          playableType: PlayableType.Countdown,
+          playableType: 'countdown',
         };
         break;
-      case PlayableType.Set:
+      case 'set':
         const idx = playable.timers.findIndex(
           (t) => t.name === stopwatchName && t.timerType === 'converted',
         );
@@ -60,7 +53,7 @@ export class PlayableService {
           playable.timers[idx] = upadte;
         }
         break;
-      case PlayableType.Superset:
+      case 'superset':
         const sotIdx = playable.setsAndTimers.forEach((sot, idx) => {
           if ((sot as TimerSet).timers) {
             (sot as TimerSet).timers.forEach((t, i) => {

@@ -7,9 +7,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Timer, TimerType } from '../../models/playable/timer.model';
-import { PlayableType } from '../../models/playable/playable.model';
 import { AssetType } from '../add-menu-button/add-menu-button.component';
 import { TranslateService } from '@ngx-translate/core';
+import { PlayableType } from '../../models/playable/playable.model';
 
 export type StopwatchForm = FormGroup<{
   name: FormControl<string>;
@@ -91,8 +91,8 @@ export class TimersFormArrayComponent implements OnInit {
     ];
   }
 
-  get addMenuTypes() {
-    return [PlayableType.Countdown, PlayableType.Stopwatch];
+  get addMenuTypes(): PlayableType[] {
+    return ['countdown', 'stopwatch'];
   }
 
   addTimer(aType: AssetType) {

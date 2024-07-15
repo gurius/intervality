@@ -37,17 +37,17 @@
       >
         <div class="flex items-center gap-3">
           @switch (item.playableType) {
-            @case (types.Stopwatch) {
+            @case ("stopwatch") {
               <fa-icon [icon]="['fas', 'stopwatch']"></fa-icon>
             }
-            @case (types.Countdown) {
+            @case ("countdown") {
               <fa-icon [icon]="['fas', 'hourglass-start']"></fa-icon>
             }
 
-            @case (types.Set) {
+            @case ("set") {
               <fa-icon [icon]="['fas', 'bars']"></fa-icon>
             }
-            @case (types.Superset) {
+            @case ("superset") {
               <fa-icon [icon]="['fas', 'superpowers']"></fa-icon>
             }
           }

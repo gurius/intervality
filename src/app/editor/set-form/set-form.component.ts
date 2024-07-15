@@ -5,10 +5,7 @@ import {
   NonNullableFormBuilder,
   Validators,
 } from '@angular/forms';
-import {
-  PlayableSet,
-  PlayableType,
-} from '../../models/playable/playable.model';
+import { PlayableSet } from '../../models/playable/playable.model';
 import { DataService } from '../../data.service';
 import { Submittable } from '../editor.component';
 import { TimerSet } from '../../models/playable/set.model';
@@ -65,7 +62,7 @@ export class SetFormComponent implements OnInit, OnDestroy, Submittable {
       ...((this.set as TimerSet).id
         ? { id: (this.set as PlayableSet).id }
         : {}),
-      playableType: PlayableType.Set,
+      playableType: 'set',
       timers: timers.map((t) => {
         t.value = t.value ? t.value * 1000 : 0;
         t.timerType = t.timerType ?? 'countdown';

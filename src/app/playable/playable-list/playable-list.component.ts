@@ -4,10 +4,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { Playable, PlayableType } from '../../models/playable/playable.model';
+import { Playable } from '../../models/playable/playable.model';
 import { FormControl } from '@angular/forms';
 import { PlayableService } from '../playable.service';
-import { Observable, forkJoin, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { DataService } from '../../data.service';
 import { FileService } from '../../shared/services/file/file.service';
 
@@ -18,8 +18,6 @@ import { FileService } from '../../shared/services/file/file.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayableListComponent {
-  types = PlayableType;
-
   userInput = signal('');
 
   filter = new FormControl();

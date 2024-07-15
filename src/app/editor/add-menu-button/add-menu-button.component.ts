@@ -2,11 +2,11 @@ import { Component, Input, OnInit, inject, output } from '@angular/core';
 import {
   Playable,
   PlayableType,
-  PlayableTypeStr,
+  SupersetNestable,
 } from '../../models/playable/playable.model';
 import { DataService } from '../../data.service';
 
-export type AssetType = { type: PlayableTypeStr; item?: Playable };
+export type AssetType = { type: SupersetNestable; item?: Playable };
 
 @Component({
   selector: 'app-add-menu-button',
@@ -45,7 +45,7 @@ export class AddMenuButtonComponent implements OnInit {
       }));
   }
 
-  addNewItem(type: PlayableTypeStr) {
+  addNewItem(type: SupersetNestable) {
     this.onAddItem.emit({ type });
     this.showMenu = false;
   }
@@ -57,19 +57,23 @@ export class AddMenuButtonComponent implements OnInit {
   addExistingItem() {
     if (this.selectedExisting) {
       const item = this.dataService.getById(this.selectedExisting.value!);
-      this.onAddItem.emit({ type: item.playableType as PlayableTypeStr, item });
+      this.onAddItem.emit({
+        type: item.playableType as SupersetNestable,
+        item,
+      });
     }
     this.showMenu = false;
   }
+
   getShowCountdown() {
-    return this.acceptAssetTypes.includes(PlayableType.Countdown);
+    return this.acceptAssetTypes.includes('countdown');
   }
 
   getShowStopwatch() {
-    return this.acceptAssetTypes.includes(PlayableType.Stopwatch);
+    return this.acceptAssetTypes.includes('stopwatch');
   }
 
   getShowSet() {
-    return this.acceptAssetTypes.includes(PlayableType.Set);
+    return this.acceptAssetTypes.includes('set');
   }
 }

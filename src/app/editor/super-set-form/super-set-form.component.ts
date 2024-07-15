@@ -4,8 +4,7 @@ import {
   PlayableStopwatch,
   PlayableSuperset,
   PlayableType,
-  PlayableTypeStr,
-  blank,
+  SupersetNestable,
   blankSt,
 } from '../../models/playable/playable.model';
 import {
@@ -75,7 +74,7 @@ export class SuperSetFormComponent implements Submittable, OnInit {
   }
 
   get setsAndTimersFormGroups() {
-    return this.superSet.setsAndTimers.map((st) => {
+    return this.superSet.setsAndTimers.map(() => {
       return this.fb.group({});
     });
   }
@@ -109,9 +108,7 @@ export class SuperSetFormComponent implements Submittable, OnInit {
     return {
       ...st,
       playableType:
-        (st as Timer).timerType === 'countdown'
-          ? PlayableType.Countdown
-          : PlayableType.Stopwatch,
+        (st as Timer).timerType === 'countdown' ? 'countdown' : 'stopwatch',
     } as PlayableStopwatch | PlayableCountdown;
   }
 
@@ -131,32 +128,22 @@ export class SuperSetFormComponent implements Submittable, OnInit {
     );
   }
 
-  get addMenuTypes() {
-    return [PlayableType.Countdown, PlayableType.Stopwatch, PlayableType.Set];
+  get addMenuTypes(): PlayableType[] {
+    return ['countdown', 'stopwatch', 'set'];
   }
 
-  createItem(type: PlayableTypeStr): Omit<TimerSet, 'id'> | Timer {
+  createItem(type: SupersetNestable): Omit<TimerSet, 'id'> | Timer {
     switch (type) {
       case 'countdown':
-        return blankSt(PlayableType.Countdown);
+        return blankSt('countdown');
 
       case 'stopwatch':
-        return blankSt(PlayableType.Stopwatch);
+        return blankSt('stopwatch');
 
       case 'set':
       default:
-        return blankSt(PlayableType.Set);
+        return blankSt('set');
     }
-  }
-
-  // TODO: implement getting a real timers
-  get existingTimers() {
-    return [
-      { value: 'run', label: 'Run' },
-      { value: 'jump', label: 'Jump' },
-      { value: 'plank', label: 'Plank' },
-      { value: 'stretching', label: 'Stretching' },
-    ];
   }
 
   openAddMenu() {
@@ -176,7 +163,7 @@ export class SuperSetFormComponent implements Submittable, OnInit {
     const superset: PlayableSuperset = {
       ...nameAndReps,
       ...(this.superSet.id ? { id: this.superSet.id } : {}),
-      playableType: PlayableType.Superset,
+      playableType: 'superset',
       setsAndTimers: setsAndTimers.map((t) => {
         if ((t as Omit<TimerSet, 'id'>).timers) {
           (t as Omit<TimerSet, 'id'>).timers.forEach((t) => {

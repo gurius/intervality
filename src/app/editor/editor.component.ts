@@ -56,8 +56,8 @@ export class EditorComponent implements OnDestroy, OnInit {
             if (playable) {
               this.playable = playable as Playable;
               if (
-                this.playableType === PlayableType.Countdown ||
-                this.playableType === PlayableType.Stopwatch
+                this.playableType === 'countdown' ||
+                this.playableType === 'stopwatch'
               ) {
                 this.timer = this.playable as
                   | PlayableCountdown
@@ -70,14 +70,13 @@ export class EditorComponent implements OnDestroy, OnInit {
         if (blankPlayable) {
           this.playable = blankPlayable;
           if (
-            this.playableType === PlayableType.Countdown ||
-            this.playableType === PlayableType.Stopwatch
+            this.playableType === 'countdown' ||
+            this.playableType === 'stopwatch'
           ) {
             this.timer = this.playable as PlayableCountdown | PlayableStopwatch;
           }
         }
       }
-      console.log(id, this.playableType);
     });
   }
 

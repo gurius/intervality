@@ -12,18 +12,18 @@ export class Sequence {
 
   constructor(playable: Playable) {
     switch (playable.playableType) {
-      case PlayableType.Countdown:
-      case PlayableType.Stopwatch:
+      case 'countdown':
+      case 'stopwatch':
         this.steps = [new Step(playable)];
         break;
-      case PlayableType.Set:
+      case 'set':
         const { repetitions, timers } = playable;
         const set = times(repetitions, () => cloneDeep(timers))
           .flat()
           .map((t) => new Step(t));
         this.steps = set;
         break;
-      case PlayableType.Superset:
+      case 'superset':
         const { repetitions: reps, setsAndTimers } = playable;
         const sset = times(reps, () => cloneDeep(setsAndTimers))
           .flat()

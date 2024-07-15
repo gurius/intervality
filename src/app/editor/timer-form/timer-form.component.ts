@@ -10,7 +10,6 @@ import { DataService } from '../../data.service';
 import {
   PlayableCountdown,
   PlayableStopwatch,
-  PlayableType,
 } from '../../models/playable/playable.model';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -97,10 +96,10 @@ export class TimerFormComponent implements OnInit, Submittable {
     timer.id = this.timer.id;
     timer.value = timer.value ? timer.value * 1000 : 0;
     if (!timer.timerType) {
-      timer.playableType = PlayableType.Countdown;
+      timer.playableType = 'countdown';
       timer.timerType = 'countdown';
     } else {
-      timer.playableType = PlayableType.Stopwatch;
+      timer.playableType = 'stopwatch';
     }
 
     console.log(timer);
