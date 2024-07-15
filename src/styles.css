@@ -111,6 +111,9 @@
     .hide-scrollbar::-webkit-scrollbar {
       @apply w-0;
     }
+    .bttn {
+      @apply bg-gradient-to-tr from-container to-surface hover:bg-gradient-to-bl;
+    }
   }
 
   h1,

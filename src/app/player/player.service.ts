@@ -240,6 +240,12 @@ export class PlayerService {
     this.playing = false;
     this.commenced = false;
     this.snapshot.state = 'stoped';
+
+    this.snapshot.status = this.translateService.instant('Player.StepOutOf', {
+      n: 1,
+      len: this.sequence.length,
+    });
+
     this.stageEmitter$.next('stoped');
   }
 

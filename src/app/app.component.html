@@ -124,7 +124,7 @@
 
     <div class="mr-4 flex items-center justify-center gap-2">
       <button
-        class="flex h-11 w-11 items-center justify-center gap-2 rounded-md border-2 border-secondary"
+        class="bttn flex h-11 w-11 items-center justify-center gap-2 rounded-md"
         *ngIf="wakelockService.isSupported()"
         type="button"
         (click)="toggleWakelock()"
@@ -140,7 +140,7 @@
         *ngIf="isPlayer"
         (click)="playerStop()"
         type="button"
-        class="flex h-11 w-11 items-center justify-center rounded-md border-2 border-secondary"
+        class="bttn flex h-11 w-11 items-center justify-center rounded-md"
       >
         <fa-icon [icon]="['fas', 'circle-stop']"></fa-icon>
       </button>
