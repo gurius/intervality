@@ -10,13 +10,14 @@ import {
   blank,
 } from '../models/playable/playable.model';
 import { PlayableService } from '../playable/playable.service';
-import { Subscription, first, take } from 'rxjs';
+import { Subscription, first, take, tap } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { Location } from '@angular/common';
 import { SetFormComponent } from './set-form/set-form.component';
 import { SuperSetFormComponent } from './super-set-form/super-set-form.component';
-import { DialogueService } from '../modal-dialogue/dialogue.service';
+import { DialogueService } from '../modal/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
+import { LeavePermission } from '../guards/can-leave/can-leave';
 
 export interface Submittable {
   submit: () => void;
@@ -27,7 +28,7 @@ export interface Submittable {
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.css',
 })
-export class EditorComponent implements OnDestroy, OnInit {
+export class EditorComponent implements OnDestroy, OnInit, LeavePermission {
   playable!: Playable;
 
   timer!: PlayableCountdown | PlayableStopwatch;
@@ -103,6 +104,27 @@ export class EditorComponent implements OnDestroy, OnInit {
     if (this.form.invalid) return;
     this.currentForm.submit();
     this.submitted = true;
+  }
+
+  canLeave() {
+    if (this.form.dirty && !this.submitted) {
+      return this.dialogueService
+        .open({
+          title: this.translateService.instant('Editor.Discard'),
+          content: this.translateService.instant('Editor.Confirm'),
+        })
+        .pipe(
+          first(),
+          tap((isConfirm) => {
+            if (isConfirm) {
+              this.form.reset();
+              this.location.back();
+            }
+          }),
+        );
+    } else {
+      return true;
+    }
   }
 
   discard() {

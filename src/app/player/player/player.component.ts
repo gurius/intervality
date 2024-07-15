@@ -3,14 +3,17 @@ import { PlayerService, PlayerSnapshot } from '../player.service';
 import { ActivatedRoute } from '@angular/router';
 import { PlayableService } from '../../playable/playable.service';
 import { Playable } from '../../models/playable/playable.model';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, first, takeUntil } from 'rxjs';
+import { LeavePermission } from '../../guards/can-leave/can-leave';
+import { DialogueData, DialogueService } from '../../modal/dialogue.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrl: './player.component.css',
 })
-export class PlayerComponent implements OnInit, OnDestroy {
+export class PlayerComponent implements OnInit, OnDestroy, LeavePermission {
   id!: string;
   snapshot$: Observable<PlayerSnapshot | null>;
   destroy$ = new Subject<void>();
@@ -19,13 +22,26 @@ export class PlayerComponent implements OnInit, OnDestroy {
     private playerService: PlayerService,
     private playableService: PlayableService,
     private aroute: ActivatedRoute,
+    private translateService: TranslateService,
+    private dialogueService: DialogueService,
   ) {
     this.snapshot$ = playerService.snapshot$.pipe(takeUntil(this.destroy$));
   }
 
-  running() {
-    return this.playerService.playing;
+  canLeave() {
+    if (this.playerService.playing) {
+      return this.dialogueService
+        .open({
+          title: this.translateService.instant('Player.LeavePlayer'),
+          content: this.translateService.instant('Player.LeaveConfirm'),
+        })
+        .pipe(first());
+    } else {
+      return true;
+    }
   }
+
+  onUserResponse(): void {}
 
   ngOnInit(): void {
     const id = this.aroute.snapshot.paramMap.get('id');

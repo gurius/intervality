@@ -4,7 +4,7 @@ import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { FileService } from '../shared/services/file/file.service';
 import { DataService } from '../data.service';
 import { Playable } from '../models/playable/playable.model';
-import { DialogueService } from '../modal-dialogue/dialogue.service';
+import { DialogueService } from '../modal/dialogue.service';
 import { first } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 

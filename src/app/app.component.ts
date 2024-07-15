@@ -5,7 +5,7 @@ import { filter } from 'rxjs';
 import { WakelockService } from './shared/services/wakelock.service';
 import { SettingsService } from './settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
-import { DialogueService } from './modal-dialogue/dialogue.service';
+import { DialogueService } from './modal/dialogue.service';
 
 @Component({
   selector: 'app-root',
@@ -40,7 +40,6 @@ export class AppComponent {
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe((s) => {
-        console.log(s, this.router.url);
         this.isPlayer = this.router.url.includes('player');
       });
 
@@ -52,7 +51,6 @@ export class AppComponent {
       if (this.settingsService.languages.includes(language)) {
         this.translateService.use(language);
       }
-      console.log(this.translateService.currentLang, 'inside');
     });
 
     console.log(this.translateService.currentLang, 'outside');

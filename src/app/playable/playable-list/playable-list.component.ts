@@ -10,7 +10,7 @@ import { PlayableService } from '../playable.service';
 import { Observable, first } from 'rxjs';
 import { DataService } from '../../data.service';
 import { FileService } from '../../shared/services/file/file.service';
-import { DialogueService } from '../../modal-dialogue/dialogue.service';
+import { DialogueService } from '../../modal/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({

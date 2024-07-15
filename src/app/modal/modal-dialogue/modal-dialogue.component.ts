@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { DialogueService } from './dialogue.service';
+import { DialogueService } from '../dialogue.service';
 
 @Component({
   selector: 'app-modal-dialogue',
