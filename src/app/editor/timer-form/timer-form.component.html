@@ -10,7 +10,7 @@
       [ngClass]="{
         'text-red-600': name.invalid && (name.dirty || name.touched),
       }"
-      >Name
+      >{{ "Editor.Name" | translate }}
       @if (name.hasError("required") && (name.dirty || name.touched)) {
         <span>*</span>
       }
@@ -25,11 +25,11 @@
         [ngClass]="{
           'text-red-600': value.invalid && (value.dirty || value.touched),
         }"
-        >Seconds
+        >{{ "Editor.Seconds" | translate }}
         @if (value.hasError("required") && (value.dirty || value.touched)) {
           <span>*</span>
         } @else if (value.hasError("min") && (value.dirty || value.touched)) {
-          <span>min is 1</span>
+          <span>{{ "Editor.MinIsOne" }}</span>
         }
       </label>
       <input
@@ -42,9 +42,9 @@
 
   @if (isControllerInGroup(group, "timerType")) {
     <div class="flex w-28 flex-1 flex-col">
-      <label class="text-on-surface-dim" for="type-{{ rnd }}-{{ idx }}"
-        >Type</label
-      >
+      <label class="text-on-surface-dim" for="type-{{ rnd }}-{{ idx }}">{{
+        "Editor.Type" | translate
+      }}</label>
       <select id="type-{{ rnd }}-{{ idx }}" formControlName="timerType">
         @for (opt of timerTypes; track opt.value) {
           <option [value]="opt.value">{{ opt.label }}</option>

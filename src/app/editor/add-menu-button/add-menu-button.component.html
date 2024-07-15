@@ -14,7 +14,7 @@
           class="rounded-3xl border-2 border-secondary px-3 py-2"
         >
           <fa-icon [icon]="['fas', 'stopwatch']"></fa-icon>
-          <label class="pl-1">new </label>
+          <label class="pl-1">{{ "Editor.New" | translate }} </label>
         </button>
       }
       @if (getShowCountdown()) {
@@ -25,7 +25,7 @@
           class="rounded-3xl border-2 border-secondary px-3 py-2"
         >
           <fa-icon [icon]="['fas', 'hourglass-start']"></fa-icon>
-          <label class="pl-1">new</label>
+          <label class="pl-1">{{ "Editor.New" | translate }}</label>
         </button>
       }
       @if (getShowSet()) {
@@ -36,7 +36,7 @@
           class="rounded-3xl border-2 border-secondary px-3 py-2"
         >
           <fa-icon [icon]="['fas', 'bars']"></fa-icon>
-          <label class="pl-1">new</label>
+          <label class="pl-1">{{ "Editor.New" | translate }}</label>
         </button>
       }
       <div class="flex w-48 flex-col">
@@ -47,7 +47,9 @@
           (change)="addExistingItem()"
           [(ngModel)]="selectedExisting"
         >
-          <option value="null" disabled selected>select from existing</option>
+          <option value="null" disabled selected>
+            {{ "Editor.SelectFromExisting" | translate }}
+          </option>
           @for (opt of existingItems; track opt.value) {
             <option [ngValue]="opt">
               {{ opt.label }}

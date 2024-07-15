@@ -13,7 +13,7 @@
                   getNameAt(tIdx).invalid &&
                   (getNameAt(tIdx).dirty || getNameAt(tIdx).touched),
               }"
-              >Timer name
+              >{{ "Editor.TimerName" | translate }}
               @if (
                 getNameAt(tIdx).hasError("required") &&
                 (getNameAt(tIdx).dirty || getNameAt(tIdx).touched)
@@ -36,7 +36,7 @@
                     getValueAt(tIdx).invalid &&
                     (getValueAt(tIdx).dirty || getValueAt(tIdx).touched),
                 }"
-                >Seconds
+                >{{ "Editor.Seconds" | translate }}
                 @if (
                   getValueAt(tIdx).hasError("required") &&
                   (getValueAt(tIdx).dirty || getValueAt(tIdx).touched)
@@ -46,7 +46,7 @@
                   getValueAt(tIdx).hasError("min") &&
                   (getValueAt(tIdx).dirty || getValueAt(tIdx).touched)
                 ) {
-                  <span>min is 1</span>
+                  <span>{{ "Editor.MinIsOne" | translate }}</span>
                 }
               </label>
               <input
@@ -59,7 +59,9 @@
 
           @if (isControllerInGroup(timerGroup, "timerType")) {
             <div class="flex w-28 flex-1 flex-col">
-              <label for="type-{{ rnd }}-{{ tIdx }}">Type</label>
+              <label for="type-{{ rnd }}-{{ tIdx }}">{{
+                "Editor.Type" | translate
+              }}</label>
               <select
                 id="type-{{ rnd }}-{{ tIdx }}"
                 formControlName="timerType"

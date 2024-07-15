@@ -9,6 +9,7 @@ import {
 import { Timer, TimerType } from '../../models/playable/timer.model';
 import { PlayableType } from '../../models/playable/playable.model';
 import { AssetType } from '../add-menu-button/add-menu-button.component';
+import { TranslateService } from '@ngx-translate/core';
 
 export type StopwatchForm = FormGroup<{
   name: FormControl<string>;
@@ -29,7 +30,8 @@ export class TimersFormArrayComponent implements OnInit {
   @Input({ required: true }) group!: FormGroup;
   @Input({ required: true }) timers!: Timer[];
 
-  fb = inject(NonNullableFormBuilder);
+  private fb = inject(NonNullableFormBuilder);
+  private translatService = inject(TranslateService);
 
   rnd!: string;
 
@@ -73,10 +75,19 @@ export class TimersFormArrayComponent implements OnInit {
 
   get timerTypes() {
     return [
-      { value: 'stopwatch', label: 'Stopwatch' },
-      // { value: 'countdown', label: 'Countdown' },
-      { value: 'hybrid', label: 'Hybrid' },
-      { value: 'converted', label: 'Converted' },
+      {
+        value: 'stopwatch',
+        label: this.translatService.instant('Editor.Stopwatch'),
+      },
+      {
+        value: 'hybrid',
+
+        label: this.translatService.instant('Editor.Hybrid'),
+      },
+      {
+        value: 'converted',
+        label: this.translatService.instant('Editor.Converted'),
+      },
     ];
   }
 

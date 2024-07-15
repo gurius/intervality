@@ -12,6 +12,7 @@ import {
   PlayableStopwatch,
   PlayableType,
 } from '../../models/playable/playable.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-timer-form',
@@ -26,6 +27,7 @@ export class TimerFormComponent implements OnInit, Submittable {
   rnd!: string;
 
   private fb = inject(NonNullableFormBuilder);
+  private translatService = inject(TranslateService);
   private dataService = inject(DataService);
 
   isControllerInGroup(g: FormGroup, prop: string) {
@@ -74,10 +76,19 @@ export class TimerFormComponent implements OnInit, Submittable {
 
   get timerTypes() {
     return [
-      { value: 'stopwatch', label: 'Stopwatch' },
-      // { value: 'countdown', label: 'Countdown' },
-      { value: 'hybrid', label: 'Hybrid' },
-      { value: 'converted', label: 'Converted' },
+      {
+        value: 'stopwatch',
+        label: this.translatService.instant('Editor.Stopwatch'),
+      },
+      {
+        value: 'hybrid',
+
+        label: this.translatService.instant('Editor.Hybrid'),
+      },
+      {
+        value: 'converted',
+        label: this.translatService.instant('Editor.Converted'),
+      },
     ];
   }
 

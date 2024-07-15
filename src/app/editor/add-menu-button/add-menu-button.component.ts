@@ -5,7 +5,6 @@ import {
   PlayableTypeStr,
 } from '../../models/playable/playable.model';
 import { DataService } from '../../data.service';
-import { pick } from 'lodash-es';
 
 export type AssetType = { type: PlayableTypeStr; item?: Playable };
 

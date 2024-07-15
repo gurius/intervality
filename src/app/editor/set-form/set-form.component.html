@@ -9,7 +9,7 @@
       [ngClass]="{
         'text-red-600': name.invalid && (name.dirty || name.touched),
       }"
-      >Name
+      >{{ "Editor.Name" | translate }}
       @if (name.hasError("required") && (name.dirty || name.touched)) {
         <span>*</span>
       }
@@ -28,7 +28,8 @@
         'text-red-600':
           repetitions.invalid && (repetitions.dirty || repetitions.touched),
       }"
-      >Reps
+      >{{ "Editor.Reps" | translate }}
+
       @if (
         repetitions.hasError("required") &&
         (repetitions.dirty || repetitions.touched)
@@ -38,7 +39,7 @@
         repetitions.hasError("min") &&
         (repetitions.dirty || repetitions.touched)
       ) {
-        <span>min is 1</span>
+        <span>{{ "Editor.MinIsOne" | translate }} </span>
       }
     </label>
     <input

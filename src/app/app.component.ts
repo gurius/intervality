@@ -4,6 +4,8 @@ import { PlayerService } from './player/player.service';
 import { filter } from 'rxjs';
 import { WakelockService } from './shared/services/wakelock.service';
 import { SettingsService } from './settings/settings.service';
+import { TranslateService } from '@ngx-translate/core';
+import { PlayableType } from './models/playable/playable.model';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +14,7 @@ import { SettingsService } from './settings/settings.service';
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.11.0';
+  version = '0.12.0';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = false;
@@ -32,6 +34,7 @@ export class AppComponent {
     private playerService: PlayerService,
     protected wakelockService: WakelockService,
     private settingsService: SettingsService,
+    private translateService: TranslateService,
   ) {
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
@@ -39,6 +42,19 @@ export class AppComponent {
         console.log(s, this.router.url);
         this.isPlayer = this.router.url.includes('player');
       });
+
+    this.settingsService.language$.subscribe((lang) => {
+      const language = lang || navigator.language;
+
+      this.translateService.setDefaultLang(this.settingsService.defautlLocale);
+
+      if (this.settingsService.languages.includes(language)) {
+        this.translateService.use(language);
+      }
+      console.log(this.translateService.currentLang, 'inside');
+    });
+
+    console.log(this.translateService.currentLang, 'outside');
 
     this.settingsService.applyTheme();
   }
@@ -62,7 +78,23 @@ export class AppComponent {
   }
   get currentlyPlayingType() {
     const { playableType = null } = this.playerService.playable ?? {};
-    return playableType;
+    switch (playableType) {
+      case PlayableType.Superset:
+        return this.translateService.instant('NavPanel.Superset').toLowerCase();
+      case PlayableType.Set:
+        return this.translateService.instant('NavPanel.Set').toLowerCase();
+      case PlayableType.Stopwatch:
+        return this.translateService
+          .instant('NavPanel.Stopwatch')
+          .toLowerCase();
+      case PlayableType.Countdown:
+        return this.translateService
+          .instant('NavPanel.Countdown')
+          .toLowerCase();
+
+      default:
+        return '';
+    }
   }
 
   editCurrentlyPlaying() {

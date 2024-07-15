@@ -16,7 +16,11 @@
         class="flex w-full items-center rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       >
         <div class="w-fulld flex flex-col">
-          <h6 class="text-on-surface-dim">Tweak {{ currentlyPlayingType }}</h6>
+          <h6 class="text-on-surface-dim">
+            {{
+              "NavPanel.Tweak" | translate: { playable: currentlyPlayingType }
+            }}
+          </h6>
           <button (click)="editCurrentlyPlaying()" class="flex gap-3">
             <fa-icon [icon]="['far', 'pen-to-square']"></fa-icon>
             <p class="max-w-56 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -35,7 +39,8 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <fa-icon [icon]="['fas', 'list-ul']"></fa-icon>Playlist
+      <fa-icon [icon]="['fas', 'list-ul']"></fa-icon
+      >{{ "NavPanel.Playlist" | translate }}
     </a>
     <a
       (click)="toggleSidePanel()"
@@ -44,10 +49,11 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <fa-icon [icon]="['fas', 'gear']"></fa-icon>Settings
+      <fa-icon [icon]="['fas', 'gear']"></fa-icon
+      >{{ "NavPanel.Settings" | translate }}
     </a>
 
-    <h3>Create</h3>
+    <h3>{{ "NavPanel.Create" | translate }}</h3>
     <a
       (click)="toggleSidePanel()"
       someStringProperty
@@ -56,7 +62,8 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <fa-icon [icon]="['fas', 'bars']"></fa-icon>Set
+      <fa-icon [icon]="['fas', 'bars']"></fa-icon
+      >{{ "NavPanel.Set" | translate }}
     </a>
 
     <a
@@ -67,7 +74,8 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <fa-icon [icon]="['fas', 'superpowers']"></fa-icon> Supeset
+      <fa-icon [icon]="['fas', 'superpowers']"></fa-icon>
+      {{ "NavPanel.Superset" | translate }}
     </a>
 
     <a
@@ -78,7 +86,8 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <fa-icon [icon]="['fas', 'hourglass-start']"></fa-icon>Countdown
+      <fa-icon [icon]="['fas', 'hourglass-start']"></fa-icon
+      >{{ "NavPanel.Countdown" | translate }}
     </a>
     <a
       (click)="toggleSidePanel()"
@@ -88,7 +97,8 @@
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
-      <fa-icon [icon]="['fas', 'stopwatch']"></fa-icon>Stopwatch
+      <fa-icon [icon]="['fas', 'stopwatch']"></fa-icon
+      >{{ "NavPanel.Stopwatch" | translate }}
     </a>
   </nav>
 </div>

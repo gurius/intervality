@@ -1,0 +1,59 @@
+{
+  "Settings": {
+    "Theme": "Theme",
+    "ThemeLabel": "Select a theme",
+    "OptionSystem": "System",
+    "OptionDark": "Dark",
+    "OptionLight": "Light",
+    "Sound": "Sound",
+    "SoundLabel": "Notify before start and before end of each step",
+    "PrestartDelay": "Prestart delay",
+    "PrestartLabel": "Delay in seconds",
+    "Language": "Language",
+    "LanguageLabel": "Select language",
+    "en": "EN",
+    "uk": "UK",
+    "PlaylisData": "Playlist data",
+    "PlaylisDataLabel": "Imported data is merged with existing data",
+    "Import": "Import",
+    "Export": "Export"
+  },
+  "NavPanel": {
+    "Tweak": "Tweak {{playable}}",
+    "Playlist": "Playlist",
+    "Settings": "Settings",
+    "Create": "Create",
+    "Set": "Set",
+    "Superset": "Superset",
+    "Countdown": "Countdown",
+    "Stopwatch": "Stopwatch"
+  },
+  "Editor": {
+    "SupersetName": "Superset name",
+    "TimerName": "Timer name",
+    "Reps": "Reps",
+    "MinIsOne": "min is 1",
+    "SelectFromExisting": "select from playlist",
+    "Set": "Set",
+    "Timer": "Timer",
+    "Type": "Type",
+    "Name": "Name",
+    "Seconds": "Seconds",
+    "Repetitions": "Repetitions",
+    "Stopwatch": "Stopwatch",
+    "Hybrid": "Hybrid",
+    "Converted": "Converted",
+    "New": "New"
+  },
+  "Player": {
+    "Past": "past",
+    "Ahead": "ahead",
+    "StepOutOf": "step {{n}} of {{len}}",
+    "done": "done",
+    "next": "next"
+  },
+  "Common": {
+    "SomethingWentWrong": "Something went wrong",
+    "TryAgain": "Try again"
+  }
+}

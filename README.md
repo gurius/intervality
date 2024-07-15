@@ -15,14 +15,15 @@ A compositor and runner for sequences of timers(countdown/stopwatch) with sound 
 9. PWA
 10. Settings
 11. Basic data export/import
+12. Translations
 
 ## Features planned
 
 - Previewer
-- Dashboard
+- Import page with previewer and selection of imported entries
+- Play log (history of completed sets, supersets and timers)
 - Alert/Notification
 - Animations and visual improvements when everything is working
-- Translations
 - Help or FAQ or both pages
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.3.

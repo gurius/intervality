@@ -11,7 +11,11 @@
       >
         <div class="flex justify-between py-1">
           <h4 class="font-sans text-xl font-light">
-            {{ item.status === "current" ? snapshot.status : item.status }}
+            {{
+              item.status === "current"
+                ? snapshot.status
+                : ("Player." + item.status | translate)
+            }}
           </h4>
           <span>x {{ item.remaining }}</span>
         </div>

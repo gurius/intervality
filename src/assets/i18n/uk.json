@@ -1,0 +1,59 @@
+{
+  "Settings": {
+    "Theme": "Тема",
+    "ThemeLabel": "Вибір теми",
+    "OptionSystem": "Системна",
+    "OptionDark": "Темна",
+    "OptionLight": "Світла",
+    "Sound": "Звукове сповіщення",
+    "SoundLabel": "Програвати на початку та у кінці кожного кроку",
+    "PrestartDelay": "Передстартовий відлік",
+    "PrestartLabel": "Значення у секоундах",
+    "Language": "Мова",
+    "LanguageLabel": "Вибір мови інтерфейсу",
+    "en": "EN",
+    "uk": "UK",
+    "PlaylisData": "Дані плейлисту",
+    "PlaylisDataLabel": "Імпортовані данні будуть об'єднані з існуючими",
+    "Import": "Імпорт",
+    "Export": "Експорт"
+  },
+  "NavPanel": {
+    "Tweak": "Підлаштувати {{playable}}",
+    "Playlist": "Плейлист",
+    "Settings": "Налаштування",
+    "Create": "Створити",
+    "Set": "Сет",
+    "Superset": "Суперсет",
+    "Countdown": "Зворотній таймер",
+    "Stopwatch": "Таймер"
+  },
+  "Editor": {
+    "SupersetName": "Назва суперсету",
+    "TimerName": "Назва таймеру",
+    "Reps": "Повтори",
+    "MinIsOne": "мінімум 1",
+    "SelectFromExisting": "вибрати із плейлисту",
+    "Set": "Сет",
+    "Timer": "Таймер",
+    "Type": "Тип",
+    "Name": "Назва",
+    "Seconds": "Секунди",
+    "Repetitions": "Повторення",
+    "Stopwatch": "Таймер",
+    "Hybrid": "Гібридний",
+    "Converted": "Конвертований",
+    "New": "Нов."
+  },
+  "Player": {
+    "Past": "пройшло",
+    "Ahead": "попереду",
+    "StepOutOf": "крок {{n}} з {{len}}",
+    "done": "завершено",
+    "next": "попереду"
+  },
+  "Common": {
+    "SomethingWentWrong": "Щось пішло не так",
+    "TryAgain": "Спробуйте ще раз"
+  }
+}

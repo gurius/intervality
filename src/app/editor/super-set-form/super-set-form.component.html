@@ -9,7 +9,7 @@
         [ngClass]="{
           'text-red-600': name.invalid && (name.dirty || name.touched),
         }"
-        >Superset name
+        >{{ "Editor.SupersetName" | translate }}
         @if (name.hasError("required") && (name.dirty || name.touched)) {
           <span>*</span>
         }
@@ -23,7 +23,7 @@
           'text-red-600':
             repetitions.invalid && (repetitions.dirty || repetitions.touched),
         }"
-        >Reps
+        >{{ "Editor.Reps" | translate }}
         @if (
           repetitions.hasError("required") &&
           (repetitions.dirty || repetitions.touched)
@@ -33,7 +33,7 @@
           repetitions.hasError("min") &&
           (repetitions.dirty || repetitions.touched)
         ) {
-          <span>min is 1</span>
+          <span>{{ "Editor.MinIsOne" | translate }}</span>
         }
       </label>
       <input
@@ -62,7 +62,7 @@
             class="heading heading -mx-2 -mt-5 flex w-full flex-shrink flex-grow items-center justify-between bg-container pl-4 text-on-container"
           >
             #{{ stIdx + 1 }}
-            <h3>Set</h3>
+            <h3>{{ "Editor.Set" | translate }}</h3>
             <button
               type="button"
               class="h-12 w-14 self-end"
@@ -87,7 +87,7 @@
             class="heading heading -mx-2 -mt-2 flex w-full flex-shrink flex-grow items-center justify-between bg-container pl-4 text-on-container"
           >
             #{{ stIdx + 1 }}
-            <h3>Timer</h3>
+            <h3>{{ "Editor.Timer" | translate }}</h3>
             <button
               type="button"
               class="h-12 w-14 self-end"

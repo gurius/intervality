@@ -16,6 +16,7 @@ import { Sequence } from './sequence/sequence';
 import { PlayableService } from '../playable/playable.service';
 import { AudioService } from '../shared/services/audio.service';
 import { SettingsService } from '../settings/settings.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export type State =
   | 'prestart'
@@ -90,6 +91,7 @@ export class PlayerService {
     private playableService: PlayableService,
     private audioService: AudioService,
     private settingsService: SettingsService,
+    private translateService: TranslateService,
   ) {}
 
   initializeSequnce(playable: Playable) {
@@ -99,7 +101,10 @@ export class PlayerService {
     this.initialSnapshot = {
       ...snapshotTemplate,
       ahead: this.sequence.ahead,
-      status: `step 1 of ${this.sequence.length}`,
+      status: this.translateService.instant('Player.StepOutOf', {
+        n: 1,
+        len: this.sequence.length,
+      }),
       currentMs: this.sequence.step.value,
     };
 
@@ -201,7 +206,13 @@ export class PlayerService {
           }
 
           this.snapshot.past += interval;
-          this.snapshot.status = `step ${this.sequence.idx + 1} of ${this.sequence.length}`;
+          this.snapshot.status = this.translateService.instant(
+            'Player.StepOutOf',
+            {
+              n: this.sequence.idx + 1,
+              len: this.sequence.length,
+            },
+          );
           this.snapshot.ahead = this.calculateAhead(interval);
           this.snapshot.currentMs = this.currentMs;
           this.snapshot.stopWatchMs = this.stopwatchMs;
@@ -238,7 +249,10 @@ export class PlayerService {
       this.currentMs = value;
       this.updatePastAhead();
       this.snapshot.currentStepProgress = 100 - (100 / value) * this.currentMs;
-      this.snapshot.status = `step ${this.sequence.idx + 1} of ${this.sequence.length}`;
+      this.snapshot.status = this.translateService.instant('Player.StepOutOf', {
+        n: this.sequence.idx + 1,
+        len: this.sequence.length,
+      });
       this.stepEmitter$.next({ direction: 'forward' });
       this.snapshotSubject$.next(this.snapshot);
     });
@@ -250,7 +264,10 @@ export class PlayerService {
       this.currentMs = value;
       this.updatePastAhead();
       this.snapshot.currentStepProgress = 100 - (100 / value) * this.currentMs;
-      this.snapshot.status = `step ${this.sequence.idx + 1} of ${this.sequence.length}`;
+      this.snapshot.status = this.translateService.instant('Player.StepOutOf', {
+        n: this.sequence.idx + 1,
+        len: this.sequence.length,
+      });
       this.stepEmitter$.next({ direction: 'backward' });
       this.snapshotSubject$.next(this.snapshot);
     });
