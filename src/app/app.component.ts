@@ -1,11 +1,11 @@
-import { Component, HostListener, inject } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Component, HostListener } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { PlayerService } from './player/player.service';
 import { filter } from 'rxjs';
 import { WakelockService } from './shared/services/wakelock.service';
 import { SettingsService } from './settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
-import { PlayableType } from './models/playable/playable.model';
+import { DialogueService } from './modal-dialogue/dialogue.service';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +14,7 @@ import { PlayableType } from './models/playable/playable.model';
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.12.0';
+  version = '0.13.0';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = false;
@@ -35,6 +35,7 @@ export class AppComponent {
     protected wakelockService: WakelockService,
     private settingsService: SettingsService,
     private translateService: TranslateService,
+    protected dialogueService: DialogueService,
   ) {
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))

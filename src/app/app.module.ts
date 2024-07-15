@@ -41,8 +41,10 @@ import { faWebAwesome } from '@fortawesome/free-brands-svg-icons';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { superSet } from './icons';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ModalContainerComponent } from './modal-container/modal-container.component';
+import { ModalDialogueComponent } from './modal-dialogue/modal-dialogue.component';
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ModalContainerComponent, ModalDialogueComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

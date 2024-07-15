@@ -16,7 +16,8 @@
     "PlaylisData": "Дані плейлисту",
     "PlaylisDataLabel": "Імпортовані данні будуть об'єднані з існуючими",
     "Import": "Імпорт",
-    "Export": "Експорт"
+    "Export": "Експорт",
+    "NothingToExport": "Здається, нічого експортувати."
   },
   "NavPanel": {
     "Tweak": "Підлаштувати {{playable}}",
@@ -43,17 +44,23 @@
     "Stopwatch": "Таймер",
     "Hybrid": "Гібридний",
     "Converted": "Конвертований",
-    "New": "Нов."
+    "New": "Нов.",
+    "Discard": "Скасування змін",
+    "Confirm": "Підтвердити?"
   },
   "Player": {
     "Past": "пройшло",
     "Ahead": "попереду",
     "StepOutOf": "крок {{n}} з {{len}}",
     "done": "завершено",
-    "next": "наступне"
+    "next": "наступне",
+    "LeavePlayer": "Вихід з плеєру",
+    "LeaveConfirm": "Прогрес буде втрачено. Вийти?"
   },
   "Common": {
     "SomethingWentWrong": "Щось пішло не так",
-    "TryAgain": "Спробуйте ще раз"
+    "TryAgain": "Спробуйте ще раз",
+    "Deletion": "Видалення",
+    "DeletionConfirmation": "Операція беззворотня. Впевніться що у вас є резервна копія. Видалити {{name}}?"
   }
 }

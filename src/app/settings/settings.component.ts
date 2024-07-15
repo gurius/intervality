@@ -4,6 +4,9 @@ import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { FileService } from '../shared/services/file/file.service';
 import { DataService } from '../data.service';
 import { Playable } from '../models/playable/playable.model';
+import { DialogueService } from '../modal-dialogue/dialogue.service';
+import { first } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-settings',
@@ -19,6 +22,8 @@ export class SettingsComponent {
     private fileService: FileService,
     private dataService: DataService,
     private fb: NonNullableFormBuilder,
+    private dialogueService: DialogueService,
+    private translateService: TranslateService,
   ) {
     this.settingsForm = this.fb.group({});
     this.initFormControls();
@@ -49,7 +54,13 @@ export class SettingsComponent {
         'intervality-data',
       );
     } else {
-      alert('Seems there are no data');
+      this.dialogueService
+        .open({
+          title: this.translateService.instant('Settings.Export'),
+          content: this.translateService.instant('Settings.NothingToExport'),
+        })
+        .pipe(first())
+        .subscribe();
     }
   }
 

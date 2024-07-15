@@ -1,0 +1,3 @@
+:host {
+  @apply m-5 flex h-fit w-fit flex-col content-stretch rounded bg-container p-5 shadow-[theme('colors.surface')_0px_3px_8px];
+}

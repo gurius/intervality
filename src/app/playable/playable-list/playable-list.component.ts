@@ -5,11 +5,13 @@ import {
   signal,
 } from '@angular/core';
 import { Playable } from '../../models/playable/playable.model';
-import { FormControl } from '@angular/forms';
+import { FormControl, isFormControl } from '@angular/forms';
 import { PlayableService } from '../playable.service';
-import { Observable } from 'rxjs';
+import { Observable, first } from 'rxjs';
 import { DataService } from '../../data.service';
 import { FileService } from '../../shared/services/file/file.service';
+import { DialogueService } from '../../modal-dialogue/dialogue.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-playable-list',
@@ -23,6 +25,8 @@ export class PlayableListComponent {
   filter = new FormControl();
 
   playableService = inject(PlayableService);
+  dialogueService = inject(DialogueService);
+  translateService = inject(TranslateService);
 
   visibleIdx: number | null = null;
 
@@ -40,9 +44,23 @@ export class PlayableListComponent {
     this.visibleIdx = this.visibleIdx === idx ? null : idx;
   }
 
-  remove(id: string) {
-    this.dataService.deleteItem(id);
-    this.data = this.playableService.getPlayable() as Observable<Playable[]>;
+  remove(item: Playable) {
+    this.dialogueService
+      .open({
+        title: this.translateService.instant('Common.Deletion'),
+        content: this.translateService.instant('Common.DeletionConfirmation', {
+          name: item.name,
+        }),
+      })
+      .pipe(first())
+      .subscribe((isConfirm) => {
+        if (isConfirm) {
+          this.dataService.deleteItem(item.id);
+          this.data = this.playableService.getPlayable() as Observable<
+            Playable[]
+          >;
+        }
+      });
   }
 
   export(item: Playable) {
@@ -53,7 +71,13 @@ export class PlayableListComponent {
         item.name,
       );
     } else {
-      alert('Seems there are no data');
+      this.dialogueService
+        .open({
+          title: this.translateService.instant('Settings.Export'),
+          content: this.translateService.instant('Settings.NothingToExport'),
+        })
+        .pipe(first())
+        .subscribe();
     }
   }
 }

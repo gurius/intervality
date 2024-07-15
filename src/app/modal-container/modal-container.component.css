@@ -1,0 +1,3 @@
+:host {
+  @apply absolute inset-0 z-10 flex content-center items-center justify-center overflow-hidden;
+}

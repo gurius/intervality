@@ -70,7 +70,7 @@
       (click)="toggleSidePanel()"
       someStringProperty
       routerLinkActive="bg-secondary"
-      (click)="navigate(['create', 'super-set'])"
+      (click)="navigate(['create', 'superset'])"
       class="flex w-full items-center gap-3 rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       ariaCurrentWhenActive="page"
     >
@@ -152,3 +152,9 @@
     <router-outlet />
   </div>
 </div>
+
+@if (dialogueService.dialogue$ | async; as isOpen) {
+  <app-modal-container>
+    <app-modal-dialogue></app-modal-dialogue>
+  </app-modal-container>
+}

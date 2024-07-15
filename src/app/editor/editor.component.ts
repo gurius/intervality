@@ -10,11 +10,13 @@ import {
   blank,
 } from '../models/playable/playable.model';
 import { PlayableService } from '../playable/playable.service';
-import { Subscription, first } from 'rxjs';
+import { Subscription, first, take } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { Location } from '@angular/common';
 import { SetFormComponent } from './set-form/set-form.component';
 import { SuperSetFormComponent } from './super-set-form/super-set-form.component';
+import { DialogueService } from '../modal-dialogue/dialogue.service';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface Submittable {
   submit: () => void;
@@ -35,6 +37,7 @@ export class EditorComponent implements OnDestroy, OnInit {
   paramMapSubscription: Subscription;
 
   form: FormGroup = new FormGroup({});
+  submitted = false;
 
   @ViewChild('submit') currentForm!: SetFormComponent | SuperSetFormComponent;
 
@@ -42,6 +45,8 @@ export class EditorComponent implements OnDestroy, OnInit {
     private aroute: ActivatedRoute,
     private playableService: PlayableService,
     private location: Location,
+    private dialogueService: DialogueService,
+    private translateService: TranslateService,
   ) {
     this.paramMapSubscription = this.aroute.params.subscribe((p) => {
       this.form = new FormGroup({});
@@ -97,10 +102,26 @@ export class EditorComponent implements OnDestroy, OnInit {
   submit() {
     if (this.form.invalid) return;
     this.currentForm.submit();
+    this.submitted = true;
   }
 
   discard() {
-    this.form.reset();
-    this.location.back();
+    if (this.form.dirty && !this.submitted) {
+      this.dialogueService
+        .open({
+          title: this.translateService.instant('Editor.Discard'),
+          content: this.translateService.instant('Editor.Confirm'),
+        })
+        .pipe(take(1))
+        .subscribe((isConfirm) => {
+          if (isConfirm) {
+            this.form.reset();
+            this.location.back();
+          }
+        });
+    } else {
+      this.form.reset();
+      this.location.back();
+    }
   }
 }

@@ -16,7 +16,8 @@
     "PlaylisData": "Playlist data",
     "PlaylisDataLabel": "Imported data is merged with existing data",
     "Import": "Import",
-    "Export": "Export"
+    "Export": "Export",
+    "NothingToExport": "Seems there is nothing to export."
   },
   "NavPanel": {
     "Tweak": "Tweak {{playable}}",
@@ -43,17 +44,23 @@
     "Stopwatch": "Stopwatch",
     "Hybrid": "Hybrid",
     "Converted": "Converted",
-    "New": "New"
+    "New": "New",
+    "Discard": "Discard changes",
+    "Confirm": "Confirm?"
   },
   "Player": {
     "Past": "past",
     "Ahead": "ahead",
     "StepOutOf": "step {{n}} of {{len}}",
     "done": "done",
-    "next": "next"
+    "next": "next",
+    "LeavePlayer": "Leave player",
+    "LeaveConfirm": "Progress will be lost. Leave anyway?"
   },
   "Common": {
     "SomethingWentWrong": "Something went wrong",
-    "TryAgain": "Try again"
+    "TryAgain": "Try again",
+    "Deletion": "Deletion",
+    "DeletionConfirmation": "Operations is irreversible, make sure you have a backup. Delete {{name}}?"
   }
 }

@@ -40,18 +40,24 @@
     </button>
     <button
       [ngClass]="{
-        'border-container text-container': form.touched && form.invalid,
+        'border-container text-container': form.invalid,
+        'border-primary text-primary': form.valid,
       }"
       type="button"
       (click)="submit()"
-      class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
+      class="mx-3 h-12 w-20 rounded-2xl border-2"
     >
       <fa-icon [icon]="['fas', 'check']"></fa-icon>
     </button>
     <button
+      [disabled]="(form.dirty && !submitted) || form.invalid"
       [routerLink]="['/player', playable.id]"
       type="button"
-      class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary"
+      class="mx-3 h-12 w-20 rounded-2xl border-2 {{
+        (submitted && form.dirty) || (form.valid && !form.dirty)
+          ? 'border-primary text-primary'
+          : 'border-container text-container'
+      }}"
     >
       <fa-icon [icon]="['fas', 'play']"></fa-icon>
     </button>
