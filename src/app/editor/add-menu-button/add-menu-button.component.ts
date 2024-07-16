@@ -5,6 +5,7 @@ import {
   SupersetNestable,
 } from '../../models/playable/playable.model';
 import { DataService } from '../../data.service';
+import { FormControl } from '@angular/forms';
 
 export type AssetType = { type: SupersetNestable; item?: Playable };
 
@@ -15,6 +16,8 @@ export type AssetType = { type: SupersetNestable; item?: Playable };
 })
 export class AddMenuButtonComponent implements OnInit {
   @Input() acceptAssetTypes!: PlayableType[];
+
+  selectCtrl = new FormControl('');
 
   onAddItem = output<AssetType>();
 
@@ -62,6 +65,7 @@ export class AddMenuButtonComponent implements OnInit {
         item,
       });
     }
+    this.selectCtrl.reset();
     this.showMenu = false;
   }
 
