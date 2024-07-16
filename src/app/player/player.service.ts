@@ -17,6 +17,7 @@ import { PlayableService } from '../playable/playable.service';
 import { AudioService } from '../shared/services/audio.service';
 import { SettingsService } from '../settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
+import { DialogueService } from '../modal/dialogue.service';
 
 export type State =
   | 'prestart'
@@ -92,11 +93,17 @@ export class PlayerService {
     private audioService: AudioService,
     private settingsService: SettingsService,
     private translateService: TranslateService,
+    private dialogueService: DialogueService,
   ) {}
 
   initializeSequnce(playable: Playable) {
     this.playable = playable;
-    this.sequence = new Sequence(playable);
+    this.sequence = new Sequence(
+      playable,
+      this.dialogueService,
+      this.translateService,
+      this.settingsService.getConfigValueOf('last-rest-removal')?.value,
+    );
 
     this.initialSnapshot = {
       ...snapshotTemplate,
@@ -189,7 +196,7 @@ export class PlayerService {
             if (this.sequence.isLastStep) {
               this.stop();
               if (
-                !this.settingsService.getConfigValueOf('sound-notification')
+                this.settingsService.getConfigValueOf('sound-notification')
                   ?.value
               ) {
                 this.audioService.play('finish');

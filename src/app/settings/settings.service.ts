@@ -10,7 +10,8 @@ export type ConfigNames =
   | 'theme'
   | 'sound-notification'
   | 'prestart-delay'
-  | 'language';
+  | 'language'
+  | 'last-rest-removal';
 
 export type Locale = 'en' | 'uk';
 
@@ -91,8 +92,9 @@ export class SettingsService {
     this.config.forEach((c) => {
       switch (c.id) {
         case 'sound-notification':
-          const isNotify = localStorage.getItem(c.id);
-          c.value = isNotify ? JSON.parse(isNotify) : c.default;
+        case 'last-rest-removal':
+          const onOroff = localStorage.getItem(c.id);
+          c.value = onOroff ? JSON.parse(onOroff) : c.default;
           break;
         case 'prestart-delay':
           const value = localStorage.getItem(c.id);
@@ -157,6 +159,14 @@ export class SettingsService {
         value: 'en',
         default: this.defautlLocale,
       },
+      {
+        label: this.tService.instant('Settings.RemoveLastRest'),
+        id: 'last-rest-removal',
+        description: this.tService.instant('Settings.RemoveLastRestLabel'),
+        controlType: 'toggle',
+        value: false,
+        default: false,
+      },
     ];
   }
 
@@ -185,6 +195,7 @@ export class SettingsService {
           this.applyTheme();
           break;
         case 'sound-notification':
+        case 'last-rest-removal':
           localStorage.setItem(c.id, c.value);
           break;
         case 'prestart-delay':

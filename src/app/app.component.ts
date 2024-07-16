@@ -15,6 +15,7 @@ import { DialogueService } from './modal/dialogue.service';
 export class AppComponent {
   title = 'Intervality';
   version = '0.13.2';
+  version = '0.14.0';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = false;

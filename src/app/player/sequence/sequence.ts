@@ -4,13 +4,25 @@ import { Timer, TimerType } from '../../models/playable/timer.model';
 import { StepInFocus, StepStatus } from '../player.service';
 import { TimerSet } from '../../models/playable/set.model';
 import { REMOVE_LAST_REST } from '../../config';
+import { SettingsService } from '../../settings/settings.service';
+import { DialogueService } from '../../modal/dialogue.service';
+import { TranslateService } from '@ngx-translate/core';
+import { first } from 'rxjs';
 
 export class Sequence {
   private currentIdx = 0;
-
+  dialogueService: DialogueService;
+  translateService: TranslateService;
   steps: Array<StepInFocus>;
 
-  constructor(playable: Playable) {
+  constructor(
+    playable: Playable,
+    dialogueService: DialogueService,
+    translateService: TranslateService,
+    isRemoveLastStep: boolean,
+  ) {
+    this.translateService = translateService;
+    this.dialogueService = dialogueService;
     switch (playable.playableType) {
       case 'countdown':
       case 'stopwatch':
@@ -43,16 +55,29 @@ export class Sequence {
         break;
     }
 
-    const first = this.steps.at(0);
-    if (first) first.status = 'current';
+    const firstStep = this.steps.at(0);
+    if (firstStep) firstStep.status = 'current';
 
     // remove last step if it's rest since it's the end of an exercise
     if (
-      REMOVE_LAST_REST &&
       this.steps.length > 1 &&
       this.steps.at(-1)?.name.toLowerCase().includes('rest')
     ) {
-      this.steps.splice(-1);
+      if (isRemoveLastStep) {
+        this.steps.splice(-1);
+      } else {
+        this.dialogueService
+          .open({
+            title: this.translateService.instant('Settings.RemoveLastRest'),
+            content: this.translateService.instant(
+              'Settings.RemoveLastRestLabel',
+            ),
+          })
+          .pipe(first())
+          .subscribe((isConfirm) => {
+            if (isConfirm) this.steps.splice(-1);
+          });
+      }
     }
 
     this.initializeEachRemaining();

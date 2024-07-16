@@ -17,7 +17,9 @@
     "PlaylisDataLabel": "Imported data is merged with existing data",
     "Import": "Import",
     "Export": "Export",
-    "NothingToExport": "Seems there is nothing to export."
+    "NothingToExport": "Seems there is nothing to export.",
+    "RemoveLastRest": "Last rest removal",
+    "RemoveLastRestLabel": "If the last step in the player appears to be a rest it can be ignored."
   },
   "NavPanel": {
     "Tweak": "Tweak {{playable}}",
