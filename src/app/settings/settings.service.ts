@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Meta } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { values } from 'lodash-es';
 import { BehaviorSubject } from 'rxjs';
@@ -62,7 +63,10 @@ export class SettingsService {
 
   config: SettingsList[] = [];
 
-  constructor(private tService: TranslateService) {
+  constructor(
+    private tService: TranslateService,
+    private metaService: Meta,
+  ) {
     const lang = this.config.find((c) => c.id === 'language');
     if (lang) {
       this.languageSubject$.next(lang.value);
@@ -205,9 +209,18 @@ export class SettingsService {
       (theme === null &&
         window.matchMedia('(prefers-color-scheme: dark)').matches)
     ) {
+      this.metaService.updateTag(
+        { name: 'theme-color', content: '#28212c' },
+        `name='theme-color'`,
+      );
       document.body.classList.add('dark');
       document.body.classList.remove('light');
     } else {
+      this.metaService.updateTag(
+        { name: 'theme-color', content: '#fffde7' },
+        `name='theme-color'`,
+      );
+
       document.body.classList.add('light');
       document.body.classList.remove('dark');
     }
