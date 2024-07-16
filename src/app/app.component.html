@@ -126,7 +126,7 @@
     <div class="mr-4 flex items-center justify-center gap-2">
       <button
         class="bttn flex h-11 w-11 items-center justify-center gap-2 rounded-md"
-        *ngIf="wakelockService.isSupported()"
+        *ngIf="wakelockService.isSupported() && isPlayer()"
         type="button"
         (click)="toggleWakelock()"
       >
