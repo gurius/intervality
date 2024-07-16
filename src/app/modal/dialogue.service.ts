@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, delay } from 'rxjs';
 
 export type DialogueData = {
   title: string;
@@ -11,7 +11,7 @@ export type DialogueData = {
 })
 export class DialogueService {
   private dialogueSubject$ = new BehaviorSubject<DialogueData | null>(null);
-  dialogue$ = this.dialogueSubject$.asObservable();
+  dialogue$ = this.dialogueSubject$.asObservable().pipe(delay(1));
 
   private dialogueResultSubject$ = new Subject<boolean>();
   dialogueResult$ = this.dialogueResultSubject$.asObservable();

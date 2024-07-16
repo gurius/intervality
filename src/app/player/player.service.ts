@@ -20,6 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DialogueService } from '../modal/dialogue.service';
 
 export type State =
+  | null
   | 'prestart'
   | 'playing'
   | 'paused'
@@ -86,7 +87,9 @@ export class PlayerService {
   snapshot!: PlayerSnapshot;
   initialSnapshot!: PlayerSnapshot;
 
-  playable!: Playable;
+  playableSubject$ = new Subject<Playable | null>();
+  playable$ = this.playableSubject$.asObservable();
+  currentPlayableId: string = '';
 
   constructor(
     private playableService: PlayableService,
@@ -97,7 +100,8 @@ export class PlayerService {
   ) {}
 
   initializeSequnce(playable: Playable) {
-    this.playable = playable;
+    this.playableSubject$.next(playable);
+    this.currentPlayableId = playable.id;
     this.sequence = new Sequence(
       playable,
       this.dialogueService,
@@ -291,7 +295,7 @@ export class PlayerService {
       .isTransformable()
       ?.transformToCountdown(this.stopwatchMs, () => {
         this.playableService.updateAsCountdownByName(
-          this.playable.id,
+          this.currentPlayableId,
           this.sequence.step.name,
           this.stopwatchMs,
         );
@@ -349,5 +353,7 @@ export class PlayerService {
     this.commenced = false;
     this.stop();
     this.snapshotSubject$.next(null);
+    this.stageEmitter$.next(null);
+    this.playableSubject$.next(null);
   }
 }

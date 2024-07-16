@@ -1,11 +1,12 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { PlayerService } from './player/player.service';
-import { filter } from 'rxjs';
+import { delay, filter } from 'rxjs';
 import { WakelockService } from './shared/services/wakelock.service';
 import { SettingsService } from './settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogueService } from './modal/dialogue.service';
+import { Playable } from './models/playable/playable.model';
 
 @Component({
   selector: 'app-root',
@@ -14,11 +15,11 @@ import { DialogueService } from './modal/dialogue.service';
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.13.2';
-  version = '0.14.0';
+  version = '0.14.1';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
-  isPlayer = false;
+  isPlayer = signal(false);
+  playerPlayable$ = this.playerService.playable$.pipe(delay(1));
 
   @HostListener('window:resize', ['$event'])
   getScreenSize() {
@@ -41,7 +42,7 @@ export class AppComponent {
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe((s) => {
-        this.isPlayer = this.router.url.includes('player');
+        this.isPlayer.set(this.router.url.includes('player'));
       });
 
     this.settingsService.language$.subscribe((lang) => {
@@ -53,8 +54,6 @@ export class AppComponent {
         this.translateService.use(language);
       }
     });
-
-    console.log(this.translateService.currentLang, 'outside');
 
     this.settingsService.applyTheme();
   }
@@ -72,12 +71,7 @@ export class AppComponent {
     this.playerService.stop();
   }
 
-  get currentlyPlayingName() {
-    const { name = null } = this.playerService.playable ?? {};
-    return name;
-  }
-  get currentlyPlayingType() {
-    const { playableType = null } = this.playerService.playable ?? {};
+  getCurrentlyPlayingType({ playableType }: Playable) {
     switch (playableType) {
       case 'superset':
         return this.translateService.instant('NavPanel.Superset').toLowerCase();
@@ -97,8 +91,7 @@ export class AppComponent {
     }
   }
 
-  editCurrentlyPlaying() {
-    const { id, playableType } = this.playerService.playable ?? {};
+  editCurrentlyPlaying({ id, playableType }: Playable) {
     this.isPanelVisible = false;
     this.navigate(['/edit', playableType, id]);
   }

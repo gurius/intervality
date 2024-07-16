@@ -11,20 +11,21 @@
     <div class="app-info__version">{{ version }}</div>
   </div>
   <nav class="overflow-y-auto">
-    @if (isPanelVisible && isPlayer && currentlyPlayingName) {
+    @if (playerPlayable$ | async; as playable) {
       <div
         class="flex w-full items-center rounded-l-lg from-purple-500 via-fuchsia-600 via-purple-400 to-purple-800 p-4 hover:bg-gradient-to-br"
       >
         <div class="w-fulld flex flex-col">
           <h6 class="text-on-surface-dim">
             {{
-              "NavPanel.Tweak" | translate: { playable: currentlyPlayingType }
+              "NavPanel.Tweak"
+                | translate: { playable: getCurrentlyPlayingType(playable) }
             }}
           </h6>
-          <button (click)="editCurrentlyPlaying()" class="flex gap-3">
+          <button (click)="editCurrentlyPlaying(playable)" class="flex gap-3">
             <fa-icon [icon]="['far', 'pen-to-square']"></fa-icon>
             <p class="max-w-56 overflow-hidden text-ellipsis whitespace-nowrap">
-              {{ currentlyPlayingName }}
+              {{ playable.name }}
             </p>
           </button>
         </div>
@@ -137,7 +138,7 @@
       </button>
 
       <button
-        *ngIf="isPlayer"
+        *ngIf="isPlayer()"
         (click)="playerStop()"
         type="button"
         class="bttn flex h-11 w-11 items-center justify-center rounded-md"
@@ -153,7 +154,7 @@
   </div>
 </div>
 
-@if (dialogueService.dialogue$ | async; as isOpen) {
+@if (dialogueService.dialogue$ | async) {
   <app-modal-container>
     <app-modal-dialogue></app-modal-dialogue>
   </app-modal-container>
