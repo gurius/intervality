@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterStateSnapshot } from '@angular/router';
 import {
   Playable,
   PlayableCountdown,
@@ -38,7 +38,10 @@ export class EditorComponent implements OnDestroy, OnInit, LeavePermission {
   paramMapSubscription: Subscription;
 
   form: FormGroup = new FormGroup({});
+
   submitted = false;
+
+  bypassGuard = false;
 
   @ViewChild('submit') currentForm!: SetFormComponent | SuperSetFormComponent;
 
@@ -48,6 +51,7 @@ export class EditorComponent implements OnDestroy, OnInit, LeavePermission {
     private location: Location,
     private dialogueService: DialogueService,
     private translateService: TranslateService,
+    private router: Router,
   ) {
     this.paramMapSubscription = this.aroute.params.subscribe((p) => {
       this.form = new FormGroup({});
@@ -106,7 +110,7 @@ export class EditorComponent implements OnDestroy, OnInit, LeavePermission {
     this.submitted = true;
   }
 
-  canLeave() {
+  canLeave(state: RouterStateSnapshot) {
     if (this.form.dirty && !this.submitted) {
       return this.dialogueService
         .open({
@@ -117,8 +121,11 @@ export class EditorComponent implements OnDestroy, OnInit, LeavePermission {
           first(),
           tap((isConfirm) => {
             if (isConfirm) {
+              this.bypassGuard = true;
               this.form.reset();
-              this.location.back();
+              this.router.createUrlTree([state.url]);
+            } else {
+              this.bypassGuard = false;
             }
           }),
         );
@@ -128,22 +135,6 @@ export class EditorComponent implements OnDestroy, OnInit, LeavePermission {
   }
 
   discard() {
-    if (this.form.dirty && !this.submitted) {
-      this.dialogueService
-        .open({
-          title: this.translateService.instant('Editor.Discard'),
-          content: this.translateService.instant('Editor.Confirm'),
-        })
-        .pipe(take(1))
-        .subscribe((isConfirm) => {
-          if (isConfirm) {
-            this.form.reset();
-            this.location.back();
-          }
-        });
-    } else {
-      this.form.reset();
-      this.location.back();
-    }
+    this.location.back();
   }
 }

@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PlayerService, PlayerSnapshot } from '../player.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterStateSnapshot } from '@angular/router';
 import { PlayableService } from '../../playable/playable.service';
 import { Playable } from '../../models/playable/playable.model';
-import { Observable, Subject, first, takeUntil } from 'rxjs';
+import { Observable, Subject, first, takeUntil, tap } from 'rxjs';
 import { LeavePermission } from '../../guards/can-leave/can-leave';
 import { DialogueData, DialogueService } from '../../modal/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,24 +18,37 @@ export class PlayerComponent implements OnInit, OnDestroy, LeavePermission {
   snapshot$: Observable<PlayerSnapshot | null>;
   destroy$ = new Subject<void>();
 
+  bypassGuard = false;
+
   constructor(
     private playerService: PlayerService,
     private playableService: PlayableService,
     private aroute: ActivatedRoute,
     private translateService: TranslateService,
     private dialogueService: DialogueService,
+    private router: Router,
   ) {
     this.snapshot$ = playerService.snapshot$.pipe(takeUntil(this.destroy$));
   }
 
-  canLeave() {
+  canLeave(state: RouterStateSnapshot) {
     if (this.playerService.playing) {
       return this.dialogueService
         .open({
           title: this.translateService.instant('Player.LeavePlayer'),
           content: this.translateService.instant('Player.LeaveConfirm'),
         })
-        .pipe(first());
+        .pipe(
+          first(),
+          tap((isConfirm) => {
+            if (isConfirm) {
+              this.bypassGuard = true;
+              this.router.createUrlTree([state.url]);
+            } else {
+              this.bypassGuard = false;
+            }
+          }),
+        );
     } else {
       return true;
     }

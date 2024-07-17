@@ -1,5 +1,8 @@
-import { GuardResult, MaybeAsync } from '@angular/router';
+import { GuardResult, MaybeAsync, RouterStateSnapshot } from '@angular/router';
 
 export interface LeavePermission {
-  canLeave(): MaybeAsync<GuardResult>;
+  canLeave(
+    state: RouterStateSnapshot | { url: string },
+  ): MaybeAsync<GuardResult>;
+  bypassGuard: boolean;
 }

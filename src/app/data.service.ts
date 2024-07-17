@@ -77,7 +77,6 @@ export class DataService {
   }
 
   merge(playable: Playable[]) {
-    console.log('merge called');
     const data = this.getAll();
 
     const alreadyInStorage = playable.filter((p) => {

@@ -41,9 +41,7 @@ export class SetFormComponent implements OnInit, OnDestroy, Submittable {
     );
   }
 
-  ngOnDestroy(): void {
-    console.log('set form destroyed');
-  }
+  ngOnDestroy(): void {}
 
   get name() {
     return this.setForm.get('name') as FormControl;
@@ -70,7 +68,6 @@ export class SetFormComponent implements OnInit, OnDestroy, Submittable {
       }),
     };
 
-    console.log(set);
     this.dataService.updsertItem(set);
   }
 }
