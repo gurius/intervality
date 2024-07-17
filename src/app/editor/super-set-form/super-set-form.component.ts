@@ -21,7 +21,7 @@ import {
 } from '../timer-form-array/timer-form.component';
 import { TimerSet } from '../../models/playable/set.model';
 import { Timer } from '../../models/playable/timer.model';
-import { DataService } from '../../data.service';
+import { DataService } from '../../shared/services/data/data.service';
 import { AssetType } from '../add-menu-button/add-menu-button.component';
 
 export type SetFormGroup = FormGroup<{

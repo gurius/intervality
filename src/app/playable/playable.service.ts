@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Playable, PlayableSuperset } from '../models/playable/playable.model';
-import { DataService } from '../data.service';
+import { DataService } from '../shared/services/data/data.service';
 import {
   CountdownTimer,
   EventuallyCountdownTimer,

@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Submittable } from '../editor.component';
-import { DataService } from '../../data.service';
+import { DataService } from '../../shared/services/data/data.service';
 import {
   PlayableCountdown,
   PlayableStopwatch,

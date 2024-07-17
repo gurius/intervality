@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { Change, SettingsService } from './settings.service';
 import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { FileService } from '../shared/services/file/file.service';
-import { DataService } from '../data.service';
+import { DataService } from '../shared/services/data/data.service';
 import { Playable } from '../models/playable/playable.model';
 import { DialogueService } from '../modal/dialogue.service';
 import { first } from 'rxjs';

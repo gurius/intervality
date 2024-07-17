@@ -6,9 +6,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { PlayableSet } from '../../models/playable/playable.model';
-import { DataService } from '../../data.service';
 import { Submittable } from '../editor.component';
 import { TimerSet } from '../../models/playable/set.model';
+import { DataService } from '../../shared/services/data/data.service';
 
 @Component({
   selector: 'app-set-form',

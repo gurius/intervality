@@ -4,7 +4,7 @@ import {
   PlayableType,
   SupersetNestable,
 } from '../../models/playable/playable.model';
-import { DataService } from '../../data.service';
+import { DataService } from '../../shared/services/data/data.service';
 import { FormControl } from '@angular/forms';
 
 export type AssetType = { type: SupersetNestable; item?: Playable };

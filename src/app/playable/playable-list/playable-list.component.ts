@@ -8,7 +8,7 @@ import { Playable } from '../../models/playable/playable.model';
 import { FormControl, isFormControl } from '@angular/forms';
 import { PlayableService } from '../playable.service';
 import { Observable, first } from 'rxjs';
-import { DataService } from '../../data.service';
+import { DataService } from '../../shared/services/data/data.service';
 import { FileService } from '../../shared/services/file/file.service';
 import { DialogueService } from '../../modal/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
