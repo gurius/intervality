@@ -243,6 +243,10 @@ export class SettingsService {
         { name: 'theme-color', content: '#28212c' },
         `name='theme-color'`,
       );
+      this.metaService.updateTag(
+        { rel: 'mask-icon', content: '#28212c' },
+        `rel='mask-icon'`,
+      );
       document.body.classList.add('dark');
       document.body.classList.remove('light');
     } else {
@@ -251,6 +255,10 @@ export class SettingsService {
         `name='theme-color'`,
       );
 
+      this.metaService.updateTag(
+        { rel: 'mask-icon', content: '#fffde7' },
+        `rel='mask-icon'`,
+      );
       document.body.classList.add('light');
       document.body.classList.remove('dark');
     }
