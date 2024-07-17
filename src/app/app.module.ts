@@ -36,6 +36,7 @@ import {
   faToggleOn,
   faFileArrowDown,
   faFileArrowUp,
+  faChargingStation,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWebAwesome } from '@fortawesome/free-brands-svg-icons';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -103,6 +104,7 @@ export class AppModule {
       faToggleOn,
       faFileArrowDown,
       faFileArrowUp,
+      faChargingStation,
     );
   }
 }

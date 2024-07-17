@@ -106,7 +106,9 @@ export class PlayerService {
       playable,
       this.dialogueService,
       this.translateService,
-      this.settingsService.getConfigValueOf('last-rest-removal')?.value,
+      this.settingsService.getConfigValueOf('last-rest-removal')
+        ?.value as boolean,
+      this.settingsService.getConfigValueOf('rest-timer-id')?.value as string,
     );
 
     this.initialSnapshot = {
@@ -123,8 +125,8 @@ export class PlayerService {
     this.snapshot = cloneDeep(this.initialSnapshot);
     this.currentMs = this.sequence.step.value;
   }
-  startBefore: number =
-    this.settingsService.getConfigValueOf('prestart-delay')?.value;
+  startBefore: number = this.settingsService.getConfigValueOf('prestart-delay')
+    ?.value as number;
 
   commenceSequence(prestart: number) {
     this.commenced = true;
@@ -143,8 +145,9 @@ export class PlayerService {
           if (this.snapshot.prestart <= 1000) {
             // stop prestart and switch to playing
             s.unsubscribe();
-            this.startBefore =
-              this.settingsService.getConfigValueOf('prestart-delay')?.value;
+            this.startBefore = this.settingsService.getConfigValueOf(
+              'prestart-delay',
+            )?.value as number;
             this.play();
           }
         }),
@@ -168,7 +171,7 @@ export class PlayerService {
 
   play(
     prestart: number = this.settingsService.getConfigValueOf('prestart-delay')
-      ?.value,
+      ?.value as number,
   ) {
     if (!this.commenced) {
       this.commenceSequence(prestart);
@@ -212,8 +215,9 @@ export class PlayerService {
               this.stepEmitter$.next({ direction: 'forward' });
             });
             this.currentMs = this.sequence.step.value;
-            this.startBefore =
-              this.settingsService.getConfigValueOf('prestart-delay')?.value;
+            this.startBefore = this.settingsService.getConfigValueOf(
+              'prestart-delay',
+            )?.value as number;
           }
 
           this.snapshot.past += interval;

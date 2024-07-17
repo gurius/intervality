@@ -1,24 +1,27 @@
 import { Injectable } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { values } from 'lodash-es';
 import { BehaviorSubject } from 'rxjs';
 
-export type SettingsList = Select | Toggle | Value;
+export type SettingsList = Select | Toggle | Value<string> | Value<number>;
 
 export type ConfigNames =
   | 'theme'
   | 'sound-notification'
   | 'prestart-delay'
   | 'language'
-  | 'last-rest-removal';
+  | 'last-rest-removal'
+  | 'rest-timer-id';
 
 export type Locale = 'en' | 'uk';
 
-export type Change = {
-  id: ConfigNames;
-  value: string | boolean | number;
-};
+export type Change =
+  | { id: 'theme'; value: string }
+  | { id: 'sound-notification'; value: boolean }
+  | { id: 'prestart-delay'; value: number }
+  | { id: 'language'; value: Locale }
+  | { id: 'last-rest-removal'; value: boolean }
+  | { id: 'rest-timer-id'; value: string };
 
 export type Toggle = {
   label: string;
@@ -39,11 +42,11 @@ export type Select<T = any> = {
   default: string;
 };
 
-export type Value<T = any> = {
+export type Value<T extends string | number> = {
   label: string;
   id: ConfigNames;
   description: string;
-  controlType: 'value';
+  controlType: 'string' | 'number';
   value: T;
   default: T;
 };
@@ -70,7 +73,7 @@ export class SettingsService {
   ) {
     const lang = this.config.find((c) => c.id === 'language');
     if (lang) {
-      this.languageSubject$.next(lang.value);
+      this.languageSubject$.next(lang.value as Locale);
     }
 
     this.restoreFromLocalStorage();
@@ -143,7 +146,7 @@ export class SettingsService {
         label: this.tService.instant('Settings.PrestartDelay'),
         id: 'prestart-delay',
         description: this.tService.instant('Settings.PrestartLabel'),
-        controlType: 'value',
+        controlType: 'number',
         value: 1000,
         default: 1000,
       },
@@ -167,6 +170,14 @@ export class SettingsService {
         value: false,
         default: false,
       },
+      {
+        label: this.tService.instant('Settings.RestTimerID'),
+        id: 'rest-timer-id',
+        description: this.tService.instant('Settings.RestTimerIDLabel'),
+        controlType: 'string',
+        value: this.tService.instant('Settings.RestTimerIDDefault'),
+        default: this.tService.instant('Settings.RestTimerIDDefault'),
+      },
     ];
   }
 
@@ -179,6 +190,8 @@ export class SettingsService {
       if (config) {
         if (config.id === 'prestart-delay') {
           config.value = (value as number) * 1000;
+        } else if (config.id === 'rest-timer-id') {
+          config.value = (value as string).trim();
         } else {
           config.value = value;
         }
@@ -191,19 +204,25 @@ export class SettingsService {
     this.config?.forEach((c) => {
       switch (c.id) {
         case 'theme':
-          this.setTheme(c.value);
+          this.setTheme(c.value as 'system' | 'light' | 'dark');
           this.applyTheme();
           break;
         case 'sound-notification':
         case 'last-rest-removal':
-          localStorage.setItem(c.id, c.value);
+          localStorage.setItem(c.id, c.value as string);
           break;
         case 'prestart-delay':
         case 'language':
           localStorage.setItem(c.id, `${c.value}`);
-          this.languageSubject$.next(c.value);
+          this.languageSubject$.next(c.value as Locale);
 
           break;
+        case 'rest-timer-id':
+          if ((c.value as string).trim() === c.default) {
+            localStorage.removeItem(c.id);
+          } else {
+            localStorage.setItem(c.id, (c.value as string).trim());
+          }
       }
     });
   }

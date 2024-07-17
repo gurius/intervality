@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { PlayerService, PlayerSnapshot, StepInFocus } from '../player.service';
 import { Subject, takeUntil } from 'rxjs';
+import { SettingsService } from '../../settings/settings.service';
 
 @Component({
   selector: 'app-sequence',
@@ -23,6 +24,7 @@ export class SequenceComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
 
   playerService = inject(PlayerService);
+  settingsService = inject(SettingsService);
 
   currentScrollYposition = 0;
 
@@ -52,6 +54,18 @@ export class SequenceComponent implements OnInit, OnDestroy {
           this.scrollTo(0);
         }
       });
+  }
+
+  isRest(name: string) {
+    const restId =
+      this.settingsService.getConfigValueOf('rest-timer-id')?.value;
+    return (
+      restId &&
+      name
+        .toLowerCase()
+        .trim()
+        .includes((restId as string).toLowerCase())
+    );
   }
 
   scrollTo(position: number) {

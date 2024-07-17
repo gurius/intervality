@@ -19,7 +19,10 @@
     "Export": "Export",
     "NothingToExport": "Seems there is nothing to export.",
     "RemoveLastRest": "Last rest removal",
-    "RemoveLastRestLabel": "If the last step in the player appears to be a rest it can be ignored."
+    "RemoveLastRestLabel": "If the last step in the player appears to be a rest it can be ignored.",
+    "RestTimerID": "Resting timer ID",
+    "RestTimerIDLabel": "Use it in timers name to mark timer as resting",
+    "RestTimerIDDefault": "Rest"
   },
   "NavPanel": {
     "Tweak": "Tweak {{playable}}",

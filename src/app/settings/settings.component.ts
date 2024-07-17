@@ -36,7 +36,8 @@ export class SettingsComponent {
 
   initFormControls() {
     this.settingsService.config?.forEach((c) => {
-      let value = c.id === 'prestart-delay' ? c.value / 1000 : c.value;
+      let value =
+        c.id === 'prestart-delay' ? (c.value as number) / 1000 : c.value;
 
       const validators = [
         Validators.required,

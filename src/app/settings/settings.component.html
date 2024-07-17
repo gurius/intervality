@@ -34,10 +34,19 @@
                 }
               </select>
             }
-            @case ("value") {
+            @case ("number") {
               <div class="flex max-w-28 flex-1 flex-col">
                 <input
                   type="number"
+                  [formControlName]="point.id"
+                  id="{{ point.id }}-{{ idx }}"
+                />
+              </div>
+            }
+            @case ("string") {
+              <div class="flex min-w-36 max-w-44 flex-1 flex-col">
+                <input
+                  type="text"
                   [formControlName]="point.id"
                   id="{{ point.id }}-{{ idx }}"
                 />

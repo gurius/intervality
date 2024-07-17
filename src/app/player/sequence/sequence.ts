@@ -20,6 +20,7 @@ export class Sequence {
     dialogueService: DialogueService,
     translateService: TranslateService,
     isRemoveLastStep: boolean,
+    restId: string = 'rest',
   ) {
     this.translateService = translateService;
     this.dialogueService = dialogueService;
@@ -61,7 +62,11 @@ export class Sequence {
     // remove last step if it's rest since it's the end of an exercise
     if (
       this.steps.length > 1 &&
-      this.steps.at(-1)?.name.toLowerCase().includes('rest')
+      this.steps
+        .at(-1)
+        ?.name.toLowerCase()
+        .trim()
+        .includes(restId.toLowerCase())
     ) {
       if (isRemoveLastStep) {
         this.steps.splice(-1);
