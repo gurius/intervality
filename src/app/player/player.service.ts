@@ -18,6 +18,9 @@ import { AudioService } from '../shared/services/audio.service';
 import { SettingsService } from '../settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogueService } from '../modal/dialogue.service';
+import { BeepService } from './beep.service';
+import { TextToSpeechService } from './tts.service';
+import { BuzzService } from './buzzing.service';
 
 export type State =
   | null
@@ -90,18 +93,21 @@ export class PlayerService {
   playableSubject$ = new Subject<Playable | null>();
   playable$ = this.playableSubject$.asObservable();
   currentPlayableId: string = '';
+  playableType: string = '';
 
   constructor(
     private playableService: PlayableService,
-    private audioService: AudioService,
     private settingsService: SettingsService,
     private translateService: TranslateService,
     private dialogueService: DialogueService,
+    private beep: BeepService,
+    private tts: TextToSpeechService,
   ) {}
 
   initializeSequnce(playable: Playable) {
     this.playableSubject$.next(playable);
     this.currentPlayableId = playable.id;
+    this.playableType = playable.name;
     this.sequence = new Sequence(
       playable,
       this.dialogueService,
@@ -137,6 +143,7 @@ export class PlayerService {
     this.snapshot.ahead = this.sequence.ahead;
     this.snapshotSubject$.next(this.snapshot);
     this.currentMs = this.sequence.step.value;
+    this.resetStartBefore();
 
     const s = interval(INTERVAL_MS)
       .pipe(
@@ -151,19 +158,19 @@ export class PlayerService {
                 ?.value
             )
               return;
-
-            this.audioService.play(
-              this.startBefore > 0 ? 'recurring' : 'before-next',
-            );
+            if (this.startBefore > 1000) {
+              this.beep.play(0.1, 0.2, 0.3, 0.1);
+            } else {
+              this.beep.play(0.4, 0.2, 0.2, 0.2);
+            }
           });
 
           if (this.snapshot.prestart <= 1000) {
             // stop prestart and switch to playing
             s.unsubscribe();
-            this.startBefore = this.settingsService.getConfigValueOf(
-              'prestart-delay',
-            )?.value as number;
+            this.resetStartBefore();
             this.play();
+            this.tts.say(this.sequence.step.name);
           }
         }),
         takeUntil(this.stop$),
@@ -205,9 +212,11 @@ export class PlayerService {
             )
               return;
 
-            this.audioService.play(
-              this.startBefore > 0 ? 'recurring' : 'before-next',
-            );
+            if (this.startBefore > 1000) {
+              this.beep.play(0.1, 0.2, 0.3, 0.1);
+            } else {
+              this.beep.play(0.4, 0.2, 0.2, 0.2);
+            }
           });
 
           // when countdown reaches zero - stop playing
@@ -218,9 +227,7 @@ export class PlayerService {
                 this.settingsService.getConfigValueOf('sound-notification')
                   ?.value
               ) {
-                setTimeout(() => {
-                  this.audioService.play('finish');
-                }, 500);
+                this.tts.say(`${this.playableType} complete`);
               }
               return;
             }
@@ -228,10 +235,10 @@ export class PlayerService {
             this.sequence.goForward(() => {
               this.stepEmitter$.next({ direction: 'forward' });
             });
+            this.tts.say(this.sequence.step.name);
+
             this.currentMs = this.sequence.step.value;
-            this.startBefore = this.settingsService.getConfigValueOf(
-              'prestart-delay',
-            )?.value as number;
+            this.resetStartBefore();
           }
 
           this.snapshot.past += interval;
@@ -389,10 +396,15 @@ export class PlayerService {
   callBeforeEnd(currentMs: number, fn: () => void) {
     const pred = Math.floor(currentMs / (this.startBefore + 4));
 
-    if (!(pred >= 1) && this.startBefore >= 0) {
+    if (!(pred >= 1) && this.startBefore > 0) {
       console.log(currentMs, this.startBefore, pred);
       fn();
       this.startBefore -= 1000;
     }
+  }
+
+  resetStartBefore() {
+    this.startBefore = this.settingsService.getConfigValueOf('prestart-delay')
+      ?.value as number;
   }
 }
