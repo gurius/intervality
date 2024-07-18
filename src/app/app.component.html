@@ -120,11 +120,14 @@
   }"
 >
   <div class="heading flex h-14 justify-between xl:h-20">
-    <button type="button" (click)="toggleSidePanel()" class="p-5">
-      <fa-icon [icon]="['fas', 'bars']"></fa-icon>
-    </button>
-
-    <div class="mr-4 flex items-center justify-center gap-2">
+    <div class="ml-4 flex items-center justify-center gap-2">
+      <button
+        type="button"
+        (click)="toggleSidePanel()"
+        class="bttn flex h-11 w-11 items-center justify-center gap-2 rounded-md"
+      >
+        <fa-icon [icon]="['fas', 'bars']"></fa-icon>
+      </button>
       <button
         class="bttn flex h-11 w-11 items-center justify-center gap-2 rounded-md"
         *ngIf="wakelockService.isSupported() && isPlayer()"
@@ -137,14 +140,16 @@
           <fa-icon [icon]="['fas', 'coffee']"></fa-icon>
         }
       </button>
+    </div>
 
+    <div class="mr-4 flex items-center justify-center gap-2">
       <button
         *ngIf="isPlayer()"
         (click)="playerStop()"
         type="button"
         class="bttn flex h-11 w-11 items-center justify-center rounded-md"
       >
-        <fa-icon [icon]="['fas', 'circle-stop']"></fa-icon>
+        <fa-icon [icon]="['fas', 'arrow-rotate-right']"></fa-icon>
       </button>
     </div>
   </div>
