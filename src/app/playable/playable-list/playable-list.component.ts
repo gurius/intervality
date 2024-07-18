@@ -1,13 +1,15 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnDestroy,
+  OnInit,
   inject,
   signal,
 } from '@angular/core';
 import { Playable } from '../../models/playable/playable.model';
 import { FormControl, isFormControl } from '@angular/forms';
 import { PlayableService } from '../playable.service';
-import { Observable, first } from 'rxjs';
+import { Observable, first, tap } from 'rxjs';
 import { DataService } from '../../shared/services/data/data.service';
 import { FileService } from '../../shared/services/file/file.service';
 import { DialogueService } from '../../modal/dialogue.service';
@@ -19,9 +21,9 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrl: './playable-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlayableListComponent {
+export class PlayableListComponent implements OnInit, OnDestroy {
   userInput = signal('');
-
+  data!: Observable<Playable[] | null>;
   filter = new FormControl();
 
   playableService = inject(PlayableService);
@@ -33,12 +35,17 @@ export class PlayableListComponent {
   private dataService = inject(DataService);
   private fileService = inject(FileService);
 
+  constructor() {}
+
   find(e?: KeyboardEvent) {
     if (!e || e.code === 'Enter') this.userInput.set(this.filter.value);
   }
+  ngOnInit(): void {
+    this.data = this.playableService.all$;
+    this.playableService.updateList();
+  }
 
-  data: Observable<Playable[]> =
-    this.playableService.getPlayable() as Observable<Playable[]>;
+  ngOnDestroy(): void {}
 
   toggleItemMenu(idx: number) {
     this.visibleIdx = this.visibleIdx === idx ? null : idx;
@@ -56,9 +63,7 @@ export class PlayableListComponent {
       .subscribe((isConfirm) => {
         if (isConfirm) {
           this.dataService.deleteItem(item.id);
-          this.data = this.playableService.getPlayable() as Observable<
-            Playable[]
-          >;
+          this.playableService.updateList();
         }
       });
   }

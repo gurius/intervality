@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import { Playable, PlayableSuperset } from '../models/playable/playable.model';
 import { DataService } from '../shared/services/data/data.service';
 import {
@@ -13,15 +13,18 @@ import { TimerSet } from '../models/playable/set.model';
   providedIn: 'root',
 })
 export class PlayableService {
+  subject = new BehaviorSubject<Playable[] | null>(null);
+  all$ = this.subject.asObservable();
+
   constructor(private dataService: DataService) {}
 
-  getPlayable(id?: string): Observable<Playable | Playable[]> {
+  getPlayable(id: string): Observable<Playable> {
+    return of(this.dataService.getById(id));
+  }
+
+  updateList() {
     const playable = this.dataService.getAll();
-    if (id) {
-      return of(this.dataService.getById(id)) as Observable<Playable>;
-    } else {
-      return of(playable) as Observable<Playable[]>;
-    }
+    this.subject.next(playable);
   }
 
   updateAsCountdownByName(
