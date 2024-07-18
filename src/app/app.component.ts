@@ -7,7 +7,6 @@ import { SettingsService } from './settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogueService } from './modal/dialogue.service';
 import { Playable } from './models/playable/playable.model';
-import { BuzzService } from './player/buzzing.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +15,7 @@ import { BuzzService } from './player/buzzing.service';
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.15.1';
+  version = '0.15.2';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = signal(false);
@@ -39,7 +38,6 @@ export class AppComponent {
     private settingsService: SettingsService,
     private translateService: TranslateService,
     protected dialogueService: DialogueService,
-    private buzzService: BuzzService,
   ) {
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
@@ -99,8 +97,6 @@ export class AppComponent {
   }
 
   toggleWakelock() {
-    this.buzzService.vibration();
-
     if (this.wakelockService.isLocked()) {
       this.wakelockService.releaseLock();
     } else {

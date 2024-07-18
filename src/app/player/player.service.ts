@@ -14,13 +14,11 @@ import { cloneDeep } from 'lodash-es';
 import { INTERVAL_MS, PRESTART_DELAY_MS } from '../config';
 import { Sequence } from './sequence/sequence';
 import { PlayableService } from '../playable/playable.service';
-import { AudioService } from '../shared/services/audio.service';
 import { SettingsService } from '../settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogueService } from '../modal/dialogue.service';
 import { BeepService } from './beep.service';
 import { TextToSpeechService } from './tts.service';
-import { BuzzService } from './buzzing.service';
 
 export type State =
   | null
@@ -337,14 +335,20 @@ export class PlayerService {
 
     this.snapshot.ahead = this.sequence.ahead;
 
+    this.resetStartBefore();
+
     if (this.sequence.isLastStep) {
       this.snapshot.ahead = 0;
       this.stop(true);
+      this.tts.say(`${this.playableType} complete`);
+
       return;
     } else {
       this.sequence.goForward(() => {
         this.stepEmitter$.next({ direction: 'forward' });
       });
+
+      this.tts.say(this.sequence.step.name);
 
       this.currentMs = this.sequence.step.value;
     }
@@ -397,7 +401,6 @@ export class PlayerService {
     const pred = Math.floor(currentMs / (this.startBefore + 4));
 
     if (!(pred >= 1) && this.startBefore > 0) {
-      console.log(currentMs, this.startBefore, pred);
       fn();
       this.startBefore -= 1000;
     }
