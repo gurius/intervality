@@ -49,7 +49,7 @@ export class SequenceComponent implements OnInit, OnDestroy {
     this.playerService.stage$
       .pipe(takeUntil(this.destroy$))
       .subscribe((stage) => {
-        if (stage === 'stoped' || stage === 'complete') {
+        if (stage === 'stoped') {
           this.currentScrollYposition = 0;
           this.scrollTo(0);
         }

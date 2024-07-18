@@ -123,15 +123,20 @@ export class PlayerService {
 
     this.snapshotSubject$.next(this.initialSnapshot);
     this.snapshot = cloneDeep(this.initialSnapshot);
-    this.currentMs = this.sequence.step.value;
   }
-  startBefore: number = this.settingsService.getConfigValueOf('prestart-delay')
-    ?.value as number;
+
+  startBefore: number =
+    (this.settingsService.getConfigValueOf('prestart-delay')?.value as number) +
+    1000;
 
   commenceSequence(prestart: number) {
     this.commenced = true;
     this.snapshot.state = 'commenced';
     this.snapshot.prestart = prestart;
+    this.snapshot.past = this.sequence.passed;
+    this.snapshot.ahead = this.sequence.ahead;
+    this.snapshotSubject$.next(this.snapshot);
+    this.currentMs = this.sequence.step.value;
 
     const s = interval(INTERVAL_MS)
       .pipe(
@@ -140,7 +145,17 @@ export class PlayerService {
           this.snapshot.prestart -= interval;
           this.snapshotSubject$.next(this.snapshot);
 
-          this.soundSignal(this.snapshot.prestart);
+          this.callBeforeEnd(this.snapshot.prestart, () => {
+            if (
+              !this.settingsService.getConfigValueOf('sound-notification')
+                ?.value
+            )
+              return;
+
+            this.audioService.play(
+              this.startBefore > 0 ? 'recurring' : 'before-next',
+            );
+          });
 
           if (this.snapshot.prestart <= 1000) {
             // stop prestart and switch to playing
@@ -154,19 +169,6 @@ export class PlayerService {
         takeUntil(this.stop$),
       )
       .subscribe();
-  }
-
-  soundSignal(currentMs: number) {
-    if (!this.settingsService.getConfigValueOf('sound-notification')?.value)
-      return;
-    const pred = Math.floor(currentMs / this.startBefore);
-    if (!(pred >= 1) && this.startBefore > 0) {
-      this.audioService.play(
-        this.startBefore === 1000 ? 'before-next' : 'recurring',
-      );
-
-      this.startBefore -= 1000;
-    }
   }
 
   play(
@@ -196,17 +198,29 @@ export class PlayerService {
             this.currentMs -= interval;
           }
 
-          this.soundSignal(this.currentMs);
+          this.callBeforeEnd(this.currentMs, () => {
+            if (
+              !this.settingsService.getConfigValueOf('sound-notification')
+                ?.value
+            )
+              return;
+
+            this.audioService.play(
+              this.startBefore > 0 ? 'recurring' : 'before-next',
+            );
+          });
 
           // when countdown reaches zero - stop playing
           if (currentStep.timerType === 'countdown' && this.currentMs <= 0) {
             if (this.sequence.isLastStep) {
-              this.stop();
+              this.stop(true);
               if (
                 this.settingsService.getConfigValueOf('sound-notification')
                   ?.value
               ) {
-                this.audioService.play('finish');
+                setTimeout(() => {
+                  this.audioService.play('finish');
+                }, 500);
               }
               return;
             }
@@ -245,23 +259,30 @@ export class PlayerService {
     this.stop$.next();
   }
 
-  stop() {
+  stop(softStop: boolean = false) {
     this.stop$.next();
 
-    this.sequence.reset();
-    this.updatePastAhead();
     this.currentMs = this.sequence.step.value;
+    const state = softStop ? 'complete' : 'stoped';
     this.stopwatchMs = 0;
     this.playing = false;
     this.commenced = false;
-    this.snapshot.state = 'stoped';
+    this.snapshot.state = state;
+    this.snapshot.currentMs = this.currentMs;
 
-    this.snapshot.status = this.translateService.instant('Player.StepOutOf', {
-      n: 1,
-      len: this.sequence.length,
-    });
+    this.stageEmitter$.next(state);
+    this.snapshotSubject$.next(this.snapshot);
 
-    this.stageEmitter$.next('stoped');
+    if (!softStop) {
+      this.sequence.reset();
+      this.snapshotSubject$.next(this.initialSnapshot);
+      this.snapshot.status = this.translateService.instant('Player.StepOutOf', {
+        n: 1,
+        len: this.sequence.length,
+      });
+    }
+
+    this.snapshot.currentStepProgress = 0;
   }
 
   goNext() {
@@ -307,16 +328,19 @@ export class PlayerService {
 
     this.stopwatchMs = 0;
 
+    this.snapshot.ahead = this.sequence.ahead;
+
     if (this.sequence.isLastStep) {
-      this.stop();
+      this.snapshot.ahead = 0;
+      this.stop(true);
       return;
+    } else {
+      this.sequence.goForward(() => {
+        this.stepEmitter$.next({ direction: 'forward' });
+      });
+
+      this.currentMs = this.sequence.step.value;
     }
-
-    this.sequence.goForward(() => {
-      this.stepEmitter$.next({ direction: 'forward' });
-    });
-
-    this.currentMs = this.sequence.step.value;
   }
 
   calculateAhead(interval: number) {
@@ -342,6 +366,7 @@ export class PlayerService {
     this.snapshotSubject$.next(this.snapshot);
   }
 
+  // for use with goNext, goPrev, onRewind,
   updatePastAhead() {
     const passed = this.sequence.step.value - this.currentMs;
     this.snapshot.past = this.sequence.passed + passed;
@@ -359,5 +384,15 @@ export class PlayerService {
     this.snapshotSubject$.next(null);
     this.stageEmitter$.next(null);
     this.playableSubject$.next(null);
+  }
+
+  callBeforeEnd(currentMs: number, fn: () => void) {
+    const pred = Math.floor(currentMs / (this.startBefore + 4));
+
+    if (!(pred >= 1) && this.startBefore >= 0) {
+      console.log(currentMs, this.startBefore, pred);
+      fn();
+      this.startBefore -= 1000;
+    }
   }
 }

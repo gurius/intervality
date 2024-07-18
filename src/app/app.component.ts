@@ -15,7 +15,7 @@ import { Playable } from './models/playable/playable.model';
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.14.5';
+  version = '0.14.6';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = signal(false);

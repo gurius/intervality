@@ -11,8 +11,10 @@ export class AudioService {
   } = { 'before-next': undefined, recurring: undefined, finish: undefined };
 
   play(title: Sound) {
-    this.sound[title]?.play().catch((error) => {
-      console.error('Audio playback failed:', error);
+    setTimeout(() => {
+      this.sound[title]?.play().catch((error) => {
+        console.error('Audio playback failed:', error);
+      });
     });
   }
 
