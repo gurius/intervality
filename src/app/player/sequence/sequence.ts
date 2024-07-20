@@ -1,10 +1,8 @@
 import { cloneDeep, times } from 'lodash-es';
-import { Playable, PlayableType } from '../../models/playable/playable.model';
+import { Playable } from '../../models/playable/playable.model';
 import { Timer, TimerType } from '../../models/playable/timer.model';
 import { StepInFocus, StepStatus } from '../player.service';
 import { TimerSet } from '../../models/playable/set.model';
-import { REMOVE_LAST_REST } from '../../config';
-import { SettingsService } from '../../settings/settings.service';
 import { DialogueService } from '../../modal/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
 import { first } from 'rxjs';

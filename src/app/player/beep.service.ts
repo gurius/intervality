@@ -1,4 +1,20 @@
 import { Injectable } from '@angular/core';
+import { SettingsService } from '../settings/settings.service';
+import {
+  Observable,
+  exhaustMap,
+  OperatorFunction,
+  combineLatestWith,
+  distinctUntilChanged,
+  filter,
+  interval,
+  map,
+  switchMap,
+  takeUntil,
+  tap,
+  defer,
+} from 'rxjs';
+import { PlayerService, PlayerSnapshot } from './player.service';
 
 @Injectable({
   providedIn: 'root',
@@ -6,9 +22,70 @@ import { Injectable } from '@angular/core';
 export class BeepService {
   private audioContext: AudioContext;
 
-  constructor() {
+  startBefore: number = 0;
+  notifyBefore: number = 0;
+
+  notify$!: Observable<number>;
+
+  constructor(
+    private settingsService: SettingsService,
+    private playerService: PlayerService,
+  ) {
     this.audioContext = new (window.AudioContext ||
       (window as any).webkitAudioContext)();
+
+    const cfg$ = settingsService.config$.pipe(
+      map((cfg) =>
+        cfg.filter((cfg) => ['notify-before-seconds'].includes(cfg.id)),
+      ),
+      distinctUntilChanged((prev, curr) => {
+        if (prev.length !== curr.length) return false;
+
+        const isChanged = prev.every((cfg, i) => cfg.value === curr[i].value);
+        return isChanged;
+      }),
+
+      map((cfg) =>
+        this.settingsService
+          .transformNotifyBeforeValue((cfg[0]?.value as string) ?? '')
+          .map((tup) => {
+            let [start, range, intensity] = tup;
+            start += 1000 + intensity;
+            const end = range;
+
+            console.log('inside config ', [start, end, intensity]);
+            return [start, end, intensity] as [number, number, number];
+          }),
+      ),
+    );
+
+    this.notify$ = playerService.snapshot$.pipe(
+      combineLatestWith(cfg$),
+      filter(([snapshot, cfg]) => {
+        const { currentMs: ms } = snapshot ?? { currentMs: 0 };
+        // is any of configs time start meet current countdown value
+        const isOneOf = cfg.some((c) => c.at(0) === ms);
+        return isOneOf;
+      }),
+      map(([snapshot, cfg]) => {
+        const { currentMs: ms } = snapshot ?? { currentMs: 0 };
+
+        const conf = cfg.find((c) => c.at(0) === ms);
+
+        const [startAt, stopAfter, intensity] = conf ?? [-1, 0, 1000];
+        console.log(startAt);
+        return { snapshot, startAt, intensity, stopAfter };
+      }),
+      switchMap(({ intensity, stopAfter }) => {
+        return interval(intensity).pipe(takeUntil(interval(stopAfter)));
+      }),
+
+      tap(() => {
+        this.play(0.1, 0.2, 0.3, 0.1);
+      }),
+    );
+
+    this.notify$.subscribe();
   }
 
   public play(
@@ -29,7 +106,7 @@ export class BeepService {
     oscillator.frequency.setValueAtTime(
       frequency,
       this.audioContext.currentTime,
-    ); // Frequency in Hz
+    );
 
     // Set up the attack phase
     gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
@@ -44,6 +121,5 @@ export class BeepService {
     gainNode.gain.linearRampToValueAtTime(0, endTime + release);
 
     oscillator.start();
-    oscillator.stop(endTime + release);
   }
 }

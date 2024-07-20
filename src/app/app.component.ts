@@ -7,6 +7,7 @@ import { SettingsService } from './settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogueService } from './modal/dialogue.service';
 import { Playable } from './models/playable/playable.model';
+import { BeepService } from './player/beep.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ import { Playable } from './models/playable/playable.model';
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.15.4';
+  version = '0.15.5';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = signal(false);
@@ -38,6 +39,7 @@ export class AppComponent {
     private settingsService: SettingsService,
     private translateService: TranslateService,
     protected dialogueService: DialogueService,
+    private beepService: BeepService,
   ) {
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))

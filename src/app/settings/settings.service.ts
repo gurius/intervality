@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { cloneDeep } from 'lodash-es';
+import { BehaviorSubject, shareReplay, tap } from 'rxjs';
 
 export type SettingsList = Select | Toggle | Value<string> | Value<number>;
 
@@ -11,7 +12,8 @@ export type ConfigNames =
   | 'prestart-delay'
   | 'language'
   | 'last-rest-removal'
-  | 'rest-timer-id';
+  | 'rest-timer-id'
+  | 'notify-before-seconds';
 
 export type Locale = 'en' | 'uk';
 
@@ -63,7 +65,9 @@ export class SettingsService {
   languageSubject$ = new BehaviorSubject<Locale>(
     (localStorage.getItem('language') as Locale) ?? 'en',
   );
-  language$ = this.languageSubject$.asObservable();
+  language$ = this.languageSubject$.asObservable().pipe(shareReplay(1));
+
+  config$ = new BehaviorSubject<SettingsList[]>([]);
 
   config: SettingsList[] = [];
 
@@ -82,6 +86,7 @@ export class SettingsService {
       this.initConfig();
       this.restoreFromLocalStorage();
 
+      this.config$.next(cloneDeep(this.config));
       this.initialised = true;
     });
     // system theme change listener init
@@ -110,6 +115,7 @@ export class SettingsService {
     });
   }
 
+  // for translation to apply
   initConfig() {
     this.config = [
       {
@@ -151,6 +157,14 @@ export class SettingsService {
         default: 1000,
       },
       {
+        label: this.tService.instant('Settings.NotifyBeforeSeconds'),
+        id: 'notify-before-seconds',
+        description: this.tService.instant('Settings.NotifyBeforeSecondsLabel'),
+        controlType: 'string',
+        value: '13,1,0.5|9,1,0.4|2,1.8,0.3',
+        default: '13,1,0.5|9,1,0.4|2,1.8,0.3',
+      },
+      {
         label: this.tService.instant('Settings.Language'),
         id: 'language',
         description: this.tService.instant('Settings.LanguageLabel'),
@@ -190,7 +204,10 @@ export class SettingsService {
       if (config) {
         if (config.id === 'prestart-delay') {
           config.value = (value as number) * 1000;
-        } else if (config.id === 'rest-timer-id') {
+        } else if (
+          config.id === 'rest-timer-id' ||
+          config.id === 'notify-before-seconds'
+        ) {
           config.value = (value as string).trim();
         } else {
           config.value = value;
@@ -198,6 +215,7 @@ export class SettingsService {
       }
     });
     this.saveChages();
+    this.config$.next(cloneDeep(this.config));
   }
 
   saveChages() {
@@ -223,12 +241,29 @@ export class SettingsService {
           } else {
             localStorage.setItem(c.id, (c.value as string).trim());
           }
+          break;
+        case 'notify-before-seconds':
+          localStorage.setItem(c.id, (c.value as string).trim());
+          break;
       }
     });
   }
 
   getConfigValueOf(id: ConfigNames) {
     return this.config?.find((c) => c.id === id);
+  }
+
+  transformNotifyBeforeValue(v: string): [number, number, number][] {
+    return v
+      .split('|')
+      .map(
+        (v) =>
+          v.split(',').map((v, i) => Number(v.trim()) * 1000) as [
+            number,
+            number,
+            number,
+          ],
+      );
   }
 
   // theme

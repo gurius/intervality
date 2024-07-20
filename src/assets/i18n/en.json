@@ -22,7 +22,9 @@
     "RemoveLastRestLabel": "If the last step in the player appears to be a rest it can be ignored.",
     "RestTimerID": "Resting timer ID",
     "RestTimerIDLabel": "Use it in timers name to mark timer as resting",
-    "RestTimerIDDefault": "Rest"
+    "RestTimerIDDefault": "Rest",
+    "NotifyBeforeSeconds": "Notifications",
+    "NotifyBeforeSecondsLabel": "Set sound notification befor end of timers in seconds. Theoretically any number of notification can be set devided by `|` in following format: `beforeEnd,howLong,howIntense|...`"
   },
   "NavPanel": {
     "Tweak": "Tweak {{playable}}",

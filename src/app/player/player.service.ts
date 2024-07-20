@@ -3,7 +3,10 @@ import {
   BehaviorSubject,
   Subject,
   animationFrameScheduler,
+  distinctUntilChanged,
   interval,
+  map,
+  shareReplay,
   takeUntil,
   tap,
   timeInterval,
@@ -17,7 +20,6 @@ import { PlayableService } from '../playable/playable.service';
 import { SettingsService } from '../settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogueService } from '../modal/dialogue.service';
-import { BeepService } from './beep.service';
 import { TextToSpeechService } from './tts.service';
 
 export type State =
@@ -64,7 +66,7 @@ const snapshotTemplate: PlayerSnapshot = {
 })
 export class PlayerService {
   private snapshotSubject$ = new BehaviorSubject<PlayerSnapshot | null>(null);
-  snapshot$ = this.snapshotSubject$.asObservable();
+  snapshot$ = this.snapshotSubject$.asObservable().pipe(shareReplay(1));
 
   private stepEmitter$ = new Subject<{ direction: 'forward' | 'backward' }>();
   step$ = this.stepEmitter$.asObservable();
@@ -72,7 +74,6 @@ export class PlayerService {
   private stageEmitter$: BehaviorSubject<State> = new BehaviorSubject(
     'prestart' as State,
   );
-
   stage$ = this.stageEmitter$.asObservable();
 
   sequence!: Sequence;
@@ -93,14 +94,50 @@ export class PlayerService {
   currentPlayableId: string = '';
   playableType: string = '';
 
+  isRemoveLastRest = false;
+  restTimerId = 'rest';
+  isSoundNotification = false;
+
   constructor(
     private playableService: PlayableService,
     private settingsService: SettingsService,
     private translateService: TranslateService,
     private dialogueService: DialogueService,
-    private beep: BeepService,
+    // private beep: BeepService,
     private tts: TextToSpeechService,
-  ) {}
+  ) {
+    settingsService.config$
+      .pipe(
+        map((cfg) =>
+          cfg.filter((cfg) =>
+            [
+              'last-rest-removal',
+              'rest-timer-id',
+              'sound-notification',
+            ].includes(cfg.id),
+          ),
+        ),
+        distinctUntilChanged((prev, curr) => {
+          if (prev.length !== curr.length) return false;
+          else {
+            const isChanged = prev.every(
+              (cfg, i) => cfg.value === curr[i].value,
+            );
+            console.log(isChanged);
+            return isChanged;
+          }
+        }),
+      )
+      .subscribe((c) => {
+        this.isRemoveLastRest = !!c.find((o) => o.id === 'last-rest-removal')
+          ?.value;
+        this.restTimerId =
+          (c.find((o) => o.id === 'rest-timer-id')?.value as string) ?? 'rest';
+        this.isSoundNotification = !!c.find(
+          (o) => o.id === 'sound-notification',
+        )?.value;
+      });
+  }
 
   initializeSequnce(playable: Playable) {
     this.playableSubject$.next(playable);
@@ -129,10 +166,8 @@ export class PlayerService {
     this.snapshot = cloneDeep(this.initialSnapshot);
   }
 
-  startBefore: number =
-    (this.settingsService.getConfigValueOf('prestart-delay')?.value as number) +
-    1000;
-
+  startBefore: number = 0;
+  notifyBefore: number = 0;
   commenceSequence(prestart: number) {
     this.commenced = true;
     this.snapshot.state = 'commenced';
@@ -141,7 +176,9 @@ export class PlayerService {
     this.snapshot.ahead = this.sequence.ahead;
     this.snapshotSubject$.next(this.snapshot);
     this.currentMs = this.sequence.step.value;
-    this.resetStartBefore();
+    this.startBefore = this.settingsService.getConfigValueOf('prestart-delay')
+      ?.value as number;
+    this.stageEmitter$.next('commenced');
 
     const s = interval(INTERVAL_MS)
       .pipe(
@@ -150,23 +187,9 @@ export class PlayerService {
           this.snapshot.prestart -= interval;
           this.snapshotSubject$.next(this.snapshot);
 
-          this.callBeforeEnd(this.snapshot.prestart, () => {
-            if (
-              !this.settingsService.getConfigValueOf('sound-notification')
-                ?.value
-            )
-              return;
-            if (this.startBefore > 1000) {
-              this.beep.play(0.1, 0.2, 0.3, 0.1);
-            } else {
-              this.beep.play(0.4, 0.2, 0.2, 0.2);
-            }
-          });
-
           if (this.snapshot.prestart <= 1000) {
             // stop prestart and switch to playing
             s.unsubscribe();
-            this.resetStartBefore();
             this.play();
             this.tts.say(this.sequence.step.name);
           }
@@ -188,6 +211,8 @@ export class PlayerService {
     this.timestamp = new Date().getTime();
 
     this.snapshot.state = 'playing';
+    this.stageEmitter$.next('playing');
+
     this.playing = true;
 
     interval(INTERVAL_MS)
@@ -203,28 +228,11 @@ export class PlayerService {
             this.currentMs -= interval;
           }
 
-          this.callBeforeEnd(this.currentMs, () => {
-            if (
-              !this.settingsService.getConfigValueOf('sound-notification')
-                ?.value
-            )
-              return;
-
-            if (this.startBefore > 1000) {
-              this.beep.play(0.1, 0.2, 0.3, 0.1);
-            } else {
-              this.beep.play(0.4, 0.2, 0.2, 0.2);
-            }
-          });
-
           // when countdown reaches zero - stop playing
           if (currentStep.timerType === 'countdown' && this.currentMs <= 0) {
             if (this.sequence.isLastStep) {
               this.stop(true);
-              if (
-                this.settingsService.getConfigValueOf('sound-notification')
-                  ?.value
-              ) {
+              if (this.isSoundNotification) {
                 this.tts.say(`${this.playableType} complete`);
               }
               return;
@@ -236,7 +244,6 @@ export class PlayerService {
             this.tts.say(this.sequence.step.name);
 
             this.currentMs = this.sequence.step.value;
-            this.resetStartBefore();
           }
 
           this.snapshot.past += interval;
@@ -261,6 +268,7 @@ export class PlayerService {
 
   pause() {
     this.snapshot.state = 'paused';
+    this.stageEmitter$.next('paused');
     this.stop$.next();
   }
 
@@ -301,6 +309,8 @@ export class PlayerService {
         len: this.sequence.length,
       });
       this.stepEmitter$.next({ direction: 'forward' });
+      this.tts.say(this.sequence.step.name);
+
       this.snapshotSubject$.next(this.snapshot);
     });
   }
@@ -316,6 +326,7 @@ export class PlayerService {
         len: this.sequence.length,
       });
       this.stepEmitter$.next({ direction: 'backward' });
+      this.tts.say(this.sequence.step.name);
       this.snapshotSubject$.next(this.snapshot);
     });
   }
@@ -334,8 +345,6 @@ export class PlayerService {
     this.stopwatchMs = 0;
 
     this.snapshot.ahead = this.sequence.ahead;
-
-    this.resetStartBefore();
 
     if (this.sequence.isLastStep) {
       this.snapshot.ahead = 0;
@@ -395,19 +404,5 @@ export class PlayerService {
     this.snapshotSubject$.next(null);
     this.stageEmitter$.next(null);
     this.playableSubject$.next(null);
-  }
-
-  callBeforeEnd(currentMs: number, fn: () => void) {
-    const pred = Math.floor(currentMs / (this.startBefore + 4));
-
-    if (!(pred >= 1) && this.startBefore > 0) {
-      fn();
-      this.startBefore -= 1000;
-    }
-  }
-
-  resetStartBefore() {
-    this.startBefore = this.settingsService.getConfigValueOf('prestart-delay')
-      ?.value as number;
   }
 }
