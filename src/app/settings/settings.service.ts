@@ -230,6 +230,8 @@ export class SettingsService {
           localStorage.setItem(c.id, c.value as string);
           break;
         case 'prestart-delay':
+          localStorage.setItem(c.id, `${c.value}`);
+          break;
         case 'language':
           localStorage.setItem(c.id, `${c.value}`);
           this.languageSubject$.next(c.value as Locale);
