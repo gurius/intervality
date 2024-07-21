@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { SettingsService } from '../settings/settings.service';
 import {
   Observable,
-  exhaustMap,
-  OperatorFunction,
   combineLatestWith,
   distinctUntilChanged,
   filter,
@@ -12,9 +10,9 @@ import {
   switchMap,
   takeUntil,
   tap,
-  defer,
 } from 'rxjs';
-import { PlayerService, PlayerSnapshot } from './player.service';
+import { PlayerService } from './player.service';
+import { isCloseTo } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -64,13 +62,19 @@ export class BeepService {
       filter(([snapshot, cfg]) => {
         const { currentMs: ms } = snapshot ?? { currentMs: 0 };
         // is any of configs time start meet current countdown value
-        const isOneOf = cfg.some((c) => c.at(0) === ms);
+        const isOneOf = cfg.some((c) => {
+          const confms = c.at(0);
+          return confms && isCloseTo(confms, ms);
+        });
         return isOneOf;
       }),
       map(([snapshot, cfg]) => {
         const { currentMs: ms } = snapshot ?? { currentMs: 0 };
 
-        const conf = cfg.find((c) => c.at(0) === ms);
+        const conf = cfg.find((c) => {
+          const confms = c.at(0);
+          return confms && isCloseTo(confms, ms);
+        });
 
         const [startAt, stopAfter, intensity] = conf ?? [-1, 0, 1000];
         console.log(startAt);
