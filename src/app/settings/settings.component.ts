@@ -29,7 +29,9 @@ export class SettingsComponent {
     this.initFormControls();
     this.fileService.uploadStrem$.subscribe((file) => {
       const data = JSON.parse(file);
-      this.dataService.merge(data as Playable[]);
+      this.dataService.merge(data as Playable[], 'intervality-data', (data) => {
+        data.sort((a, b) => a.name.localeCompare(b.name));
+      });
     });
     this.settingsForm.addControl('fileInput', this.fb.control(''));
   }

@@ -33,6 +33,15 @@ const routes: Routes = [
     loadChildren: () =>
       import('./player/player.module').then((m) => m.PlayerModule),
   },
+  {
+    path: 'report/:playableId',
+    loadChildren: () =>
+      import('./reports/reports.module').then((m) => m.ReportsModule),
+  },
+  {
+    path: '**',
+    redirectTo: 'playable',
+  },
 ];
 
 @NgModule({

@@ -34,7 +34,8 @@
     "Set": "Set",
     "Superset": "Superset",
     "Countdown": "Countdown",
-    "Stopwatch": "Stopwatch"
+    "Stopwatch": "Stopwatch",
+    "Reports": "Reports"
   },
   "Editor": {
     "SupersetName": "Superset name",
@@ -69,5 +70,16 @@
     "TryAgain": "Try again",
     "Deletion": "Deletion",
     "DeletionConfirmation": "Operations is irreversible, make sure you have a backup. Delete {{name}}?"
+  },
+  "Report": {
+    "History": "history",
+    "Details": "details",
+    "All": "all",
+    "Start": "start",
+    "Total": "total",
+    "Discard": "discard",
+    "Save": "save",
+    "UnsavedData": "Unsaved data",
+    "LeaveConfirm": "Data will be lost. Discard data?"
   }
 }

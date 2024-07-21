@@ -68,6 +68,8 @@ export class SetFormComponent implements OnInit, OnDestroy, Submittable {
       }),
     };
 
-    this.dataService.updsertItem(set);
+    this.dataService.updsertItem(set, 'intervality-data', (data) => {
+      data.sort((a, b) => a.name.localeCompare(b.name));
+    });
   }
 }

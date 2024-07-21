@@ -66,6 +66,12 @@
                 <fa-icon [icon]="['fas', 'play']"></fa-icon>
               </button>
               <button
+                class="h-10 w-10 rounded-md"
+                [routerLink]="['/report', item.id]"
+              >
+                <fa-icon [icon]="['fas', 'chart-pie']"></fa-icon>
+              </button>
+              <button
                 [routerLink]="['/edit', item.playableType, item.id]"
                 class="h-10 w-10 rounded-md"
               >

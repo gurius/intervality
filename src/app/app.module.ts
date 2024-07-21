@@ -38,9 +38,14 @@ import {
   faFileArrowUp,
   faChargingStation,
   faArrowRightRotate,
+  faChartPie,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWebAwesome } from '@fortawesome/free-brands-svg-icons';
-import { faPenToSquare, faTrashCan } from '@fortawesome/free-regular-svg-icons';
+import {
+  faPenToSquare,
+  faTrashCan,
+  faChartBar,
+} from '@fortawesome/free-regular-svg-icons';
 import { superSet } from './icons';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ModalContainerComponent } from './modal/modal-container/modal-container.component';
@@ -107,6 +112,8 @@ export class AppModule {
       faFileArrowUp,
       faChargingStation,
       faArrowRightRotate,
+      faChartBar,
+      faChartPie,
     );
   }
 }
