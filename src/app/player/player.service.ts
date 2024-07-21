@@ -89,8 +89,10 @@ export class PlayerService {
   snapshot!: PlayerSnapshot;
   initialSnapshot!: PlayerSnapshot;
 
+  // for editing currently playing from the main menu
   playableSubject$ = new Subject<Playable | null>();
   playable$ = this.playableSubject$.asObservable();
+
   currentPlayableId: string = '';
   playableType: string = '';
 
@@ -98,12 +100,14 @@ export class PlayerService {
   restTimerId = 'rest';
   isSoundNotification = false;
 
+  startTime!: string;
+  endTime!: string;
+
   constructor(
     private playableService: PlayableService,
     private settingsService: SettingsService,
     private translateService: TranslateService,
     private dialogueService: DialogueService,
-    // private beep: BeepService,
     private tts: TextToSpeechService,
   ) {
     settingsService.config$
@@ -191,6 +195,7 @@ export class PlayerService {
             // stop prestart and switch to playing
             s.unsubscribe();
             this.play();
+            this.startTime = new Date().toLocaleString();
             this.tts.say(this.sequence.step.name);
           }
         }),
@@ -294,6 +299,7 @@ export class PlayerService {
         len: this.sequence.length,
       });
     }
+    this.endTime = new Date().toLocaleString();
 
     this.snapshot.currentStepProgress = 0;
   }

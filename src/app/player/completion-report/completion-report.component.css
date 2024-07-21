@@ -1,0 +1,6 @@
+:host {
+  @apply mb-3 flex h-[23rem] w-full flex-col gap-3 px-2;
+  .slider {
+    @apply [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-surface [&::-webkit-slider-thumb]:bg-container;
+  }
+}

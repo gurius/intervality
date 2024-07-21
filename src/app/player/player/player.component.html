@@ -1,88 +1,92 @@
 @if (snapshot$ | async; as snapshot) {
-  <div class="flex items-center justify-between gap-4 px-2 py-4">
-    <!-- timer -->
-    <div
-      class="flex flex-shrink-0 flex-grow flex-col items-center justify-between rounded-2xl bg-container py-2 text-on-container"
-    >
-      <div>
-        <h4 class="font-sans text-xl font-light">
-          {{ "Player.Past" | translate }}
-        </h4>
-        <p class="text-3xl">{{ snapshot.past | timeStr: "mm:ss" }}</p>
+  @if (snapshot.state !== "complete") {
+    <div class="flex items-center justify-between gap-4 px-2 py-4">
+      <!-- timer -->
+      <div
+        class="flex flex-shrink-0 flex-grow flex-col items-center justify-between rounded-2xl bg-container py-2 text-on-container"
+      >
+        <div>
+          <h4 class="font-sans text-xl font-light">
+            {{ "Player.Past" | translate }}
+          </h4>
+          <p class="text-3xl">{{ snapshot.past | timeStr: "mm:ss" }}</p>
+        </div>
+      </div>
+      <!-- timer -->
+      <div
+        class="flex flex-shrink-0 flex-grow flex-col items-center justify-between rounded-2xl bg-container py-2 text-on-container"
+      >
+        <div>
+          <h4 class="font-sans text-xl font-light">
+            {{ "Player.Ahead" | translate }}
+          </h4>
+          @if (snapshot.ahead < 0) {
+            <fa-icon
+              [icon]="['fas', 'stopwatch']"
+              class="text-3xl text-on-container"
+            ></fa-icon>
+            <span class="text-3xl">{{ snapshot.ahead | timeStr: "ms" }}</span>
+          } @else {
+            <p class="text-3xl">{{ snapshot.ahead | timeStr: "mm:ss" }}</p>
+          }
+        </div>
       </div>
     </div>
-    <!-- timer -->
-    <div
-      class="flex flex-shrink-0 flex-grow flex-col items-center justify-between rounded-2xl bg-container py-2 text-on-container"
-    >
-      <div>
-        <h4 class="font-sans text-xl font-light">
-          {{ "Player.Ahead" | translate }}
-        </h4>
-        @if (snapshot.ahead < 0) {
-          <fa-icon
-            [icon]="['fas', 'stopwatch']"
-            class="text-3xl text-on-container"
-          ></fa-icon>
-          <span class="text-3xl">{{ snapshot.ahead | timeStr: "ms" }}</span>
-        } @else {
-          <p class="text-3xl">{{ snapshot.ahead | timeStr: "mm:ss" }}</p>
-        }
+
+    <!-- <div class="mx-2 mb-4 flex justify-center bg-container px-5"> -->
+    <!--   <span class="text-on-container">{{ snapshot.status }}</span> -->
+    <!-- </div> -->
+
+    <app-sequence [snapshot]="snapshot"></app-sequence>
+
+    <div class="justify-centr flex flex-col items-center text-8xl">
+      <div class="flex flex-grow items-center justify-center">
+        <button
+          *ngIf="snapshot.state != 'playing'"
+          type="button"
+          class="mx-2 text-secondary"
+          (click)="previous()"
+        >
+          <fa-icon [icon]="['fas', 'chevron-circle-left']"></fa-icon>
+        </button>
+        <button
+          *ngIf="snapshot.state != 'playing'"
+          type="button"
+          [class.bg-secondary]="snapshot.state === 'commenced'"
+          class="mx-3 h-24 w-24 rounded-full text-secondary"
+          (click)="snapshot.state !== 'commenced' && play()"
+        >
+          @if (snapshot.state === "commenced") {
+            <span
+              class="flex items-center justify-center text-6xl font-bold text-surface"
+              >{{ snapshot.prestart | timeStr: "second" }}</span
+            >
+          } @else {
+            <fa-icon [icon]="['fas', 'circle-play']"></fa-icon>
+          }
+        </button>
+        <button
+          *ngIf="snapshot.state == 'playing'"
+          type="button"
+          class="mx-4 text-secondary"
+          (click)="pause()"
+        >
+          <fa-icon [icon]="['fas', 'circle-pause']"></fa-icon>
+        </button>
+
+        <button
+          *ngIf="snapshot.state != 'playing'"
+          type="button"
+          class="mx-2 text-secondary"
+          (click)="next()"
+        >
+          <fa-icon [icon]="['fas', 'chevron-circle-right']"></fa-icon>
+        </button>
       </div>
     </div>
-  </div>
-
-  <!-- <div class="mx-2 mb-4 flex justify-center bg-container px-5"> -->
-  <!--   <span class="text-on-container">{{ snapshot.status }}</span> -->
-  <!-- </div> -->
-
-  <app-sequence [snapshot]="snapshot"></app-sequence>
-
-  <div class="justify-centr flex flex-col items-center text-8xl">
-    <div class="flex flex-grow items-center justify-center">
-      <button
-        *ngIf="snapshot.state != 'playing'"
-        type="button"
-        class="mx-2 text-secondary"
-        (click)="previous()"
-      >
-        <fa-icon [icon]="['fas', 'chevron-circle-left']"></fa-icon>
-      </button>
-      <button
-        *ngIf="snapshot.state != 'playing'"
-        type="button"
-        [class.bg-secondary]="snapshot.state === 'commenced'"
-        class="mx-3 h-24 w-24 rounded-full text-secondary"
-        (click)="snapshot.state !== 'commenced' && play()"
-      >
-        @if (snapshot.state === "commenced") {
-          <span
-            class="flex items-center justify-center text-6xl font-bold text-surface"
-            >{{ snapshot.prestart | timeStr: "second" }}</span
-          >
-        } @else {
-          <fa-icon [icon]="['fas', 'circle-play']"></fa-icon>
-        }
-      </button>
-      <button
-        *ngIf="snapshot.state == 'playing'"
-        type="button"
-        class="mx-4 text-secondary"
-        (click)="pause()"
-      >
-        <fa-icon [icon]="['fas', 'circle-pause']"></fa-icon>
-      </button>
-
-      <button
-        *ngIf="snapshot.state != 'playing'"
-        type="button"
-        class="mx-2 text-secondary"
-        (click)="next()"
-      >
-        <fa-icon [icon]="['fas', 'chevron-circle-right']"></fa-icon>
-      </button>
-    </div>
-  </div>
+  } @else {
+    <app-completion-report></app-completion-report>
+  }
 } @else {
   <div class="flex h-full flex-col items-center pt-7">
     <h1>{{ "Common.SomethingWentWrong" | translate }}</h1>
