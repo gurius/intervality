@@ -62,7 +62,7 @@ export class PlayableListComponent implements OnInit, OnDestroy {
       .pipe(first())
       .subscribe((isConfirm) => {
         if (isConfirm) {
-          this.dataService.deleteItem(item.id);
+          this.dataService.deleteItem(item.id, 'intervality-data');
           this.playableService.updateList();
         }
       });

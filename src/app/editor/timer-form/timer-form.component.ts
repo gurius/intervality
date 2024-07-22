@@ -104,6 +104,8 @@ export class TimerFormComponent implements OnInit, Submittable {
 
     console.log(timer);
 
-    this.dataService.updsertItem(timer);
+    this.dataService.updsertItem(timer, 'intervality-data', (data) => {
+      data.sort((a, b) => a.name.localeCompare(b.name));
+    });
   }
 }

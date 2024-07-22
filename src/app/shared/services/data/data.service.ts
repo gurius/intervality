@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Playable } from '../../../models/playable/playable.model';
+import { extend } from 'lodash-es';
+
+export interface Identifiable {
+  id: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -7,42 +11,50 @@ import { Playable } from '../../../models/playable/playable.model';
 export class DataService {
   constructor() {}
 
-  private update(data: Playable[]) {
-    localStorage.setItem('intervality-data', JSON.stringify(data));
+  private update<T extends Identifiable>(data: T[], dataKey: string) {
+    localStorage.setItem(dataKey, JSON.stringify(data));
   }
 
-  getAll(): Playable[] {
-    const data = localStorage.getItem('intervality-data');
+  getAll<T extends Identifiable>(dataKey: string): T[] {
+    const data = localStorage.getItem(dataKey);
     return data ? JSON.parse(data) : [];
   }
 
-  getById(id: string): Playable {
-    const p = this.getAll().find((p) => p.id === id);
+  getById<T extends Identifiable>(id: string, dataKey: string) {
+    const p = this.getAll(dataKey).find((p) => p.id === id);
 
     if (!p) {
       throw new Error("Couldn't retrieve item");
     }
 
-    return p;
+    return p as T;
   }
 
-  saveItem(item: Playable) {
-    const data = this.getAll();
+  saveItem<T extends Identifiable>(
+    item: T,
+    dataKey: string,
+    compareFn: (data: T[]) => void = () => {},
+  ) {
+    const data = this.getAll(dataKey);
 
     data.push(item);
 
-    data.sort((a, b) => a.name.localeCompare(b.name));
+    compareFn(data as T[]);
 
-    this.update(data);
+    this.update(data, dataKey);
   }
 
-  updsertItem(item: Playable) {
-    const data = this.getAll();
+  updsertItem<T extends Identifiable>(
+    item: T,
+    dataKey: string,
+    compareFn: (data: T[]) => void = () => {},
+  ) {
+    const data = this.getAll(dataKey);
 
     const idx = data.findIndex((p) => p.id === item.id);
 
     if (idx === -1) {
-      this.saveItem(item);
+      this.saveItem(item, dataKey, compareFn);
       return;
     }
 
@@ -57,13 +69,13 @@ export class DataService {
 
     const newData = data.with(idx, item);
 
-    newData.sort((a, b) => a.name.localeCompare(b.name));
+    compareFn(newData as T[]);
 
-    this.update(newData);
+    this.update(newData, dataKey);
   }
 
-  deleteItem(id: string) {
-    const data = this.getAll();
+  deleteItem(id: string, dataKey: string) {
+    const data = this.getAll(dataKey);
 
     const idx = data.findIndex((p) => p.id === id);
 
@@ -73,17 +85,21 @@ export class DataService {
 
     data.splice(idx, 1);
 
-    this.update(data);
+    this.update(data, dataKey);
   }
 
-  merge(playable: Playable[]) {
-    const data = this.getAll();
+  merge<T extends Identifiable>(
+    mergeData: T[],
+    dataKey: string,
+    compareFn: (data: T[]) => void = () => {},
+  ) {
+    const data = this.getAll(dataKey);
 
-    const alreadyInStorage = playable.filter((p) => {
+    const alreadyInStorage = mergeData.filter((p) => {
       return data.some((d) => d.id === p.id);
     });
 
-    const newSet = playable.filter((p) => {
+    const newSet = mergeData.filter((p) => {
       return !data.some((d) => d.id === p.id);
     });
 
@@ -105,8 +121,8 @@ export class DataService {
 
     const newData = data.concat(newSet);
 
-    newData.sort((a, b) => a.name.localeCompare(b.name));
+    compareFn(newData as T[]);
 
-    this.update(newData);
+    this.update(newData, dataKey);
   }
 }

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import {
+  Playable,
   PlayableCountdown,
   PlayableStopwatch,
   PlayableSuperset,
@@ -180,6 +181,12 @@ export class SuperSetFormComponent implements Submittable, OnInit {
     };
 
     console.log(superset);
-    this.dataService.updsertItem(superset);
+    this.dataService.updsertItem<Playable>(
+      superset,
+      'intervality-data',
+      (data) => {
+        data.sort((a, b) => a.name.localeCompare(b.name));
+      },
+    );
   }
 }

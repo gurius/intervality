@@ -19,11 +19,11 @@ export class PlayableService {
   constructor(private dataService: DataService) {}
 
   getPlayable(id: string): Observable<Playable> {
-    return of(this.dataService.getById(id));
+    return of(this.dataService.getById<Playable>(id, 'intervality-data'));
   }
 
   updateList() {
-    const playable = this.dataService.getAll();
+    const playable = this.dataService.getAll<Playable>('intervality-data');
     this.subject.next(playable);
   }
 
@@ -32,7 +32,10 @@ export class PlayableService {
     stopwatchName: string,
     value: number,
   ) {
-    let playable = this.dataService.getById(playableId);
+    let playable = this.dataService.getById<Playable>(
+      playableId,
+      'intervality-data',
+    );
 
     let upadte;
 
@@ -79,7 +82,9 @@ export class PlayableService {
         break;
     }
 
-    this.dataService.updsertItem(playable);
+    this.dataService.updsertItem(playable, 'intervality-data', (data) => {
+      data.sort((a, b) => a.name.localeCompare(b.name));
+    });
   }
 
   swToCd<T extends EventuallyCountdownTimer, N extends CountdownTimer>(

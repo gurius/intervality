@@ -39,7 +39,7 @@ export class AddMenuButtonComponent implements OnInit {
 
   ngOnInit(): void {
     this.existingItems = this.dataService
-      .getAll()
+      .getAll<Playable>('intervality-data')
       .filter((data) => this.acceptAssetTypes.includes(data.playableType))
       .map((item) => ({
         ...{ label: item.name },
@@ -59,7 +59,10 @@ export class AddMenuButtonComponent implements OnInit {
 
   addExistingItem() {
     if (this.selectedExisting) {
-      const item = this.dataService.getById(this.selectedExisting.value!);
+      const item = this.dataService.getById<Playable>(
+        this.selectedExisting.value!,
+        'intervality-data',
+      );
       this.onAddItem.emit({
         type: item.playableType as SupersetNestable,
         item,
