@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Data } from '@angular/router';
 import { extend } from 'lodash-es';
+
+export type DataKeyDictionary = 'intervality-data' | 'intervality-reports';
 
 export interface Identifiable {
   id: string;
@@ -15,12 +18,12 @@ export class DataService {
     localStorage.setItem(dataKey, JSON.stringify(data));
   }
 
-  getAll<T extends Identifiable>(dataKey: string): T[] {
+  getAll<T extends Identifiable>(dataKey: DataKeyDictionary): T[] {
     const data = localStorage.getItem(dataKey);
     return data ? JSON.parse(data) : [];
   }
 
-  getById<T extends Identifiable>(id: string, dataKey: string) {
+  getById<T extends Identifiable>(id: string, dataKey: DataKeyDictionary) {
     const p = this.getAll(dataKey).find((p) => p.id === id);
 
     if (!p) {
@@ -32,7 +35,7 @@ export class DataService {
 
   saveItem<T extends Identifiable>(
     item: T,
-    dataKey: string,
+    dataKey: DataKeyDictionary,
     compareFn: (data: T[]) => void = () => {},
   ) {
     const data = this.getAll(dataKey);
@@ -46,7 +49,7 @@ export class DataService {
 
   updsertItem<T extends Identifiable>(
     item: T,
-    dataKey: string,
+    dataKey: DataKeyDictionary,
     compareFn: (data: T[]) => void = () => {},
   ) {
     const data = this.getAll(dataKey);
@@ -74,7 +77,7 @@ export class DataService {
     this.update(newData, dataKey);
   }
 
-  deleteItem(id: string, dataKey: string) {
+  deleteItem(id: string, dataKey: DataKeyDictionary) {
     const data = this.getAll(dataKey);
 
     const idx = data.findIndex((p) => p.id === id);
@@ -90,7 +93,7 @@ export class DataService {
 
   merge<T extends Identifiable>(
     mergeData: T[],
-    dataKey: string,
+    dataKey: DataKeyDictionary,
     compareFn: (data: T[]) => void = () => {},
   ) {
     const data = this.getAll(dataKey);

@@ -1,9 +1,19 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { PlayerService } from '../player.service';
-import { Subject, takeUntil, tap } from 'rxjs';
+import { Observable, Subject, takeUntil, tap } from 'rxjs';
 import { PlayableService } from '../../playable/playable.service';
-import { pick, uniqWith, isEqual } from 'lodash-es';
+import { pick } from 'lodash-es';
 import { uid } from '../../utils';
+import { DataService } from '../../shared/services/data/data.service';
+
+export interface Report {
+  id: string;
+  playableId: string;
+  startTime: string;
+  endTime: string;
+  valid: boolean;
+  value: { name: string; value: number }[];
+}
 
 @Component({
   selector: 'app-completion-report',
@@ -13,10 +23,16 @@ import { uid } from '../../utils';
 export class CompletionReportComponent implements OnInit, OnDestroy {
   playerService = inject(PlayerService);
   playableService = inject(PlayableService);
+  dataService = inject(DataService);
+
+  saved = false;
 
   name!: string;
 
   destroy$ = new Subject<void>();
+
+  reports!: Report[];
+
   ngOnInit(): void {
     this.playableService
       .getPlayable(this.playerService.currentPlayableId)
@@ -27,9 +43,20 @@ export class CompletionReportComponent implements OnInit, OnDestroy {
         }),
       )
       .subscribe();
-    console.log(this.playerService.startTime);
-    console.log(this.playerService.endTime);
+
+    this.reports = this.dataService
+      .getAll<Report>('intervality-reports')
+      .map((r) => ({
+        ...r,
+        startTime: new Date(r.startTime).toLocaleString('uk-UA', {
+          day: '2-digit',
+          month: 'short',
+          weekday: 'short',
+          year: '2-digit',
+        }),
+      }));
   }
+
   ngOnDestroy(): void {
     this.destroy$.next();
   }
@@ -56,7 +83,7 @@ export class CompletionReportComponent implements OnInit, OnDestroy {
       id: uid(),
       playableId: this.playerService.currentPlayableId,
       startTime: this.playerService.startTime,
-      endTimer: this.playerService.endTime,
+      endTime: this.playerService.endTime,
       valid: this.isValid,
       value: this.playerService.sequence.steps.map((s) =>
         pick(s, ['name', 'value']),
@@ -83,9 +110,37 @@ export class CompletionReportComponent implements OnInit, OnDestroy {
   }
 
   saveReport() {
-    console.log(this.reportValue);
+    this.dataService.updsertItem<Report>(
+      this.reportValue,
+      'intervality-reports',
+      (data) => {
+        return data.sort(
+          (a, b) =>
+            new Date(a.endTime).getTime() - new Date(b.endTime).getTime(),
+        );
+      },
+    );
+    this.reports = this.dataService
+      .getAll<Report>('intervality-reports')
+      .map((r) => ({
+        ...r,
+        startTime: new Date(r.startTime).toLocaleString('uk-UA'),
+      }));
+    this.saved = true;
   }
+
+  remove(item: Report) {
+    this.dataService.deleteItem(item.id, 'intervality-reports');
+    this.reports = this.dataService.getAll<Report>('intervality-reports');
+  }
+
   discardReport() {
     this.playerService.stop();
   }
+
+  goToChart() {}
+
+  export() {}
+
+  removeAll() {}
 }
