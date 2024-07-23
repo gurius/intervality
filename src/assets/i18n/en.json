@@ -34,7 +34,8 @@
     "Set": "Set",
     "Superset": "Superset",
     "Countdown": "Countdown",
-    "Stopwatch": "Stopwatch"
+    "Stopwatch": "Stopwatch",
+    "Reports": "Reports"
   },
   "Editor": {
     "SupersetName": "Superset name",

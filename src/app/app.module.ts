@@ -38,6 +38,7 @@ import {
   faFileArrowUp,
   faChargingStation,
   faArrowRightRotate,
+  faChartPie,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWebAwesome } from '@fortawesome/free-brands-svg-icons';
 import {
@@ -112,6 +113,7 @@ export class AppModule {
       faChargingStation,
       faArrowRightRotate,
       faChartBar,
+      faChartPie,
     );
   }
 }

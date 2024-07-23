@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { PlayerService } from '../player.service';
 import { Observable, Subject, takeUntil, tap } from 'rxjs';
 import { PlayableService } from '../../playable/playable.service';
 import { pick } from 'lodash-es';
 import { uid } from '../../utils';
 import { DataService } from '../../shared/services/data/data.service';
+import { PlayerService } from '../../player/player.service';
 
 export interface Report {
   id: string;

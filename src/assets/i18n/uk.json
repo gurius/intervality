@@ -34,7 +34,8 @@
     "Set": "Сет",
     "Superset": "Суперсет",
     "Countdown": "Зворотній таймер",
-    "Stopwatch": "Таймер"
+    "Stopwatch": "Таймер",
+    "Reports": "Звіти"
   },
   "Editor": {
     "SupersetName": "Назва суперсету",
