@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { Observable, Subject, first, map, tap } from 'rxjs';
+import { Observable, first, map, tap } from 'rxjs';
 import { PlayableService } from '../../playable/playable.service';
 import { Report, ReportService } from '../report.service';
 import { Location } from '@angular/common';
@@ -67,8 +67,8 @@ export class DetailsComponent implements OnInit, OnDestroy, LeavePermission {
     if (this.isNew) {
       return this.dialogueService
         .open({
-          title: this.translateService.instant('Player.LeavePlayer'),
-          content: this.translateService.instant('Player.LeaveConfirm'),
+          title: this.translateService.instant('Report.UnsavedData'),
+          content: this.translateService.instant('Report.LeaveConfirm'),
         })
         .pipe(
           first(),

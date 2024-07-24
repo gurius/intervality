@@ -3,7 +3,9 @@
     <li
       class="relative flex h-fit min-h-6 flex-grow flex-row items-center justify-between gap-3 px-5"
     >
-      <div class="overflow-hidden text-ellipsis whitespace-nowrap">started</div>
+      <div class="overflow-hidden text-ellipsis whitespace-nowrap">
+        {{ "Report.Start" | translate }}
+      </div>
       <div class="whitespace-nowrap">
         {{ report.startTime | date: "medium" }}
       </div>
@@ -28,27 +30,29 @@
     <li
       class="relative flex h-fit min-h-6 flex-grow flex-row items-center justify-between gap-3 px-5"
     >
-      <div class="overflow-hidden text-ellipsis whitespace-nowrap">total</div>
+      <div class="overflow-hidden text-ellipsis whitespace-nowrap">
+        {{ "Report.Total" | translate }}
+      </div>
       <div class="whitespace-nowrap">
         {{ totalTime | timeStr }} <span> / {{ report.value.length }} </span>
       </div>
     </li>
   </ol>
   <div class="justify-centr mb-4 flex flex-col items-center text-xl">
-    <div class="flex flex-grow items-center justify-center">
+    <div class="flex flex-grow items-center justify-center" *ngIf="isNew">
       <button
         type="button"
-        class="mx-3 h-10 w-24 rounded-md bg-secondary text-on-secondary"
+        class="mx-3 h-10 w-24 cursor-pointer rounded-md bg-secondary text-on-secondary"
         (click)="discardReport()"
       >
-        <span class="cursor-pointer">discard</span>
+        <span>{{ "Report.Discard" | translate }}</span>
       </button>
       <button
         type="button"
-        class="mx-3 h-10 w-24 rounded-md bg-secondary text-on-secondary"
+        class="mx-3 h-10 w-24 cursor-pointer rounded-md bg-secondary text-on-secondary"
         (click)="saveReport()"
       >
-        <span class="cursor-pointer">save</span>
+        <span>{{ "Report.Save" | translate }}</span>
       </button>
     </div>
   </div>

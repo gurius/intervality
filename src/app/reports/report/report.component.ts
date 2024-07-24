@@ -26,4 +26,8 @@ export class ReportComponent {
       switchMap((id) => (id ? playbaleService.getPlayable(id) : EMPTY)),
     );
   }
+
+  isNew(reportId: string) {
+    return this.reportService.isNew(reportId);
+  }
 }

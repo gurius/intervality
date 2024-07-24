@@ -2,7 +2,7 @@
   <div
     class="mb-2 flex justify-between gap-7 bg-surface px-5 align-middle text-2xl text-primary shadow-md"
   >
-    <span> history </span>
+    <span> {{ "Report.History" | translate }} </span>
     <div class="flex items-center gap-3">
       <button type="button" class="h-10 w-10 rounded-md" (click)="goToChart()">
         <fa-icon [icon]="['far', 'chart-bar']"></fa-icon>
@@ -18,7 +18,7 @@
         (click)="removeAll()"
       >
         <fa-icon [icon]="['far', 'trash-can']"></fa-icon>
-        all
+        {{ "Report.All" | translate }}
       </button>
     </div>
   </div>

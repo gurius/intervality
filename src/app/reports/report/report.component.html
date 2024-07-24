@@ -4,20 +4,23 @@
       {{ playable.name }}
     </h3>
     @if (detailsData$ | async; as details) {
-      <div class="flex min-w-52 flex-1 items-center justify-center gap-5">
+      <div
+        *ngIf="!isNew(details.id)"
+        class="flex min-w-52 flex-1 items-center justify-center gap-5"
+      >
         <a
           routerLinkActive="text-primary ring-1 ring-primary"
           class="flex w-20 items-center justify-center rounded-l-2xl bg-container py-1 disabled:text-on-surface-dim"
           routerLink="list"
           ariaCurrentWhenActive="page"
-          >list</a
+          >{{ "Report.History" | translate }}</a
         >
         <a
           routerLinkActive="text-primary ring-1 ring-primary"
           class="flex w-20 items-center justify-center rounded-r-2xl bg-container py-1"
           [routerLink]="['record', details.id]"
           ariaCurrentWhenActive="page"
-          >details</a
+          >{{ "Report.Details" | translate }}</a
         >
       </div>
     }
