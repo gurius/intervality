@@ -232,9 +232,7 @@ export class PlayerService {
           if (currentStep.timerType === 'countdown' && this.currentMs <= 0) {
             if (this.sequence.isLastStep) {
               this.stop(true);
-              if (this.isSoundNotification) {
-                this.tts.say(`${this.playableType} complete`);
-              }
+              this.tts.say(`${this.playableType} complete`);
               return;
             }
 

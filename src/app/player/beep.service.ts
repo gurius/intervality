@@ -25,6 +25,8 @@ export class BeepService {
 
   notify$!: Observable<number>;
 
+  isSoundOn$!: Observable<boolean>;
+
   constructor(
     private settingsService: SettingsService,
     private playerService: PlayerService,
@@ -32,7 +34,18 @@ export class BeepService {
     this.audioContext = new (window.AudioContext ||
       (window as any).webkitAudioContext)();
 
-    const cfg$ = settingsService.config$.pipe(
+    this.isSoundOn$ = settingsService.config$.pipe(
+      map((cfg) =>
+        Boolean(
+          cfg.filter((cfg) => ['sound-notification'].includes(cfg.id)).at(0)
+            ?.value,
+        ),
+      ),
+      distinctUntilChanged(),
+      // (prev, curr) => prev.every((cfg, i) => cfg.value === curr[i].value),
+    );
+
+    const notifyBeforSeconds$ = settingsService.config$.pipe(
       map((cfg) =>
         cfg.filter((cfg) => ['notify-before-seconds'].includes(cfg.id)),
       ),
@@ -58,14 +71,17 @@ export class BeepService {
     );
 
     this.notify$ = playerService.snapshot$.pipe(
-      combineLatestWith(cfg$),
-      filter(([snapshot, cfg]) => {
+      combineLatestWith(notifyBeforSeconds$, this.isSoundOn$),
+      filter(([snapshot, cfg, isSoundOn]) => {
+        if (!isSoundOn) return false;
+
         const { currentMs: ms } = snapshot ?? { currentMs: 0 };
         // is any of configs time start meet current countdown value
         const isOneOf = cfg.some((c) => {
           const confms = c.at(0);
           return confms && isCloseTo(confms, ms);
         });
+
         return isOneOf;
       }),
       map(([snapshot, cfg]) => {
