@@ -91,6 +91,18 @@ export class DataService {
     this.update(data, dataKey);
   }
 
+  deleteBatch(ids: string[], dataKey: DataKeyDictionary) {
+    const data = this.getAll(dataKey);
+
+    const updated = data.filter((d) => !ids.includes(d.id));
+
+    if (data.length - ids.length !== updated.length) {
+      throw new Error("something doesn't add up");
+    }
+
+    this.update(updated, dataKey);
+  }
+
   merge<T extends Identifiable>(
     mergeData: T[],
     dataKey: DataKeyDictionary,

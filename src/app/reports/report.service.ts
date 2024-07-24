@@ -55,6 +55,11 @@ export class ReportService {
     this.updateList();
   }
 
+  deleteBatch(ids: string[]) {
+    this.dataService.deleteBatch(ids, dictionaryKey);
+    this.updateList();
+  }
+
   submitForReview(report: Report) {
     this.currentReportEmitter$.next(report);
   }

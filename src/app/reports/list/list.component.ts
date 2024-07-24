@@ -10,7 +10,6 @@ import { Observable, filter, map, of, switchMap } from 'rxjs';
 })
 export class ListComponent {
   reports$!: Observable<Report[] | undefined> | undefined;
-  removeAll() {}
 
   constructor(
     private reportService: ReportService,
@@ -27,6 +26,11 @@ export class ListComponent {
 
   remove(item: Report) {
     this.reportService.deleteById(item.id);
+  }
+
+  removeAll(reports: Report[]) {
+    const ids = reports.map((r) => r.id);
+    this.reportService.deleteBatch(ids);
   }
 
   submitForReview(item: Report) {
