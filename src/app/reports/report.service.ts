@@ -45,6 +45,11 @@ export class ReportService {
     );
   }
 
+  isNew(reportId: string) {
+    const reports = this.dataService.getAll<Report>(dictionaryKey);
+    return !reports.some((r) => r.id === reportId);
+  }
+
   deleteById(id: string) {
     this.dataService.deleteItem(id, dictionaryKey);
     this.updateList();

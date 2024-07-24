@@ -3,22 +3,35 @@ import { Observable, Subject, first, map, tap } from 'rxjs';
 import { PlayableService } from '../../playable/playable.service';
 import { Report, ReportService } from '../report.service';
 import { Location } from '@angular/common';
+import { LeavePermission } from '../../guards/can-leave/can-leave';
+import { Router, RouterStateSnapshot } from '@angular/router';
+import { DialogueService } from '../../modal/dialogue.service';
+import { TranslateService } from '@ngx-translate/core';
+
+export interface ReportReview {
+  name: string;
+  totalTime: number;
+  reps: number;
+}
 
 @Component({
   selector: 'app-completion-report',
   templateUrl: './details.component.html',
   styleUrl: './details.component.css',
 })
-export class DetailsComponent implements OnInit, OnDestroy {
+export class DetailsComponent implements OnInit, OnDestroy, LeavePermission {
   playableService = inject(PlayableService);
   reportService = inject(ReportService);
   location = inject(Location);
+  dialogueService = inject(DialogueService);
+  translateService = inject(TranslateService);
+  router = inject(Router);
 
-  reportRev$!: Observable<
-    { name: string; totalTime: number; reps: number }[] | null
-  >;
+  reportRev$!: Observable<ReportReview[] | null>;
 
   report!: Report;
+
+  bypassGuard = false;
 
   ngOnInit(): void {
     this.reportRev$ = this.reportService.currentReport$.pipe(
@@ -42,8 +55,35 @@ export class DetailsComponent implements OnInit, OnDestroy {
     );
   }
 
+  get isNew() {
+    return this.reportService.isNew(this.report.id);
+  }
+
   ngOnDestroy(): void {
     this.reportService.completeReview();
+  }
+
+  canLeave(state: RouterStateSnapshot) {
+    if (this.isNew) {
+      return this.dialogueService
+        .open({
+          title: this.translateService.instant('Player.LeavePlayer'),
+          content: this.translateService.instant('Player.LeaveConfirm'),
+        })
+        .pipe(
+          first(),
+          tap((isConfirm) => {
+            if (isConfirm) {
+              this.bypassGuard = true;
+              this.router.createUrlTree([state.url]);
+            } else {
+              this.bypassGuard = false;
+            }
+          }),
+        );
+    } else {
+      return true;
+    }
   }
 
   getStepNames(report: Report) {
