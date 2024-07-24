@@ -1,5 +1,26 @@
-<p>report works!</p>
-
-<a routerLink="list">[list]</a>
-<a [routerLink]="['record', '123']">specific report</a>
-<router-outlet></router-outlet>
+@if (playable$ | async; as playable) {
+  <div class="mb-4 flex flex-wrap text-xl">
+    <h3 class="my-3 flex min-w-52 flex-1 justify-center px-5 text-center">
+      {{ playable.name }}
+    </h3>
+    @if (detailsData$ | async; as details) {
+      <div class="flex min-w-52 flex-1 items-center justify-center gap-5">
+        <a
+          routerLinkActive="text-primary ring-1 ring-primary"
+          class="flex w-20 items-center justify-center rounded-l-2xl bg-container py-1 disabled:text-on-surface-dim"
+          routerLink="list"
+          ariaCurrentWhenActive="page"
+          >list</a
+        >
+        <a
+          routerLinkActive="text-primary ring-1 ring-primary"
+          class="flex w-20 items-center justify-center rounded-r-2xl bg-container py-1"
+          [routerLink]="['record', details.id]"
+          ariaCurrentWhenActive="page"
+          >details</a
+        >
+      </div>
+    }
+  </div>
+  <router-outlet></router-outlet>
+}

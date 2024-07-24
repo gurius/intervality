@@ -34,7 +34,7 @@ const routes: Routes = [
       import('./player/player.module').then((m) => m.PlayerModule),
   },
   {
-    path: 'report',
+    path: 'report/:playableId',
     loadChildren: () =>
       import('./reports/reports.module').then((m) => m.ReportsModule),
   },

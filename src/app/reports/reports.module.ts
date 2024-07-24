@@ -3,16 +3,12 @@ import { CommonModule } from '@angular/common';
 
 import { ReportsRoutingModule } from './reports-routing.module';
 import { ReportComponent } from './report/report.component';
-import { ReportListComponent } from './report-list/report-list.component';
+import { ListComponent } from './list/list.component';
 import { SharedModule } from '../shared/shared.module';
-import { CompletionReportComponent } from './completion-report/completion-report.component';
+import { DetailsComponent } from './details/details.component';
 
 @NgModule({
-  declarations: [
-    ReportComponent,
-    ReportListComponent,
-    CompletionReportComponent,
-  ],
+  declarations: [ReportComponent, ListComponent, DetailsComponent],
   imports: [CommonModule, ReportsRoutingModule, SharedModule],
 })
 export class ReportsModule {}

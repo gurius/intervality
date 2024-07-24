@@ -4,6 +4,7 @@ import {
   Subject,
   animationFrameScheduler,
   distinctUntilChanged,
+  first,
   interval,
   map,
   shareReplay,
@@ -21,6 +22,9 @@ import { SettingsService } from '../settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogueService } from '../modal/dialogue.service';
 import { TextToSpeechService } from './tts.service';
+import { ReportService } from '../reports/report.service';
+import { Router } from '@angular/router';
+import { uid } from '../utils';
 
 export type State =
   | null
@@ -109,6 +113,8 @@ export class PlayerService {
     private translateService: TranslateService,
     private dialogueService: DialogueService,
     private tts: TextToSpeechService,
+    private reportService: ReportService,
+    private router: Router,
   ) {
     settingsService.config$
       .pipe(
@@ -240,6 +246,9 @@ export class PlayerService {
               if (this.isSoundNotification) {
                 this.tts.say(`${this.playableType} complete`);
               }
+
+              this.openCompletionDialogue();
+
               return;
             }
 
@@ -356,7 +365,7 @@ export class PlayerService {
       this.snapshot.ahead = 0;
       this.stop(true);
       this.tts.say(`${this.playableType} complete`);
-
+      this.openCompletionDialogue();
       return;
     } else {
       this.sequence.goForward(() => {
@@ -410,5 +419,30 @@ export class PlayerService {
     this.snapshotSubject$.next(null);
     this.stageEmitter$.next(null);
     this.playableSubject$.next(null);
+  }
+
+  openCompletionDialogue() {
+    this.dialogueService
+      .open({ title: 'Complete!', content: 'Save report?' })
+      .pipe(first())
+      .subscribe((isConfirm) => {
+        if (isConfirm) {
+          const reportId = uid();
+
+          this.reportService.submitForReview({
+            id: reportId,
+            playableId: this.currentPlayableId,
+            startTime: this.startTime,
+            value: this.sequence.reportValue,
+          });
+
+          this.router.navigate([
+            'report',
+            this.currentPlayableId,
+            'record',
+            reportId,
+          ]);
+        }
+      });
   }
 }

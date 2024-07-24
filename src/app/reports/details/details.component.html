@@ -1,0 +1,55 @@
+@if (reportRev$ | async; as reportRev) {
+  <ol class="mb-4 flex h-auto w-full flex-col gap-3 overflow-y-auto text-xl">
+    <li
+      class="relative flex h-fit min-h-6 flex-grow flex-row items-center justify-between gap-3 px-5"
+    >
+      <div class="overflow-hidden text-ellipsis whitespace-nowrap">started</div>
+      <div class="whitespace-nowrap">
+        {{ report.startTime | date: "medium" }}
+      </div>
+    </li>
+    <hr />
+    @for (item of reportRev; track idx; let idx = $index) {
+      <li
+        class="relative flex h-fit min-h-6 flex-grow flex-row items-center justify-between gap-3 px-5"
+      >
+        <div
+          class="overflow-hidden text-ellipsis whitespace-nowrap"
+          [attr.title]="item.name"
+        >
+          {{ item.name }}
+        </div>
+        <div class="whitespace-nowrap">
+          {{ item.totalTime | timeStr }} <span> / {{ item.reps }} </span>
+        </div>
+      </li>
+    }
+    <hr />
+    <li
+      class="relative flex h-fit min-h-6 flex-grow flex-row items-center justify-between gap-3 px-5"
+    >
+      <div class="overflow-hidden text-ellipsis whitespace-nowrap">total</div>
+      <div class="whitespace-nowrap">
+        {{ totalTime | timeStr }} <span> / {{ report.value.length }} </span>
+      </div>
+    </li>
+  </ol>
+  <div class="justify-centr mb-4 flex flex-col items-center text-xl">
+    <div class="flex flex-grow items-center justify-center">
+      <button
+        type="button"
+        class="mx-3 h-10 w-24 rounded-md bg-secondary text-on-secondary"
+        (click)="discardReport()"
+      >
+        <span class="cursor-pointer">discard</span>
+      </button>
+      <button
+        type="button"
+        class="mx-3 h-10 w-24 rounded-md bg-secondary text-on-secondary"
+        (click)="saveReport()"
+      >
+        <span class="cursor-pointer">save</span>
+      </button>
+    </div>
+  </div>
+}

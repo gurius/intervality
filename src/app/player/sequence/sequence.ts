@@ -1,4 +1,4 @@
-import { cloneDeep, times } from 'lodash-es';
+import { cloneDeep, pick, times } from 'lodash-es';
 import { Playable } from '../../models/playable/playable.model';
 import { Timer, TimerType } from '../../models/playable/timer.model';
 import { StepInFocus, StepStatus } from '../player.service';
@@ -203,6 +203,10 @@ export class Sequence {
     if (convertible && onSuccess) {
       onSuccess();
     }
+  }
+
+  get reportValue() {
+    return this.steps.map((s) => pick(s, ['name', 'value']));
   }
 }
 
