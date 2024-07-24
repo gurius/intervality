@@ -419,7 +419,10 @@ export class PlayerService {
 
   openCompletionDialogue() {
     this.dialogueService
-      .open({ title: 'Complete!', content: 'Save report?' })
+      .open({
+        title: this.translateService.instant('Report.Complete'),
+        content: this.translateService.instant('Report.SaveReport'),
+      })
       .pipe(first())
       .subscribe((isConfirm) => {
         if (isConfirm) {

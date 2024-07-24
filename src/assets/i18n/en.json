@@ -80,6 +80,8 @@
     "Discard": "discard",
     "Save": "save",
     "UnsavedData": "Unsaved data",
-    "LeaveConfirm": "Data will be lost. Discard data?"
+    "LeaveConfirm": "Data will be lost. Discard data?",
+    "Complete": "Complete!",
+    "SaveReport": "Save report?"
   }
 }
