@@ -57,6 +57,11 @@ export class PlayerComponent implements OnInit, OnDestroy, LeavePermission {
   onUserResponse(): void {}
 
   ngOnInit(): void {
+    if (this.playerService.minimised) {
+      this.playerService.minimised = false;
+
+      return;
+    }
     const id = this.aroute.snapshot.paramMap.get('id');
     if (id) {
       this.id = id;
@@ -66,6 +71,11 @@ export class PlayerComponent implements OnInit, OnDestroy, LeavePermission {
 
   ngOnDestroy(): void {
     this.destroy$.next();
+
+    if (this.playerService.playing) {
+      this.playerService.minimised = true;
+      return;
+    }
     this.playerService.reset();
   }
 

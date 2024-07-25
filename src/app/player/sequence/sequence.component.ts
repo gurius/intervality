@@ -11,6 +11,8 @@ import { PlayerService, PlayerSnapshot, StepInFocus } from '../player.service';
 import { Subject, takeUntil } from 'rxjs';
 import { SettingsService } from '../../settings/settings.service';
 
+const scorllDelta = 124;
+
 @Component({
   selector: 'app-sequence',
   templateUrl: './sequence.component.html',
@@ -30,18 +32,27 @@ export class SequenceComponent implements OnInit, OnDestroy {
 
   sequence: StepInFocus[] = [];
 
+  ngAfterViewInit(): void {
+    if (this.playerService.playing) this.scrollTo(this.currentScrollYposition);
+  }
+
   ngOnInit(): void {
+    if (this.playerService.playing) {
+      this.currentScrollYposition =
+        this.playerService.sequence.idx * scorllDelta - scorllDelta;
+    }
+
     this.sequence = this.playerService.sequence.steps;
     this.playerService.step$
       .pipe(takeUntil(this.destroy$))
       .subscribe(({ direction }) => {
         if (direction === 'backward' && this.playerService.sequence.idx >= 1) {
-          this.currentScrollYposition -= 124;
+          this.currentScrollYposition -= scorllDelta;
         } else if (
           direction === 'forward' &&
           this.playerService.sequence.idx >= 2
         ) {
-          this.currentScrollYposition += 124;
+          this.currentScrollYposition += scorllDelta;
         }
         this.scrollTo(this.currentScrollYposition);
       });

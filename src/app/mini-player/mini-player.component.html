@@ -1,0 +1,21 @@
+@if (snapshot$ | async; as snapshot) {
+  <div
+    (click)="returnToPlayer()"
+    class="flex flex-shrink-0 flex-grow cursor-pointer items-center justify-between gap-1 rounded-full bg-container px-3 py-2 text-xl text-on-container"
+  >
+    <div>
+      <!-- {{ snapshot.past | timeStr: "mm:ss" }} -->
+      {{ snapshot.status }}
+    </div>
+    |
+    @if (snapshot.currentMs) {
+      <div>
+        {{ snapshot.currentMs | timeStr: "mm:ss.sss" }}
+      </div>
+    } @else if (snapshot.stopWatchMs) {
+      <div>
+        {{ snapshot.stopWatchMs | timeStr: "mm:ss.sss" }}
+      </div>
+    }
+  </div>
+}

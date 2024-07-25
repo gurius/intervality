@@ -90,6 +90,9 @@ export class PlayerService {
   playing = false;
   commenced = false;
 
+  // when playeing but currnt location is not player
+  minimised = false;
+
   snapshot!: PlayerSnapshot;
   initialSnapshot!: PlayerSnapshot;
 
@@ -443,5 +446,8 @@ export class PlayerService {
           ]);
         }
       });
+  }
+  returnToPlayer() {
+    this.router.navigate(['player', this.currentPlayableId]);
   }
 }

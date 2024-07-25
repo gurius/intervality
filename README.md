@@ -17,12 +17,12 @@ A compositor and runner for sequences of timers(countdown/stopwatch) with sound 
 11. Basic data export/import
 12. Translations
 13. A simple dialogue
+14. History for each playable
 
 ## Features planned
 
 - Previewer
 - Import page with previewer and selection of imported entries
-- Play log (history of completed sets, supersets and timers)
 - Notification
 - Animations and visual improvements when everything is working
 - Help or FAQ or both pages

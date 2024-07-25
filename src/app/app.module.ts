@@ -50,8 +50,14 @@ import { superSet } from './icons';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ModalContainerComponent } from './modal/modal-container/modal-container.component';
 import { ModalDialogueComponent } from './modal/modal-dialogue/modal-dialogue.component';
+import { MiniPlayerComponent } from './mini-player/mini-player.component';
 @NgModule({
-  declarations: [AppComponent, ModalContainerComponent, ModalDialogueComponent],
+  declarations: [
+    AppComponent,
+    ModalContainerComponent,
+    ModalDialogueComponent,
+    MiniPlayerComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
