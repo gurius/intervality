@@ -1,6 +1,6 @@
 <form
   onsubmit="return false"
-  class="mx-2 my-6 flex h-20 items-center justify-between rounded-md bg-secondary py-8"
+  class="mx-2 my-4 flex h-12 items-center justify-between rounded-full bg-secondary py-4"
 >
   <button type="button" class="mx-4 text-on-primary">
     <fa-icon [icon]="['fas', 'filter']"></fa-icon>
@@ -10,7 +10,7 @@
     name="filter"
     [formControl]="filter"
     (keydown)="find($event)"
-    class="h-14 w-8/12 flex-auto rounded-md bg-surface px-4 text-xl selection:bg-primary selection:text-on-primary"
+    class="h-10 w-8/12 flex-auto rounded-full bg-surface px-4 text-xl selection:bg-primary selection:text-on-primary"
   />
   <button type="button" class="mx-4 text-on-primary" (click)="find()">
     <fa-icon [icon]="['fas', 'search']"></fa-icon>

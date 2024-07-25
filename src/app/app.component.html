@@ -1,12 +1,11 @@
 <div
-  class="side-panel-portrait z-10 flex h-full min-w-80 flex-col bg-container text-xl text-on-container"
+  class="side-panel-portrait z-10 flex h-full min-w-80 flex-col rounded-r-xl bg-container text-xl text-on-container shadow-md"
   data-theme="dark"
   [ngClass]="{
     'slide-in-left': isPanelVisible,
-    'slide-out-left': !isPanelVisible,
   }"
 >
-  <div class="app-info text-on-primary">
+  <div class="app-info rounded-r-xl text-on-primary shadow-md">
     <h1>{{ title }}</h1>
     <div class="app-info__version">{{ version }}</div>
   </div>
@@ -119,7 +118,7 @@
 
 @if (isPanelVisible && !isPushMode) {
   <div
-    class="absolute inset-0 z-[1] backdrop-blur-sm"
+    class="absolute inset-0 z-[1] bg-surface/35"
     (click)="toggleSidePanel()"
   ></div>
 }
@@ -129,6 +128,7 @@
   [ngClass]="{
     'inset-0': !isPanelVisible || (isPanelVisible && !isPushMode),
     'bottom-0 left-80 right-0 top-0': isPushMode && isPanelVisible,
+    fading: isPanelVisible && !isPushMode,
   }"
 >
   <div class="heading flex h-14 justify-between xl:h-20">
