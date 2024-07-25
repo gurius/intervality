@@ -58,7 +58,7 @@
         </div>
         <div class="flex items-center gap-2">
           @if (visibleIdx === idx) {
-            <div class="flex">
+            <div class="flex flex-wrap justify-end">
               <button
                 class="h-10 w-10 rounded-md"
                 [routerLink]="['/player', item.id]"
