@@ -30,10 +30,10 @@
       >
         <div
           class="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap p-2 hover:bg-container"
-          [attr.title]="item.startTime | date: 'medium'"
+          [attr.title]="item.startTime"
           (click)="submitForReview(item)"
         >
-          {{ item.startTime | date: "medium" }}
+          {{ item.startTime }}
         </div>
         <div class="flex items-center gap-3">
           <button
