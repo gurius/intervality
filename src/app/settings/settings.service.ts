@@ -1,56 +1,27 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
-import { BehaviorSubject, shareReplay, tap } from 'rxjs';
-
-export type SettingsList = Select | Toggle | Value<string> | Value<number>;
-
-export type ConfigNames =
-  | 'theme'
-  | 'sound-notification'
-  | 'prestart-delay'
-  | 'language'
-  | 'last-rest-removal'
-  | 'rest-timer-id'
-  | 'notify-before-seconds';
+import {
+  BehaviorSubject,
+  Observable,
+  distinctUntilChanged,
+  filter,
+  map,
+  shareReplay,
+} from 'rxjs';
+import {
+  ConfigNames,
+  SelectStringOption,
+  SettingsList,
+  SingleValueOption,
+} from './settings';
 
 export type Locale = 'en' | 'uk';
 
-export type Change =
-  | { id: 'theme'; value: string }
-  | { id: 'sound-notification'; value: boolean }
-  | { id: 'prestart-delay'; value: number }
-  | { id: 'language'; value: Locale }
-  | { id: 'last-rest-removal'; value: boolean }
-  | { id: 'rest-timer-id'; value: string };
-
-export type Toggle = {
-  label: string;
+export type Change = {
   id: ConfigNames;
-  description: string;
-  controlType: 'toggle';
-  value: boolean;
-  default: boolean;
-};
-
-export type Select<T = any> = {
-  label: string;
-  id: ConfigNames;
-  description: string;
-  controlType: 'select';
-  options: T[];
-  value: string;
-  default: string;
-};
-
-export type Value<T extends string | number> = {
-  label: string;
-  id: ConfigNames;
-  description: string;
-  controlType: 'string' | 'number';
-  value: T;
-  default: T;
+  value: string | number | boolean | Locale;
 };
 
 @Injectable({
@@ -69,22 +40,23 @@ export class SettingsService {
 
   config$ = new BehaviorSubject<SettingsList[]>([]);
 
+  getParam(cfgId: ConfigNames): Observable<string | number | boolean> {
+    return this.config$.asObservable().pipe(
+      map((cfg) => cfg.find((c) => c.id === cfgId)?.rawValue),
+      distinctUntilChanged(),
+      filter((x) => x !== undefined),
+      shareReplay(1),
+    );
+  }
+
   config: SettingsList[] = [];
 
   constructor(
     private tService: TranslateService,
     private metaService: Meta,
   ) {
-    const lang = this.config.find((c) => c.id === 'language');
-    if (lang) {
-      this.languageSubject$.next(lang.value as Locale);
-    }
-
-    this.restoreFromLocalStorage();
-
     this.tService.onLangChange.subscribe((event) => {
       this.initConfig();
-      this.restoreFromLocalStorage();
 
       this.config$.next(cloneDeep(this.config));
       this.initialised = true;
@@ -95,76 +67,56 @@ export class SettingsService {
       .addEventListener('change', () => this.applyTheme());
   }
 
-  restoreFromLocalStorage() {
-    if (this.initialised) return;
-    this.config.forEach((c) => {
-      switch (c.id) {
-        case 'sound-notification':
-        case 'last-rest-removal':
-          const onOroff = localStorage.getItem(c.id);
-          c.value = onOroff ? JSON.parse(onOroff) : c.default;
-          break;
-        case 'prestart-delay':
-          const value = localStorage.getItem(c.id);
-          c.value = value ? JSON.parse(value) : c.default;
-          break;
-        default:
-          c.value = localStorage.getItem(c.id) ?? c.default;
-          break;
-      }
-    });
-  }
-
   // for translation to apply
   initConfig() {
     this.config = [
-      {
-        label: this.tService.instant('Settings.Theme'),
+      new SelectStringOption({
+        label: this.tService.instant('Settings.Theme') as string,
         id: 'theme',
-        description: this.tService.instant('Settings.ThemeLabel'),
+        description: this.tService.instant('Settings.ThemeLabel') as string,
         controlType: 'select',
         options: [
           {
             value: 'system',
-            label: this.tService.instant('Settings.OptionSystem'),
+            label: this.tService.instant('Settings.OptionSystem') as string,
           },
           {
             value: 'dark',
-            label: this.tService.instant('Settings.OptionDark'),
+            label: this.tService.instant('Settings.OptionDark') as string,
           },
           {
             value: 'light',
-            label: this.tService.instant('Settings.OptionLight'),
+            label: this.tService.instant('Settings.OptionLight') as string,
           },
         ],
-        value: 'system',
-        default: 'system',
-      },
-      {
+        defaults: 'system',
+        unsetIfDefault: true, // useful for those whoe switch languages
+        onAfterSaved: () => this.applyTheme(),
+      }),
+      new SingleValueOption({
         label: this.tService.instant('Settings.Sound'),
         id: 'sound-notification',
         description: this.tService.instant('Settings.SoundLabel'),
         controlType: 'toggle',
-        value: false,
-        default: false,
-      },
-      {
-        label: this.tService.instant('Settings.PrestartDelay'),
+        defaults: false,
+      }),
+      new SingleValueOption({
+        label: this.tService.instant('Settings.PrestartDelay') as string,
         id: 'prestart-delay',
-        description: this.tService.instant('Settings.PrestartLabel'),
+        description: this.tService.instant('Settings.PrestartLabel') as string,
         controlType: 'number',
-        value: 1000,
-        default: 1000,
-      },
-      {
+        defaults: 1000,
+        transformBeforeGet: (v) => v / 1000, // get
+        transformBeforeSet: (v) => v * 1000, // set
+      }),
+      new SingleValueOption({
         label: this.tService.instant('Settings.NotifyBeforeSeconds'),
         id: 'notify-before-seconds',
         description: this.tService.instant('Settings.NotifyBeforeSecondsLabel'),
         controlType: 'string',
-        value: '13,1,0.5|9,1,0.4|2,1.8,0.3',
-        default: '13,1,0.5|9,1,0.4|2,1.8,0.3',
-      },
-      {
+        defaults: '13,1,0.5|9,1,0.4|2,1.8,0.3',
+      }),
+      new SelectStringOption({
         label: this.tService.instant('Settings.Language'),
         id: 'language',
         description: this.tService.instant('Settings.LanguageLabel'),
@@ -173,86 +125,37 @@ export class SettingsService {
           value: lang,
           label: this.tService.instant(`Settings.${lang}`),
         })),
-        value: 'en',
-        default: this.defautlLocale,
-      },
-      {
+        defaults: this.defautlLocale,
+      }),
+      new SingleValueOption({
         label: this.tService.instant('Settings.RemoveLastRest'),
         id: 'last-rest-removal',
         description: this.tService.instant('Settings.RemoveLastRestLabel'),
         controlType: 'toggle',
-        value: false,
-        default: false,
-      },
-      {
+        defaults: false,
+      }),
+      new SingleValueOption({
         label: this.tService.instant('Settings.RestTimerID'),
         id: 'rest-timer-id',
         description: this.tService.instant('Settings.RestTimerIDLabel'),
         controlType: 'string',
-        value: this.tService.instant('Settings.RestTimerIDDefault'),
-        default: this.tService.instant('Settings.RestTimerIDDefault'),
-      },
+        defaults: this.tService.instant('Settings.RestTimerIDDefault'),
+        unsetIfDefault: true, // useful for those whoe switch languages
+      }),
     ];
   }
 
   update(changes: Change[]) {
     changes.forEach(({ id, value }) => {
-      const config = this.config?.find((c) => {
-        return c.id === id;
-      });
+      const config = this.config?.find((c) => c.id === id);
+      config && (config.value = value);
 
-      if (config) {
-        if (config.id === 'prestart-delay') {
-          config.value = (value as number) * 1000;
-        } else if (
-          config.id === 'rest-timer-id' ||
-          config.id === 'notify-before-seconds'
-        ) {
-          config.value = (value as string).trim();
-        } else {
-          config.value = value;
-        }
+      if (id === 'language') {
+        this.languageSubject$.next(value as Locale);
       }
     });
-    this.saveChages();
+
     this.config$.next(cloneDeep(this.config));
-  }
-
-  saveChages() {
-    this.config?.forEach((c) => {
-      switch (c.id) {
-        case 'theme':
-          this.setTheme(c.value as 'system' | 'light' | 'dark');
-          this.applyTheme();
-          break;
-        case 'sound-notification':
-        case 'last-rest-removal':
-          localStorage.setItem(c.id, c.value as string);
-          break;
-        case 'prestart-delay':
-          localStorage.setItem(c.id, `${c.value}`);
-          break;
-        case 'language':
-          localStorage.setItem(c.id, `${c.value}`);
-          this.languageSubject$.next(c.value as Locale);
-
-          break;
-        case 'rest-timer-id':
-          if ((c.value as string).trim() === c.default) {
-            localStorage.removeItem(c.id);
-          } else {
-            localStorage.setItem(c.id, (c.value as string).trim());
-          }
-          break;
-        case 'notify-before-seconds':
-          localStorage.setItem(c.id, (c.value as string).trim());
-          break;
-      }
-    });
-  }
-
-  getConfigValueOf(id: ConfigNames) {
-    return this.config?.find((c) => c.id === id);
   }
 
   transformNotifyBeforeValue(v: string): [number, number, number][] {
@@ -298,14 +201,6 @@ export class SettingsService {
       );
       document.body.classList.add('light');
       document.body.classList.remove('dark');
-    }
-  }
-
-  setTheme(theme: 'system' | 'dark' | 'light') {
-    if (theme === 'system') {
-      localStorage.removeItem('theme');
-    } else {
-      localStorage.setItem('theme', theme);
     }
   }
 }

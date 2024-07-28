@@ -1,20 +1,28 @@
-import { Component, ElementRef, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { Change, SettingsService } from './settings.service';
 import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { FileService } from '../shared/services/file/file.service';
 import { DataService } from '../shared/services/data/data.service';
 import { Playable } from '../models/playable/playable.model';
 import { DialogueService } from '../modal/dialogue.service';
-import { first } from 'rxjs';
+import { Subject, first, map, pairwise, startWith, takeUntil } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { ConfigNames, SelectStringOption, SettingsList } from './settings';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
 })
-export class SettingsComponent {
-  protected settingsService = inject(SettingsService);
+export class SettingsComponent implements OnDestroy {
+  destroy$ = new Subject<void>();
+
   settingsForm: FormGroup;
 
   @ViewChild('importInput') importInput!: ElementRef<HTMLInputElement>;
@@ -24,6 +32,7 @@ export class SettingsComponent {
     private fb: NonNullableFormBuilder,
     private dialogueService: DialogueService,
     private translateService: TranslateService,
+    protected settingsService: SettingsService,
   ) {
     this.settingsForm = this.fb.group({});
     this.initFormControls();
@@ -34,18 +43,45 @@ export class SettingsComponent {
       });
     });
     this.settingsForm.addControl('fileInput', this.fb.control(''));
+    this.settingsForm.valueChanges
+      .pipe(
+        startWith(() => {
+          // initial state to compare with in map from the first chage
+          settingsService.config.map(({ id, value }) => ({ id, value }));
+        }),
+        pairwise(),
+        map(([prev, curr]) => {
+          const chages: Change[] = [];
+          for (let key in curr) {
+            if (prev[key] !== curr[key]) {
+              chages.push({ id: key as ConfigNames, value: curr[key] });
+            }
+          }
+          return chages;
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((chages) => {
+        console.log(chages);
+        this.settingsService.update(chages);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
+
+  isSelectInput(point: SettingsList): point is SelectStringOption<string> {
+    return point.controlType === 'select';
   }
 
   initFormControls() {
     this.settingsService.config?.forEach((c) => {
-      let value =
-        c.id === 'prestart-delay' ? (c.value as number) / 1000 : c.value;
-
       const validators = [
         Validators.required,
         ...(c.id === 'prestart-delay' ? [Validators.min(0)] : []),
       ];
-      this.settingsForm.addControl(c.id, this.fb.control(value, validators));
+      this.settingsForm.addControl(c.id, this.fb.control(c.value, validators));
     });
   }
 
@@ -71,17 +107,5 @@ export class SettingsComponent {
     const file = e.target.files[0];
     this.fileService.upladFile(file);
     this.settingsForm.get('fileInput')?.reset();
-  }
-
-  submit() {
-    const changed = Object.entries(this.settingsForm.controls)
-      .map((e) => {
-        const [id, { value }] = e;
-        if (id === 'prestart-delay' && value < 0) return {} as Change;
-        return { id, value } as Change;
-      })
-      .filter((e) => !!e.id);
-
-    this.settingsService.update(changed);
   }
 }

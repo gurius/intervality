@@ -3,7 +3,6 @@ import { SettingsService } from '../settings/settings.service';
 import {
   Observable,
   combineLatestWith,
-  distinctUntilChanged,
   filter,
   interval,
   map,
@@ -12,7 +11,8 @@ import {
   tap,
 } from 'rxjs';
 import { PlayerService } from './player.service';
-import { isCloseTo } from '../utils';
+import { isBoolean, isCloseTo, typeGuard } from '../utils';
+import { isString } from 'lodash-es';
 
 @Injectable({
   providedIn: 'root',
@@ -34,41 +34,25 @@ export class BeepService {
     this.audioContext = new (window.AudioContext ||
       (window as any).webkitAudioContext)();
 
-    this.isSoundOn$ = settingsService.config$.pipe(
-      map((cfg) =>
-        Boolean(
-          cfg.filter((cfg) => ['sound-notification'].includes(cfg.id)).at(0)
-            ?.value,
-        ),
-      ),
-      distinctUntilChanged(),
-      // (prev, curr) => prev.every((cfg, i) => cfg.value === curr[i].value),
-    );
+    this.isSoundOn$ = settingsService
+      .getParam('sound-notification')
+      .pipe(typeGuard(isBoolean));
 
-    const notifyBeforSeconds$ = settingsService.config$.pipe(
-      map((cfg) =>
-        cfg.filter((cfg) => ['notify-before-seconds'].includes(cfg.id)),
-      ),
-      distinctUntilChanged((prev, curr) => {
-        if (prev.length !== curr.length) return false;
+    const notifyBeforSeconds$ = settingsService
+      .getParam('notify-before-seconds')
+      .pipe(
+        typeGuard(isString),
 
-        const isChanged = prev.every((cfg, i) => cfg.value === curr[i].value);
-        return isChanged;
-      }),
-
-      map((cfg) =>
-        this.settingsService
-          .transformNotifyBeforeValue((cfg[0]?.value as string) ?? '')
-          .map((tup) => {
+        map((cfg) =>
+          this.settingsService.transformNotifyBeforeValue(cfg).map((tup) => {
             let [start, range, intensity] = tup;
             start += 1000 + intensity;
             const end = range;
 
-            console.log('inside config ', [start, end, intensity]);
             return [start, end, intensity] as [number, number, number];
           }),
-      ),
-    );
+        ),
+      );
 
     this.notify$ = playerService.snapshot$.pipe(
       combineLatestWith(notifyBeforSeconds$, this.isSoundOn$),
@@ -93,7 +77,6 @@ export class BeepService {
         });
 
         const [startAt, stopAfter, intensity] = conf ?? [-1, 0, 1000];
-        console.log(startAt);
         return { snapshot, startAt, intensity, stopAfter };
       }),
       switchMap(({ intensity, stopAfter }) => {

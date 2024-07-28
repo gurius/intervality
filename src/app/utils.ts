@@ -1,3 +1,4 @@
+import { OperatorFunction, map } from 'rxjs';
 import { INTERVAL_MS } from './config';
 
 export const uid = () => {
@@ -11,3 +12,25 @@ export const isCloseTo = (confms: number, ms: number) => {
 
   return confms + half >= ms && confms - half <= ms;
 };
+
+// rxjs guard OperatorFunction
+export const typeGuard = <T, Y extends T>(
+  isOfExpectedType: (value: T) => value is Y,
+): OperatorFunction<T, Y> => {
+  return (source) =>
+    source.pipe(
+      map((value) => {
+        if (isOfExpectedType(value)) {
+          return value;
+        } else {
+          throw new Error('TypeGuard: Wrong type');
+        }
+      }),
+    );
+};
+
+export const isBoolean = (x: unknown): x is boolean =>
+  x !== null && x !== undefined && typeof x === 'boolean';
+
+export const isString = (x: unknown): x is string => typeof x === 'string';
+export const isNumber = (x: unknown): x is number => typeof x === 'number';

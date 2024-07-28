@@ -24,7 +24,7 @@ import { DialogueService } from '../modal/dialogue.service';
 import { TextToSpeechService } from './tts.service';
 import { ReportService } from '../reports/report.service';
 import { Router } from '@angular/router';
-import { uid } from '../utils';
+import { isNumber, typeGuard, uid } from '../utils';
 
 export type State =
   | null
@@ -103,12 +103,10 @@ export class PlayerService {
   currentPlayableId: string = '';
   playableType: string = '';
 
-  isRemoveLastRest = false;
-  restTimerId = 'rest';
-  isSoundNotification = false;
-
   startTime!: string;
   endTime!: string;
+
+  prestartDelay!: number;
 
   constructor(
     private playableService: PlayableService,
@@ -119,36 +117,11 @@ export class PlayerService {
     private reportService: ReportService,
     private router: Router,
   ) {
-    settingsService.config$
-      .pipe(
-        map((cfg) =>
-          cfg.filter((cfg) =>
-            [
-              'last-rest-removal',
-              'rest-timer-id',
-              'sound-notification',
-            ].includes(cfg.id),
-          ),
-        ),
-        distinctUntilChanged((prev, curr) => {
-          if (prev.length !== curr.length) return false;
-          else {
-            const isChanged = prev.every(
-              (cfg, i) => cfg.value === curr[i].value,
-            );
-            console.log(isChanged);
-            return isChanged;
-          }
-        }),
-      )
-      .subscribe((c) => {
-        this.isRemoveLastRest = !!c.find((o) => o.id === 'last-rest-removal')
-          ?.value;
-        this.restTimerId =
-          (c.find((o) => o.id === 'rest-timer-id')?.value as string) ?? 'rest';
-        this.isSoundNotification = !!c.find(
-          (o) => o.id === 'sound-notification',
-        )?.value;
+    settingsService
+      .getParam('prestart-delay')
+      .pipe(typeGuard(isNumber))
+      .subscribe((x) => {
+        this.prestartDelay = x;
       });
   }
 
@@ -160,9 +133,7 @@ export class PlayerService {
       playable,
       this.dialogueService,
       this.translateService,
-      this.settingsService.getConfigValueOf('last-rest-removal')
-        ?.value as boolean,
-      this.settingsService.getConfigValueOf('rest-timer-id')?.value as string,
+      this.settingsService,
     );
 
     this.initialSnapshot = {
@@ -179,8 +150,6 @@ export class PlayerService {
     this.snapshot = cloneDeep(this.initialSnapshot);
   }
 
-  startBefore: number = 0;
-  notifyBefore: number = 0;
   commenceSequence(prestart: number) {
     this.commenced = true;
     this.snapshot.state = 'commenced';
@@ -189,8 +158,6 @@ export class PlayerService {
     this.snapshot.ahead = this.sequence.ahead;
     this.snapshotSubject$.next(this.snapshot);
     this.currentMs = this.sequence.step.value;
-    this.startBefore = this.settingsService.getConfigValueOf('prestart-delay')
-      ?.value as number;
     this.stageEmitter$.next('commenced');
 
     const s = interval(INTERVAL_MS)
@@ -213,10 +180,7 @@ export class PlayerService {
       .subscribe();
   }
 
-  play(
-    prestart: number = this.settingsService.getConfigValueOf('prestart-delay')
-      ?.value as number,
-  ) {
+  play(prestart: number = this.prestartDelay) {
     if (!this.commenced) {
       this.commenceSequence(prestart);
       return;
@@ -418,6 +382,7 @@ export class PlayerService {
     this.snapshotSubject$.next(null);
     this.stageEmitter$.next(null);
     this.playableSubject$.next(null);
+    this.sequence.cleanUp();
   }
 
   openCompletionDialogue() {

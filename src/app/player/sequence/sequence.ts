@@ -5,21 +5,47 @@ import { StepInFocus, StepStatus } from '../player.service';
 import { TimerSet } from '../../models/playable/set.model';
 import { DialogueService } from '../../modal/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
-import { first } from 'rxjs';
+import { Subscription, first } from 'rxjs';
+import { SettingsService } from '../../settings/settings.service';
+import { isBoolean, isString, typeGuard } from '../../utils';
 
 export class Sequence {
   private currentIdx = 0;
+  private isRemoveLastStep!: boolean;
+  private restId: string = 'rest';
+
   dialogueService: DialogueService;
   translateService: TranslateService;
   steps: Array<StepInFocus>;
+
+  subscription: Subscription;
+
+  cleanUp(): void {
+    this.subscription.unsubscribe();
+  }
 
   constructor(
     playable: Playable,
     dialogueService: DialogueService,
     translateService: TranslateService,
-    isRemoveLastStep: boolean,
-    restId: string = 'rest',
+    settingsService: SettingsService,
   ) {
+    this.subscription = settingsService
+      .getParam('last-rest-removal')
+      .pipe(typeGuard(isBoolean))
+      .subscribe((x) => {
+        this.isRemoveLastStep = x;
+      });
+
+    this.subscription.add(
+      settingsService
+        .getParam('rest-timer-id')
+        .pipe(typeGuard(isString))
+        .subscribe((x) => {
+          this.restId = x;
+        }),
+    );
+
     this.translateService = translateService;
     this.dialogueService = dialogueService;
     switch (playable.playableType) {
@@ -64,9 +90,9 @@ export class Sequence {
         .at(-1)
         ?.name.toLowerCase()
         .trim()
-        .includes(restId.toLowerCase())
+        .includes(this.restId.toLowerCase())
     ) {
-      if (isRemoveLastStep) {
+      if (this.isRemoveLastStep) {
         this.steps.splice(-1);
       } else {
         this.dialogueService

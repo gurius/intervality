@@ -10,6 +10,7 @@ import {
 import { PlayerService, PlayerSnapshot, StepInFocus } from '../player.service';
 import { Subject, takeUntil } from 'rxjs';
 import { SettingsService } from '../../settings/settings.service';
+import { isString, typeGuard } from '../../utils';
 
 const scorllDelta = 124;
 
@@ -32,6 +33,8 @@ export class SequenceComponent implements OnInit, OnDestroy {
 
   sequence: StepInFocus[] = [];
 
+  restTimerId: string = 'rest';
+
   ngAfterViewInit(): void {
     if (this.playerService.playing) this.scrollTo(this.currentScrollYposition);
   }
@@ -41,6 +44,13 @@ export class SequenceComponent implements OnInit, OnDestroy {
       this.currentScrollYposition =
         this.playerService.sequence.idx * scorllDelta - scorllDelta;
     }
+
+    this.settingsService
+      .getParam('rest-timer-id')
+      .pipe(typeGuard(isString), takeUntil(this.destroy$))
+      .subscribe((x) => {
+        this.restTimerId = x;
+      });
 
     this.sequence = this.playerService.sequence.steps;
     this.playerService.step$
@@ -68,15 +78,7 @@ export class SequenceComponent implements OnInit, OnDestroy {
   }
 
   isRest(name: string) {
-    const restId =
-      this.settingsService.getConfigValueOf('rest-timer-id')?.value;
-    return (
-      restId &&
-      name
-        .toLowerCase()
-        .trim()
-        .includes((restId as string).toLowerCase())
-    );
+    return name.toLowerCase().trim().includes(this.restTimerId.toLowerCase());
   }
 
   scrollTo(position: number) {

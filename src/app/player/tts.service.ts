@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SettingsService } from '../settings/settings.service';
-import { distinctUntilChanged, map, tap } from 'rxjs';
+import { typeGuard, isBoolean } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -8,12 +8,20 @@ import { distinctUntilChanged, map, tap } from 'rxjs';
 export class TextToSpeechService {
   private synth: SpeechSynthesis;
   private lang: string = '';
+  private notify: boolean = false;
   constructor(private settingsService: SettingsService) {
     this.settingsService.language$.subscribe((lang) => {
       this.lang = lang || navigator.language;
     });
 
     this.synth = window.speechSynthesis;
+
+    this.settingsService
+      .getParam('sound-notification')
+      .pipe(typeGuard(isBoolean))
+      .subscribe((value) => {
+        this.notify = value;
+      });
   }
 
   get voice() {
@@ -23,6 +31,8 @@ export class TextToSpeechService {
   }
 
   public say(text: string): void {
+    if (!this.notify) return;
+
     if (this.synth.speaking) {
       console.error('SpeechSynthesis is already speaking');
       return;
