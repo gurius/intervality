@@ -5,10 +5,10 @@
     "OptionSystem": "System",
     "OptionDark": "Dark",
     "OptionLight": "Light",
-    "Sound": "Sound",
-    "SoundLabel": "Notify before start and before end of each step",
+    "Sound": "Sound notification",
+    "SoundLabel": "Play sound (timing is specified by 'Notification timing')",
     "PrestartDelay": "Prestart delay",
-    "PrestartLabel": "Delay in seconds",
+    "PrestartLabel": "Delay in seconds before the start of the first step.",
     "Language": "Language",
     "LanguageLabel": "Select language",
     "en": "EN",
@@ -23,8 +23,10 @@
     "RestTimerID": "Resting timer ID",
     "RestTimerIDLabel": "Use it in timers name to mark timer as resting",
     "RestTimerIDDefault": "Rest",
-    "NotifyBeforeSeconds": "Notifications",
-    "NotifyBeforeSecondsLabel": "Set sound notification befor end of timers in seconds. Theoretically any number of notification can be set devided by `|` in following format: `beforeEnd,howLong,howIntense|...`"
+    "NotifyBeforeSeconds": "Notification timing",
+    "NotifyBeforeSecondsLabel": "Set time before end of step in seconds. (Applies to every step)",
+    "interface": "Interface",
+    "playback": "Playback"
   },
   "NavPanel": {
     "Tweak": "Tweak {{playable}}",

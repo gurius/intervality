@@ -73,6 +73,7 @@ export class SettingsService {
       new SelectStringOption({
         label: this.tService.instant('Settings.Theme') as string,
         id: 'theme',
+        category: 'interface',
         description: this.tService.instant('Settings.ThemeLabel') as string,
         controlType: 'select',
         options: [
@@ -94,15 +95,9 @@ export class SettingsService {
         onAfterSaved: () => this.applyTheme(),
       }),
       new SingleValueOption({
-        label: this.tService.instant('Settings.Sound'),
-        id: 'sound-notification',
-        description: this.tService.instant('Settings.SoundLabel'),
-        controlType: 'toggle',
-        defaults: false,
-      }),
-      new SingleValueOption({
         label: this.tService.instant('Settings.PrestartDelay') as string,
         id: 'prestart-delay',
+        category: 'playback',
         description: this.tService.instant('Settings.PrestartLabel') as string,
         controlType: 'number',
         defaults: 1000,
@@ -110,8 +105,18 @@ export class SettingsService {
         transformBeforeSet: (v) => v * 1000, // set
       }),
       new SingleValueOption({
+        label: this.tService.instant('Settings.Sound'),
+        id: 'sound-notification',
+        category: 'playback',
+        description: this.tService.instant('Settings.SoundLabel'),
+        controlType: 'toggle',
+        defaults: false,
+      }),
+
+      new SingleValueOption({
         label: this.tService.instant('Settings.NotifyBeforeSeconds'),
         id: 'notify-before-seconds',
+        category: 'playback',
         description: this.tService.instant('Settings.NotifyBeforeSecondsLabel'),
         controlType: 'string',
         defaults: '13,1,0.5|9,1,0.4|2,1.8,0.3',
@@ -119,6 +124,7 @@ export class SettingsService {
       new SelectStringOption({
         label: this.tService.instant('Settings.Language'),
         id: 'language',
+        category: 'interface',
         description: this.tService.instant('Settings.LanguageLabel'),
         controlType: 'select',
         options: this.languages.map((lang) => ({
@@ -130,6 +136,7 @@ export class SettingsService {
       new SingleValueOption({
         label: this.tService.instant('Settings.RemoveLastRest'),
         id: 'last-rest-removal',
+        category: 'playback',
         description: this.tService.instant('Settings.RemoveLastRestLabel'),
         controlType: 'toggle',
         defaults: false,
@@ -137,6 +144,7 @@ export class SettingsService {
       new SingleValueOption({
         label: this.tService.instant('Settings.RestTimerID'),
         id: 'rest-timer-id',
+        category: 'playback',
         description: this.tService.instant('Settings.RestTimerIDLabel'),
         controlType: 'string',
         defaults: this.tService.instant('Settings.RestTimerIDDefault'),

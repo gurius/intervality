@@ -13,7 +13,12 @@ import { Playable } from '../models/playable/playable.model';
 import { DialogueService } from '../modal/dialogue.service';
 import { Subject, first, map, pairwise, startWith, takeUntil } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { ConfigNames, SelectStringOption, SettingsList } from './settings';
+import {
+  CategoryDictionary,
+  ConfigNames,
+  SelectStringOption,
+  SettingsList,
+} from './settings';
 
 @Component({
   selector: 'app-settings',
@@ -25,7 +30,10 @@ export class SettingsComponent implements OnDestroy {
 
   settingsForm: FormGroup;
 
+  categories: CategoryDictionary[];
+
   @ViewChild('importInput') importInput!: ElementRef<HTMLInputElement>;
+
   constructor(
     private fileService: FileService,
     private dataService: DataService,
@@ -65,6 +73,11 @@ export class SettingsComponent implements OnDestroy {
         console.log(chages);
         this.settingsService.update(chages);
       });
+
+    this.categories = Array.from(
+      new Set(settingsService.config.map((c) => c.category)),
+    );
+    console.log(this.categories);
   }
 
   ngOnDestroy(): void {

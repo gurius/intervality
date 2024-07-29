@@ -1,11 +1,16 @@
 @if (settingsService.config) {
   <form [formGroup]="settingsForm">
-    @for (point of settingsService.config; let idx = $index; track idx) {
+    @for (category of categories; let idc = $index; track idc) {
       <section class="m-7 flex flex-col content-stretch justify-start">
-        <h2>{{ point.label }}</h2>
-        <p class="flex items-center justify-between">
+        <h2 class="mb-4">{{ "Settings." + category | translate }}</h2>
+        @for (
+          point of settingsService.config | categoryFilter: category;
+          let idx = $index;
+          track idx
+        ) {
           <label
-            class="self-end text-on-surface-dim"
+            #label
+            class="hidden text-lg italic text-on-surface-dim"
             for="{{ point.id }}-{{ idx }}"
             [ngClass]="{
               'text-red-600':
@@ -26,49 +31,92 @@
             }
           </label>
 
-          @switch (point.controlType) {
-            @case ("select") {
-              <select *ngIf="isSelectInput(point)" [formControlName]="point.id">
-                @for (opt of point.options; track opt.value) {
-                  <option [value]="opt.value">{{ opt.label }}</option>
-                }
-              </select>
-            }
-            @case ("number") {
-              <div class="flex max-w-28 flex-1 flex-col">
-                <input
-                  type="number"
+          <div class="mb-7 flex items-center justify-between rounded-b">
+            <p
+              class="flex cursor-pointer items-center justify-center text-on-surface-dim"
+              (click)="
+                label.style.display =
+                  label.style.display === 'block' ? 'none' : 'block'
+              "
+            >
+              <fa-icon
+                *ngIf="point.id === 'theme'"
+                [icon]="['fas', 'swatchbook']"
+              ></fa-icon>
+              <fa-icon
+                *ngIf="point.id === 'language'"
+                [icon]="['fas', 'language']"
+              ></fa-icon>
+              <fa-icon
+                *ngIf="point.id === 'sound-notification'"
+                [icon]="['fas', 'bell']"
+              ></fa-icon>
+              <fa-icon
+                *ngIf="point.id === 'prestart-delay'"
+                [icon]="['fas', 'clock-rotate-left']"
+              ></fa-icon>
+
+              <fa-icon
+                *ngIf="point.id === 'last-rest-removal'"
+                [icon]="['fas', 'forward-step']"
+              ></fa-icon>
+              <fa-icon
+                *ngIf="point.id === 'notify-before-seconds'"
+                [icon]="['fas', 'stopwatch-20']"
+              ></fa-icon>
+              <fa-icon
+                *ngIf="point.id === 'rest-timer-id'"
+                [icon]="['fas', 'charging-station']"
+              ></fa-icon>
+              <span class="ml-2 font-bold">{{ point.label }}</span>
+            </p>
+            @switch (point.controlType) {
+              @case ("select") {
+                <select
+                  *ngIf="isSelectInput(point)"
                   [formControlName]="point.id"
-                  id="{{ point.id }}-{{ idx }}"
-                />
-              </div>
+                >
+                  @for (opt of point.options; track opt.value) {
+                    <option [value]="opt.value">{{ opt.label }}</option>
+                  }
+                </select>
+              }
+              @case ("number") {
+                <div class="flex max-w-20 flex-1 flex-col">
+                  <input
+                    type="number"
+                    [formControlName]="point.id"
+                    id="{{ point.id }}-{{ idx }}"
+                  />
+                </div>
+              }
+              @case ("string") {
+                <div class="flex min-w-36 max-w-44 flex-1 flex-col">
+                  <input
+                    type="text"
+                    [formControlName]="point.id"
+                    id="{{ point.id }}-{{ idx }}"
+                  />
+                </div>
+              }
+              @case ("toggle") {
+                <button type="button" (click)="toggle.click()" class="text-3xl">
+                  <input
+                    #toggle
+                    class="hidden"
+                    type="checkbox"
+                    [formControlName]="point.id"
+                  />
+                  @if (point.value) {
+                    <fa-icon [icon]="['fas', 'toggle-on']"></fa-icon>
+                  } @else {
+                    <fa-icon [icon]="['fas', 'toggle-off']"></fa-icon>
+                  }
+                </button>
+              }
             }
-            @case ("string") {
-              <div class="flex min-w-36 max-w-44 flex-1 flex-col">
-                <input
-                  type="text"
-                  [formControlName]="point.id"
-                  id="{{ point.id }}-{{ idx }}"
-                />
-              </div>
-            }
-            @case ("toggle") {
-              <button type="button" (click)="toggle.click()" class="text-3xl">
-                <input
-                  #toggle
-                  class="hidden"
-                  type="checkbox"
-                  [formControlName]="point.id"
-                />
-                @if (point.value) {
-                  <fa-icon [icon]="['fas', 'toggle-on']"></fa-icon>
-                } @else {
-                  <fa-icon [icon]="['fas', 'toggle-off']"></fa-icon>
-                }
-              </button>
-            }
-          }
-        </p>
+          </div>
+        }
       </section>
     }
   </form>

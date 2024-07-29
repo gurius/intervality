@@ -39,12 +39,19 @@ import {
   faChargingStation,
   faArrowRightRotate,
   faChartPie,
+  faLanguage,
+  faSwatchbook,
+  faBell,
+  faStopwatch20,
+  faClockRotateLeft,
+  faForwardStep,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWebAwesome } from '@fortawesome/free-brands-svg-icons';
 import {
   faPenToSquare,
   faTrashCan,
   faChartBar,
+  faCircleQuestion,
 } from '@fortawesome/free-regular-svg-icons';
 import { superSet } from './icons';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -120,6 +127,13 @@ export class AppModule {
       faArrowRightRotate,
       faChartBar,
       faChartPie,
+      faCircleQuestion,
+      faLanguage,
+      faSwatchbook,
+      faBell,
+      faStopwatch20,
+      faClockRotateLeft,
+      faForwardStep,
     );
   }
 }

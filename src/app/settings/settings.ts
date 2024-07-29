@@ -18,6 +18,8 @@ export type ConfigNames =
   | 'rest-timer-id'
   | 'notify-before-seconds';
 
+export type CategoryDictionary = 'interface' | 'playback' | 'miscellaneous';
+
 export interface OptionParameters<T> {
   label: string;
   id: ConfigNames;
@@ -28,6 +30,8 @@ export interface OptionParameters<T> {
 
   // remove item from localStorage if value is equal to defalut
   unsetIfDefault?: boolean;
+
+  category: CategoryDictionary;
 
   onAfterSaved?: () => void;
 
@@ -48,6 +52,8 @@ class SettingsOption<T> {
 
   unsetIfDefault: boolean;
 
+  category: CategoryDictionary;
+
   onAfterSaved: () => void;
 
   protected val: T | undefined;
@@ -63,6 +69,7 @@ class SettingsOption<T> {
     controlType,
     defaults,
     unsetIfDefault = false,
+    category = 'miscellaneous',
     onAfterSaved = noop,
     transformBeforeGet = identity,
     transformBeforeSet = identity,
@@ -74,6 +81,7 @@ class SettingsOption<T> {
     this.controlType = controlType;
     this.defaults = defaults;
     this.unsetIfDefault = unsetIfDefault;
+    this.category = category;
 
     this.onAfterSaved = onAfterSaved;
     this.transformBeforeGet = transformBeforeGet;
