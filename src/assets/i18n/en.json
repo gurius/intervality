@@ -26,7 +26,10 @@
     "NotifyBeforeSeconds": "Notification timing",
     "NotifyBeforeSecondsLabel": "Set time before end of step in seconds. (Applies to every step)",
     "interface": "Interface",
-    "playback": "Playback"
+    "playback": "Playback",
+    "BeforeEnd": "before end",
+    "Duration": "duration",
+    "Intensity": "intensity"
   },
   "NavPanel": {
     "Tweak": "Tweak {{playable}}",

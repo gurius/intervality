@@ -45,6 +45,7 @@ import {
   faStopwatch20,
   faClockRotateLeft,
   faForwardStep,
+  faArrowLeftRotate,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWebAwesome } from '@fortawesome/free-brands-svg-icons';
 import {
@@ -134,6 +135,7 @@ export class AppModule {
       faStopwatch20,
       faClockRotateLeft,
       faForwardStep,
+      faArrowLeftRotate,
     );
   }
 }

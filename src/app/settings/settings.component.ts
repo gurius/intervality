@@ -1,12 +1,12 @@
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Change, SettingsService, StartBefore } from './settings.service';
 import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  ViewChild,
-  inject,
-} from '@angular/core';
-import { Change, SettingsService } from './settings.service';
-import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+  AbstractControl,
+  FormArray,
+  FormGroup,
+  NonNullableFormBuilder,
+  Validators,
+} from '@angular/forms';
 import { FileService } from '../shared/services/file/file.service';
 import { DataService } from '../shared/services/data/data.service';
 import { Playable } from '../models/playable/playable.model';
@@ -53,10 +53,11 @@ export class SettingsComponent implements OnDestroy {
     this.settingsForm.addControl('fileInput', this.fb.control(''));
     this.settingsForm.valueChanges
       .pipe(
-        startWith(() => {
-          // initial state to compare with in map from the first chage
-          settingsService.config.map(({ id, value }) => ({ id, value }));
-        }),
+        startWith(
+          settingsService.config
+            .map(({ id, value }) => ({ [id]: value }))
+            .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+        ),
         pairwise(),
         map(([prev, curr]) => {
           const chages: Change[] = [];
@@ -77,7 +78,6 @@ export class SettingsComponent implements OnDestroy {
     this.categories = Array.from(
       new Set(settingsService.config.map((c) => c.category)),
     );
-    console.log(this.categories);
   }
 
   ngOnDestroy(): void {
@@ -94,8 +94,55 @@ export class SettingsComponent implements OnDestroy {
         Validators.required,
         ...(c.id === 'prestart-delay' ? [Validators.min(0)] : []),
       ];
-      this.settingsForm.addControl(c.id, this.fb.control(c.value, validators));
+      if (c.id === 'notify-before-seconds') {
+        this.addTimingsCtrl(c);
+      } else {
+        this.settingsForm.addControl(
+          c.id,
+          this.fb.control(c.value, validators),
+        );
+      }
     });
+  }
+
+  addTimingBtn() {
+    const timerSet: StartBefore = [1, 1, 0.5];
+    this.notifyBeforeSecondsArray.push(this.addTimingsSet(timerSet));
+  }
+
+  removeTimerset(idx: number) {
+    this.notifyBeforeSecondsArray.removeAt(idx);
+    this.notifyBeforeSecondsArray.reset();
+  }
+
+  get notifyBeforeSecondsArray() {
+    return this.settingsForm.get('notify-before-seconds') as FormArray;
+  }
+
+  getInnerArray(ctrls: AbstractControl): FormArray {
+    return ctrls as FormArray;
+  }
+
+  addTimingsCtrl(c: SettingsList) {
+    this.settingsForm.addControl(
+      c.id,
+      this.fb.array(
+        (c.value as StartBefore[]).map((t) => this.addTimingsSet(t)),
+      ),
+    );
+  }
+
+  addTimingsSet(t: [number, number, number]) {
+    const [before, duration, intensity] = t;
+    return this.fb.array([
+      this.fb.control(before, [Validators.required]),
+      this.fb.control(duration, [Validators.required]),
+      this.fb.control(intensity, [Validators.required]),
+    ]);
+  }
+
+  stringGuard(val: unknown): val is string {
+    return typeof val === 'string';
   }
 
   export() {

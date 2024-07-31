@@ -16,7 +16,7 @@ import { BeepService } from './player/beep.service';
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.16.4';
+  version = '0.16.5';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = signal(false);

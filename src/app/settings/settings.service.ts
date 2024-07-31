@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
@@ -17,6 +17,8 @@ import {
   SingleValueOption,
 } from './settings';
 
+export type StartBefore = [number, number, number];
+
 export type Locale = 'en' | 'uk';
 
 export type Change = {
@@ -34,7 +36,7 @@ export class SettingsService {
   initialised = false;
 
   languageSubject$ = new BehaviorSubject<Locale>(
-    (localStorage.getItem('language') as Locale) ?? 'en',
+    JSON.parse(localStorage.getItem('language') ?? '"en"') as Locale,
   );
   language$ = this.languageSubject$.asObservable().pipe(shareReplay(1));
 
@@ -76,6 +78,7 @@ export class SettingsService {
         category: 'interface',
         description: this.tService.instant('Settings.ThemeLabel') as string,
         controlType: 'select',
+        valType: 'string',
         options: [
           {
             value: 'system',
@@ -100,6 +103,7 @@ export class SettingsService {
         category: 'playback',
         description: this.tService.instant('Settings.PrestartLabel') as string,
         controlType: 'number',
+        valType: 'number',
         defaults: 1000,
         transformBeforeGet: (v) => v / 1000, // get
         transformBeforeSet: (v) => v * 1000, // set
@@ -110,6 +114,7 @@ export class SettingsService {
         category: 'playback',
         description: this.tService.instant('Settings.SoundLabel'),
         controlType: 'toggle',
+        valType: 'boolean',
         defaults: false,
       }),
 
@@ -118,8 +123,17 @@ export class SettingsService {
         id: 'notify-before-seconds',
         category: 'playback',
         description: this.tService.instant('Settings.NotifyBeforeSecondsLabel'),
-        controlType: 'string',
-        defaults: '13,1,0.5|9,1,0.4|2,1.8,0.3',
+        controlType: 'custom',
+        valType: 'StartBefore',
+        defaults: [
+          [13000, 1000, 500],
+          [9000, 1000, 400],
+          [2000, 1800, 300],
+        ] as StartBefore[],
+        transformBeforeGet: (s) =>
+          s.map((t) => t.map((v) => v / 1000)) as StartBefore[],
+        transformBeforeSet: (s) =>
+          s.map((t) => t.map((v) => v * 1000)) as StartBefore[],
       }),
       new SelectStringOption({
         label: this.tService.instant('Settings.Language'),
@@ -127,6 +141,7 @@ export class SettingsService {
         category: 'interface',
         description: this.tService.instant('Settings.LanguageLabel'),
         controlType: 'select',
+        valType: 'string',
         options: this.languages.map((lang) => ({
           value: lang,
           label: this.tService.instant(`Settings.${lang}`),
@@ -139,6 +154,7 @@ export class SettingsService {
         category: 'playback',
         description: this.tService.instant('Settings.RemoveLastRestLabel'),
         controlType: 'toggle',
+        valType: 'boolean',
         defaults: false,
       }),
       new SingleValueOption({
@@ -147,6 +163,7 @@ export class SettingsService {
         category: 'playback',
         description: this.tService.instant('Settings.RestTimerIDLabel'),
         controlType: 'string',
+        valType: 'string',
         defaults: this.tService.instant('Settings.RestTimerIDDefault'),
         unsetIfDefault: true, // useful for those whoe switch languages
       }),
@@ -181,7 +198,8 @@ export class SettingsService {
 
   // theme
   applyTheme() {
-    const theme = localStorage.getItem('theme');
+    const lsVal = localStorage.getItem('theme');
+    const theme = lsVal ? JSON.parse(lsVal) : null;
     if (
       theme === 'dark' ||
       (theme === null &&

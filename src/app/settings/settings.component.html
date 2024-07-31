@@ -8,17 +8,17 @@
           let idx = $index;
           track idx
         ) {
-          <label
+          <div
             #label
             class="hidden text-lg italic text-on-surface-dim"
-            for="{{ point.id }}-{{ idx }}"
             [ngClass]="{
               'text-red-600':
                 settingsForm.get(point.id)?.invalid &&
                 (settingsForm.get(point.id)?.dirty ||
                   settingsForm.get(point.id)?.touched),
             }"
-            >{{ point.description }}
+          >
+            {{ point.description }}
             @if (
               settingsForm.get(point.id)?.dirty ||
               settingsForm.get(point.id)?.touched
@@ -29,9 +29,11 @@
                 <span>(Negative values are not allowed)</span>
               }
             }
-          </label>
+          </div>
 
-          <div class="mb-7 flex items-center justify-between rounded-b">
+          <div
+            class="mb-7 flex flex-wrap items-center justify-between rounded-b"
+          >
             <p
               class="flex cursor-pointer items-center justify-center text-on-surface-dim"
               (click)="
@@ -83,20 +85,24 @@
               }
               @case ("number") {
                 <div class="flex max-w-20 flex-1 flex-col">
-                  <input
-                    type="number"
-                    [formControlName]="point.id"
-                    id="{{ point.id }}-{{ idx }}"
-                  />
+                  <input type="number" [formControlName]="point.id" />
                 </div>
               }
               @case ("string") {
-                <div class="flex min-w-36 max-w-44 flex-1 flex-col">
-                  <input
-                    type="text"
-                    [formControlName]="point.id"
-                    id="{{ point.id }}-{{ idx }}"
-                  />
+                <div
+                  class="relative flex min-w-36 max-w-44 flex-1 flex-col justify-center"
+                >
+                  <input type="text" [formControlName]="point.id" />
+                  @let control = settingsForm.get(point.id);
+                  @if (control) {
+                    <button
+                      type="button"
+                      (click)="control.setValue(point.getDefaultValue())"
+                      class="absolute right-2 text-xl text-secondary"
+                    >
+                      <fa-icon [icon]="['fas', 'arrow-left-rotate']"></fa-icon>
+                    </button>
+                  }
                 </div>
               }
               @case ("toggle") {
@@ -113,6 +119,19 @@
                     <fa-icon [icon]="['fas', 'toggle-off']"></fa-icon>
                   }
                 </button>
+              }
+              @case ("custom") {
+                @if (point.id === "notify-before-seconds") {
+                  <ng-container
+                    *ngTemplateOutlet="
+                      timings;
+                      context: {
+                        config: notifyBeforeSecondsArray,
+                        group: settingsForm,
+                      }
+                    "
+                  ></ng-container>
+                }
               }
             }
           </div>
@@ -168,3 +187,63 @@
     <p class="mb-7">{{ "Common.TryAgain" | translate }}</p>
   </div>
 }
+
+<ng-template #timings let-config="config" let-group="group">
+  <div [formGroup]="group" class="flex flex-grow justify-end pt-3">
+    <div formArrayName="notify-before-seconds">
+      @for (timing of config.controls; let idt = $index; track idt) {
+        <!-- even though it's there is no group insede but only arrays - only [formGroup] works  -->
+        <fieldset
+          [formGroup]="timing"
+          class="flex items-center justify-between gap-1"
+        >
+          @for (
+            param of getInnerArray(timing).controls;
+            let idp = $index;
+            track idp
+          ) {
+            <div class="flex flex-col items-start justify-center">
+          <span
+            class="overflow-hidden text-ellipsis whitespace-nowrap max-w-24"
+            [attr.title]="'Settings.BeforeEnd'|translate"
+            *ngIf="idp === 0 && idt === 0">{{"Settings.BeforeEnd"|translate}}</span>
+          <span
+            class="overflow-hidden text-ellipsis whitespace-nowrap max-w-24"
+            [attr.title]="'Settings.Duration'|translate"
+            *ngIf="idp === 1 && idt === 0">{{"Settings.Duration"|translate}}</span>
+          <span
+            class="overflow-hidden text-ellipsis whitespace-nowrap max-w-24"
+            [attr.title]="'Settings.Intensity'|translate"
+            *ngIf="idp === 2 && idt === 0">{{"Settings.Intensity"|translate}}</span>
+              <div class="flex items-center">
+                <input
+                  class="mr-4 w-20"
+                  type="number"
+                  [formControlName]="idp"
+                />
+                @if (config.controls.length > 1) {
+                  <button
+                    *ngIf="idp === 2"
+                    type="button"
+                    (click)="removeTimerset(idt)"
+                    class="text-3xl"
+                  >
+                    <fa-icon [icon]="['fas', 'xmark']"></fa-icon>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </fieldset>
+      }
+      <button
+        *ngIf="config.length <= 2"
+        type="button"
+        (click)="addTimingBtn()"
+        class="my-2 h-fit w-full border-2 border-secondary text-secondary"
+      >
+        <fa-icon [icon]="['fas', 'plus']"></fa-icon>
+      </button>
+    </div>
+  </div>
+</ng-template>

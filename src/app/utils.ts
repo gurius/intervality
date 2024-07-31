@@ -1,5 +1,6 @@
-import { OperatorFunction, map } from 'rxjs';
+import { OperatorFunction, config, map } from 'rxjs';
 import { INTERVAL_MS } from './config';
+import { StartBefore } from './settings/settings.service';
 
 export const uid = () => {
   const date = new Date().getTime().toString(36);
@@ -34,3 +35,5 @@ export const isBoolean = (x: unknown): x is boolean =>
 
 export const isString = (x: unknown): x is string => typeof x === 'string';
 export const isNumber = (x: unknown): x is number => typeof x === 'number';
+export const isStartBeforeArray = (x: unknown): x is StartBefore[] =>
+  Array.isArray(x) && Array.isArray(x.at(0));

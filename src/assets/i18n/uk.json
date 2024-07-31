@@ -26,7 +26,10 @@
     "NotifyBeforeSeconds": "Таймінги сповіщення",
     "NotifyBeforeSecondsLabel": "Встановлення часу звучання до кінця кроку у секундах (застосовується до всіх кроків).",
     "interface": "Інтерфейс",
-    "playback": "Програванняя"
+    "playback": "Програванняя",
+    "BeforeEnd": "до завершення",
+    "Duration": "тривалісь",
+    "Intensity": "інтенсивність"
   },
   "NavPanel": {
     "Tweak": "Підлаштувати {{playable}}",

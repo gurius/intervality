@@ -11,8 +11,7 @@ import {
   tap,
 } from 'rxjs';
 import { PlayerService } from './player.service';
-import { isBoolean, isCloseTo, typeGuard } from '../utils';
-import { isString } from 'lodash-es';
+import { isBoolean, isCloseTo, isStartBeforeArray, typeGuard } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -41,12 +40,12 @@ export class BeepService {
     const notifyBeforSeconds$ = settingsService
       .getParam('notify-before-seconds')
       .pipe(
-        typeGuard(isString),
+        typeGuard(isStartBeforeArray),
 
         map((cfg) =>
-          this.settingsService.transformNotifyBeforeValue(cfg).map((tup) => {
+          cfg.map((tup) => {
             let [start, range, intensity] = tup;
-            start += 1000 + intensity;
+
             const end = range;
 
             return [start, end, intensity] as [number, number, number];

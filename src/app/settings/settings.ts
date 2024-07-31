@@ -1,9 +1,14 @@
 import { noop } from 'lodash-es';
 import { identity } from 'rxjs';
+import { StartBefore } from './settings.service';
+
+export type ControlType = 'toggle' | 'string' | 'number' | 'select' | 'custom';
+export type ValueType = 'boolean' | 'string' | 'number' | 'StartBefore';
 
 export type SettingsList =
   | SingleValueOption<string>
   | SelectStringOption<string>
+  | SingleValueOption<StartBefore[]>
   | SingleValueOption<number>
   | SelectStringOption<number>
   | SingleValueOption<boolean>
@@ -24,7 +29,8 @@ export interface OptionParameters<T> {
   label: string;
   id: ConfigNames;
   description: string;
-  controlType: 'toggle' | 'string' | 'number' | 'select';
+  controlType: ControlType;
+  valType: ValueType;
   value?: T;
   defaults: T;
 
@@ -48,7 +54,8 @@ class SettingsOption<T> {
   label: string;
   id: ConfigNames;
   description: string;
-  controlType: 'toggle' | 'select' | 'string' | 'number';
+  controlType: ControlType;
+  valType: ValueType;
 
   unsetIfDefault: boolean;
 
@@ -67,6 +74,7 @@ class SettingsOption<T> {
     id,
     description,
     controlType,
+    valType,
     defaults,
     unsetIfDefault = false,
     category = 'miscellaneous',
@@ -82,6 +90,7 @@ class SettingsOption<T> {
     this.defaults = defaults;
     this.unsetIfDefault = unsetIfDefault;
     this.category = category;
+    this.valType = valType;
 
     this.onAfterSaved = onAfterSaved;
     this.transformBeforeGet = transformBeforeGet;
@@ -108,6 +117,10 @@ class SettingsOption<T> {
     return typeof this.val !== 'undefined';
   }
 
+  getDefaultValue() {
+    return this.transformBeforeGet(this.defaults);
+  }
+
   saveToLocalStorage() {
     if (this.val === null || this.val === undefined)
       throw new Error(`value hasn't been saved`);
@@ -115,7 +128,7 @@ class SettingsOption<T> {
     if (this.unsetIfDefault && this.value === this.defaults) {
       localStorage.removeItem(this.id);
     } else {
-      localStorage.setItem(this.id, this.val!.toString().trim());
+      localStorage.setItem(this.id, JSON.stringify(this.val));
     }
   }
 
@@ -126,11 +139,11 @@ class SettingsOption<T> {
   }
 
   isInitiallyString() {
-    return this.controlType === 'string' || this.controlType === 'select';
+    return this.valType === 'string';
   }
 
   parse(value: string) {
-    return this.isInitiallyString() ? value : JSON.parse(value);
+    return JSON.parse(value);
   }
 }
 
