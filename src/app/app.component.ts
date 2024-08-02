@@ -13,16 +13,18 @@ import { BeepService } from './player/beep.service';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
+  host: {
+    '(window:resize)': 'onResize($event)',
+  },
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.16.5';
+  version = '0.17.0';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = signal(false);
   playerPlayable$ = this.playerService.playable$.pipe(delay(1));
 
-  @HostListener('window:resize', ['$event'])
   getScreenSize() {
     const { innerWidth } = window;
     if (innerWidth < 640) {
@@ -104,5 +106,10 @@ export class AppComponent {
     } else {
       this.wakelockService.requestLock();
     }
+  }
+
+  onResize(e: Event) {
+    console.log(e);
+    this.getScreenSize();
   }
 }

@@ -5,6 +5,7 @@ import { DetailsComponent } from './details/details.component';
 import { ListComponent } from './list/list.component';
 import { canLeaveGuard } from '../guards/can-leave/can-leave.guard';
 import { canActivateGuard } from './details/guars/can-activate.guard';
+import { PieChartComponent } from './pie-chart/pie-chart.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,11 @@ const routes: Routes = [
         path: 'record/:reportId',
         component: DetailsComponent,
         canDeactivate: [canLeaveGuard],
+        canActivate: [canActivateGuard],
+      },
+      {
+        path: 'chart/:reportId',
+        component: PieChartComponent,
         canActivate: [canActivateGuard],
       },
       { path: '', redirectTo: 'list', pathMatch: 'full' },

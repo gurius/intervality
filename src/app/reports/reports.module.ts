@@ -6,9 +6,10 @@ import { ReportComponent } from './report/report.component';
 import { ListComponent } from './list/list.component';
 import { SharedModule } from '../shared/shared.module';
 import { DetailsComponent } from './details/details.component';
+import { PieChartComponent } from './pie-chart/pie-chart.component';
 
 @NgModule({
-  declarations: [ReportComponent, ListComponent, DetailsComponent],
+  declarations: [ReportComponent, ListComponent, DetailsComponent, PieChartComponent],
   imports: [CommonModule, ReportsRoutingModule, SharedModule],
 })
 export class ReportsModule {}

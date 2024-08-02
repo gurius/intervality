@@ -5,9 +5,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TimeStrPipe } from './pipes/time-str.pipe';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
+import { EchartComponent } from './echart/echart.component';
 
 @NgModule({
-  declarations: [FilterPipe, TimeStrPipe],
+  declarations: [FilterPipe, TimeStrPipe, EchartComponent],
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   exports: [
     FilterPipe,
@@ -16,6 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     FontAwesomeModule,
     TranslateModule,
+    EchartComponent,
   ],
 })
 export class SharedModule {}

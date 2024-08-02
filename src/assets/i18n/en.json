@@ -87,6 +87,7 @@
     "UnsavedData": "Unsaved data",
     "LeaveConfirm": "Data will be lost. Discard data?",
     "Complete": "Complete!",
-    "SaveReport": "Save report?"
+    "SaveReport": "Save report?",
+    "Chart": "chart"
   }
 }

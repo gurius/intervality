@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EMPTY, Observable, filter, map, switchMap } from 'rxjs';
 import { PlayableService } from '../../playable/playable.service';
@@ -10,7 +10,7 @@ import { Report, ReportService } from '../report.service';
   templateUrl: './report.component.html',
   styleUrl: './report.component.css',
 })
-export class ReportComponent {
+export class ReportComponent implements OnDestroy {
   playable$: Observable<Playable | null>;
   detailsData$!: Observable<Report | null>;
 
@@ -29,5 +29,9 @@ export class ReportComponent {
 
   isNew(reportId: string) {
     return this.reportService.isNew(reportId);
+  }
+
+  ngOnDestroy(): void {
+    this.reportService.completeReview();
   }
 }

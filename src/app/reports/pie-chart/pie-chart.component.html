@@ -1,0 +1,32 @@
+@if (reportData$ | async; as reportData) {
+  <button
+    (click)="grouped = !grouped"
+    class="m-4 w-fit animate-pulse rounded px-2 py-1"
+    type="button"
+  >
+    @if (grouped) {
+      grouped
+    } @else {
+      ungrouped
+    }
+  </button>
+  @if (!grouped) {
+    <app-echart
+      class="aspect-1 w-full"
+      [chartParams]="{
+        data: reportData.value,
+        name: reportData.startTime,
+        type: 'pie',
+      }"
+    ></app-echart>
+  } @else {
+    <app-echart
+      class="aspect-1 w-full"
+      [chartParams]="{
+        data: groupByName(reportData.value),
+        name: reportData.startTime,
+        type: 'pie',
+      }"
+    ></app-echart>
+  }
+}

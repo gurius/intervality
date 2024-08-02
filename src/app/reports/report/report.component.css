@@ -1,3 +1,6 @@
 :host {
   @apply h-full w-full overflow-hidden;
+  .outlet-wrapper {
+    height: calc(100% - theme("height.32"));
+  }
 }

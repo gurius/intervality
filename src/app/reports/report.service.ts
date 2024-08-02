@@ -3,7 +3,7 @@ import {
   DataKeyDictionary,
   DataService,
 } from '../shared/services/data/data.service';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 
 export interface Report {
   id: string;
@@ -66,6 +66,12 @@ export class ReportService {
 
   completeReview() {
     this.currentReportEmitter$.next(null);
+  }
+
+  getReportById(id: string): Observable<Report | null> {
+    const report = this.dataService.getById<Report>(id, dictionaryKey);
+    this.currentReportEmitter$.next(report);
+    return this.currentReportEmitter$.asObservable();
   }
 
   saveReport(report: Report) {

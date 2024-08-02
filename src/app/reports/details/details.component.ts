@@ -19,7 +19,7 @@ export interface ReportReview {
   templateUrl: './details.component.html',
   styleUrl: './details.component.css',
 })
-export class DetailsComponent implements OnInit, OnDestroy, LeavePermission {
+export class DetailsComponent implements OnInit, LeavePermission {
   playableService = inject(PlayableService);
   reportService = inject(ReportService);
   location = inject(Location);
@@ -59,10 +59,6 @@ export class DetailsComponent implements OnInit, OnDestroy, LeavePermission {
     return this.reportService.isNew(this.report.id);
   }
 
-  ngOnDestroy(): void {
-    this.reportService.completeReview();
-  }
-
   canLeave(state: RouterStateSnapshot) {
     if (this.isNew) {
       return this.dialogueService
@@ -97,7 +93,7 @@ export class DetailsComponent implements OnInit, OnDestroy, LeavePermission {
   }
 
   discardReport() {
-    this.reportService.completeReview();
+    // this.reportService.completeReview();
     this.location.back();
   }
 
