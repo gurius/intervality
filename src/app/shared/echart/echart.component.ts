@@ -1,6 +1,8 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { EchartService } from './echart.service';
 import * as echarts from 'echarts/core';
+import { WindowResizeService } from '../window-resize/window-resize.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-echart',
@@ -10,6 +12,7 @@ import * as echarts from 'echarts/core';
   host: { '(resize)': 'onResize($event)' },
 })
 export class EchartComponent implements OnDestroy, OnInit {
+  destroy$ = new Subject<void>();
   @Input({ required: true }) chartParams!: {
     name: string;
     data: { name: string; value: number }[];
@@ -21,6 +24,7 @@ export class EchartComponent implements OnDestroy, OnInit {
   constructor(
     elementref: ElementRef,
     private echartService: EchartService,
+    private wrs: WindowResizeService,
   ) {
     this.el = elementref;
   }
@@ -39,6 +43,11 @@ export class EchartComponent implements OnDestroy, OnInit {
         // bar chart instantiation
         break;
     }
+
+    this.wrs
+      .onResize$()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((e) => this.onResize());
   }
 
   onResize() {
@@ -46,6 +55,7 @@ export class EchartComponent implements OnDestroy, OnInit {
   }
 
   ngOnDestroy(): void {
+    this.destroy$.next();
     this.chartInstance.dispose();
   }
 }

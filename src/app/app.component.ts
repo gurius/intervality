@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DialogueService } from './modal/dialogue.service';
 import { Playable } from './models/playable/playable.model';
 import { BeepService } from './player/beep.service';
+import { WindowResizeService } from './shared/window-resize/window-resize.service';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,7 @@ import { BeepService } from './player/beep.service';
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.17.0';
+  version = '0.17.2';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = signal(false);
@@ -42,6 +43,7 @@ export class AppComponent {
     private translateService: TranslateService,
     protected dialogueService: DialogueService,
     private beepService: BeepService,
+    private windowResizeService: WindowResizeService,
   ) {
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
@@ -109,7 +111,7 @@ export class AppComponent {
   }
 
   onResize(e: Event) {
-    console.log(e);
+    this.windowResizeService.onResize(e);
     this.getScreenSize();
   }
 }
