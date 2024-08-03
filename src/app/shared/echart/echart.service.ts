@@ -138,7 +138,7 @@ export class EchartService {
         valueFormatter: (v) => this.tPipe.transform(v as number),
       },
       legend: {
-        top: '0.5%',
+        bottom: 10,
         left: 'center',
       },
       series: [
@@ -146,6 +146,7 @@ export class EchartService {
           name: name,
           type: 'pie',
           radius: ['50%', '80%'],
+          center: ['50%', '38%'],
           avoidLabelOverlap: false,
           padAngle: 0.7,
           itemStyle: {

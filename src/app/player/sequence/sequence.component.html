@@ -41,9 +41,9 @@
                 ? item.timerType === "hybrid" ||
                   item.timerType === "converted" ||
                   item.timerType === "stopwatch"
-                  ? (this.snapshot.stopWatchMs | timeStr)
-                  : (this.snapshot.currentMs | timeStr)
-                : (item.value | timeStr)
+                  ? (this.snapshot.stopWatchMs | timeStr: "mm:ss.sss")
+                  : (this.snapshot.currentMs | timeStr: "mm:ss.sss")
+                : (item.value | timeStr: "mm:ss.sss")
             }}
           </span>
         </p>

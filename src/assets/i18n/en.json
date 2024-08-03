@@ -88,6 +88,8 @@
     "LeaveConfirm": "Data will be lost. Discard data?",
     "Complete": "Complete!",
     "SaveReport": "Save report?",
-    "Chart": "chart"
+    "Chart": "chart",
+    "grouped": "grouped",
+    "ungrouped": "all steps"
   }
 }

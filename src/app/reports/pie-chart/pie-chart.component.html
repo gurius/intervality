@@ -5,14 +5,14 @@
     type="button"
   >
     @if (grouped) {
-      grouped
+      {{ "Report.grouped" | translate }}
     } @else {
-      ungrouped
+      {{ "Report.ungrouped" | translate }}
     }
   </button>
   @if (!grouped) {
     <app-echart
-      class="aspect-1 w-full"
+      class="aspect-[1/1.3] w-full"
       [chartParams]="{
         data: reportData.value,
         name: reportData.startTime,
@@ -21,7 +21,7 @@
     ></app-echart>
   } @else {
     <app-echart
-      class="aspect-1 w-full"
+      class="aspect-[1/1.3] w-full"
       [chartParams]="{
         data: groupByName(reportData.value),
         name: reportData.startTime,

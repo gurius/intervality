@@ -56,7 +56,7 @@ export class BeepService {
     this.notify$ = playerService.snapshot$.pipe(
       combineLatestWith(notifyBeforSeconds$, this.isSoundOn$),
       filter(([snapshot, cfg, isSoundOn]) => {
-        if (!isSoundOn) return false;
+        if (!isSoundOn || snapshot?.state !== 'playing') return false;
 
         const { currentMs: ms } = snapshot ?? { currentMs: 0 };
         // is any of configs time start meet current countdown value
