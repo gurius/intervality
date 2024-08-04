@@ -1,8 +1,11 @@
 <form
   onsubmit="return false"
-  class="mx-2 my-4 flex h-12 items-center justify-between rounded-full bg-secondary py-4"
+  class="relative mx-2 my-4 flex h-12 items-center justify-between rounded-full bg-secondary py-4"
 >
-  <button type="button" class="mx-4 text-on-primary">
+  <button
+    type="button"
+    class="absolute left-1 mx-4 cursor-pointer text-secondary"
+  >
     <fa-icon [icon]="['fas', 'filter']"></fa-icon>
   </button>
   <input
@@ -10,15 +13,19 @@
     name="filter"
     [formControl]="filter"
     (keydown)="find($event)"
-    class="h-10 w-8/12 flex-auto rounded-full bg-surface px-4 text-xl selection:bg-primary selection:text-on-primary"
+    class="mx-1 h-10 w-full flex-auto rounded-full bg-surface pl-10 pr-16 text-xl selection:bg-primary selection:text-on-primary"
   />
-  <button type="button" class="mx-4 text-on-primary" (click)="find()">
+  <button
+    type="button"
+    class="absolute right-1 mx-4 cursor-pointer text-secondary"
+    (click)="find()"
+  >
     <fa-icon [icon]="['fas', 'search']"></fa-icon>
   </button>
   @if (filter.value) {
     <button
       type="button"
-      class="absolute right-16 mx-4 text-primary"
+      class="absolute right-9 mx-4 text-primary"
       (click)="filter.setValue('')"
     >
       <fa-icon [icon]="['fas', 'xmark']"></fa-icon>

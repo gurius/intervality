@@ -20,7 +20,7 @@ import { WindowResizeService } from './shared/window-resize/window-resize.servic
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.18.0';
+  version = '0.18.1';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = signal(false);
