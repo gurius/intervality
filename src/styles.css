@@ -32,7 +32,7 @@
     --on-container-light: 278deg 14% 15%;
 
     --on-surface-dim-light: 54deg 23% 67%;
-    --on-surface-dim-dark: 279deg 8% 33%;
+    --on-surface-dim-dark: 296deg 12% 25%;
 
     body.dark {
       --surface: var(--surface-dark);

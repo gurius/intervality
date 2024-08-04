@@ -40,38 +40,30 @@
       let idx = $index
     ) {
       <li
-        class="flex h-28 flex-none items-center justify-between rounded-md bg-container px-5"
+        class="flex h-28 flex-none flex-col items-stretch rounded-md bg-container px-5"
       >
-        <div class="flex items-center gap-3">
-          @switch (item.playableType) {
-            @case ("stopwatch") {
-              <fa-icon [icon]="['fas', 'stopwatch']"></fa-icon>
-            }
-            @case ("countdown") {
-              <fa-icon [icon]="['fas', 'hourglass-start']"></fa-icon>
-            }
+        <!-- first row (icons/actions) -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            @switch (item.playableType) {
+              @case ("stopwatch") {
+                <fa-icon [icon]="['fas', 'stopwatch']"></fa-icon>
+              }
+              @case ("countdown") {
+                <fa-icon [icon]="['fas', 'hourglass-start']"></fa-icon>
+              }
 
-            @case ("set") {
-              <fa-icon [icon]="['fas', 'bars']"></fa-icon>
+              @case ("set") {
+                <fa-icon [icon]="['fas', 'bars']"></fa-icon>
+              }
+              @case ("superset") {
+                <fa-icon [icon]="['fas', 'superpowers']"></fa-icon>
+              }
             }
-            @case ("superset") {
-              <fa-icon [icon]="['fas', 'superpowers']"></fa-icon>
-            }
-          }
-          <span
-            class="max-h-20 max-w-32 overflow-hidden text-ellipsis whitespace-nowrap"
-            >{{ item.name }}</span
-          >
-        </div>
-        <div class="flex items-center gap-2">
-          @if (visibleIdx === idx) {
+          </div>
+          <div class="flex items-center gap-2 text-secondary">
+            <!-- @if (visibleIdx === idx) { -->
             <div class="flex flex-wrap justify-end">
-              <button
-                class="h-10 w-10 rounded-md"
-                [routerLink]="['/player', item.id]"
-              >
-                <fa-icon [icon]="['fas', 'play']"></fa-icon>
-              </button>
               <button
                 class="h-10 w-10 rounded-md"
                 [routerLink]="['/report', item.id]"
@@ -106,13 +98,31 @@
                 <fa-icon [icon]="['fas', 'eye']"></fa-icon>
               </button>
             </div>
-          }
+            <!-- } -->
+            <!-- <button -->
+            <!--   type="button" -->
+            <!--   (click)="toggleItemMenu(idx)" -->
+            <!--   class="h-10 w-10 rounded-md" -->
+            <!-- > -->
+            <!--   <fa-icon [icon]="['fas', 'ellipsis-vertical']"></fa-icon> -->
+            <!-- </button> -->
+          </div>
+        </div>
+        <!-- first row endg -->
+        <div class="flex w-full items-center justify-between">
+          <div class="flex max-w-[80%] flex-col">
+            <!-- <div class="text-base text-on-surface-dim"> number or steps or last run date </div> -->
+            <div
+              class="max-h-20 max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-lg"
+            >
+              {{ item.name }}
+            </div>
+          </div>
           <button
-            type="button"
-            (click)="toggleItemMenu(idx)"
-            class="h-10 w-10 rounded-md"
+            class="border-1 h-10 w-10 rounded-md border-on-container text-secondary"
+            [routerLink]="['/player', item.id]"
           >
-            <fa-icon [icon]="['fas', 'ellipsis-vertical']"></fa-icon>
+            <fa-icon size="lg" [icon]="['fas', 'play']"></fa-icon>
           </button>
         </div>
       </li>
