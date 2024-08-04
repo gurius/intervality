@@ -3,7 +3,7 @@ import { Playable } from '../../models/playable/playable.model';
 import { Timer, TimerType } from '../../models/playable/timer.model';
 import { StepInFocus, StepStatus } from '../player.service';
 import { TimerSet } from '../../models/playable/set.model';
-import { DialogueService } from '../../modal/dialogue.service';
+import { DialogueService } from '../../modal/modal-dialogue/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, first } from 'rxjs';
 import { SettingsService } from '../../settings/settings.service';

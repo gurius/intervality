@@ -1,10 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Component, Injectable, Type } from '@angular/core';
 import { BehaviorSubject, Subject, delay } from 'rxjs';
 
 export type DialogueData = {
   title: string;
-  content: string;
+  content?: string;
+  component?: Type<any>;
+  inputs?: Record<string, unknown>;
+  module?: Type<any>;
+  actions?: Action[];
 };
+
+export type Action = 'confirm' | 'cancel';
 
 @Injectable({
   providedIn: 'root',

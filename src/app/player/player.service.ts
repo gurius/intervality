@@ -20,7 +20,7 @@ import { Sequence } from './sequence/sequence';
 import { PlayableService } from '../playable/playable.service';
 import { SettingsService } from '../settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
-import { DialogueService } from '../modal/dialogue.service';
+import { DialogueService } from '../modal/modal-dialogue/dialogue.service';
 import { TextToSpeechService } from './tts.service';
 import { ReportService } from '../reports/report.service';
 import { Router } from '@angular/router';

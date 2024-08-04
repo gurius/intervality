@@ -10,7 +10,7 @@ import {
 import { FileService } from '../shared/services/file/file.service';
 import { DataService } from '../shared/services/data/data.service';
 import { Playable } from '../models/playable/playable.model';
-import { DialogueService } from '../modal/dialogue.service';
+import { DialogueService } from '../modal/modal-dialogue/dialogue.service';
 import { Subject, first, map, pairwise, startWith, takeUntil } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import {

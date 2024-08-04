@@ -15,7 +15,7 @@ import { FormGroup } from '@angular/forms';
 import { Location } from '@angular/common';
 import { SetFormComponent } from './set-form/set-form.component';
 import { SuperSetFormComponent } from './super-set-form/super-set-form.component';
-import { DialogueService } from '../modal/dialogue.service';
+import { DialogueService } from '../modal/modal-dialogue/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LeavePermission } from '../guards/can-leave/can-leave';
 

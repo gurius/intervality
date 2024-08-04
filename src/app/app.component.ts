@@ -5,7 +5,7 @@ import { delay, filter } from 'rxjs';
 import { WakelockService } from './shared/services/wakelock.service';
 import { SettingsService } from './settings/settings.service';
 import { TranslateService } from '@ngx-translate/core';
-import { DialogueService } from './modal/dialogue.service';
+import { DialogueService } from './modal/modal-dialogue/dialogue.service';
 import { Playable } from './models/playable/playable.model';
 import { BeepService } from './player/beep.service';
 import { WindowResizeService } from './shared/window-resize/window-resize.service';
@@ -20,7 +20,7 @@ import { WindowResizeService } from './shared/window-resize/window-resize.servic
 })
 export class AppComponent {
   title = 'Intervality';
-  version = '0.17.4';
+  version = '0.18.0';
   isPanelVisible = false;
   isPushMode = !(window.innerWidth < 640);
   isPlayer = signal(false);

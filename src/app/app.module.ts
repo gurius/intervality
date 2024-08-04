@@ -46,6 +46,7 @@ import {
   faClockRotateLeft,
   faForwardStep,
   faArrowLeftRotate,
+  faEye,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWebAwesome } from '@fortawesome/free-brands-svg-icons';
 import {
@@ -56,16 +57,10 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import { superSet } from './icons';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ModalContainerComponent } from './modal/modal-container/modal-container.component';
 import { ModalDialogueComponent } from './modal/modal-dialogue/modal-dialogue.component';
 import { MiniPlayerComponent } from './mini-player/mini-player.component';
 @NgModule({
-  declarations: [
-    AppComponent,
-    ModalContainerComponent,
-    ModalDialogueComponent,
-    MiniPlayerComponent,
-  ],
+  declarations: [AppComponent, ModalDialogueComponent, MiniPlayerComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -136,6 +131,7 @@ export class AppModule {
       faClockRotateLeft,
       faForwardStep,
       faArrowLeftRotate,
+      faEye,
     );
   }
 }

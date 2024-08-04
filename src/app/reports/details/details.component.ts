@@ -5,7 +5,7 @@ import { Report, ReportService } from '../report.service';
 import { Location } from '@angular/common';
 import { LeavePermission } from '../../guards/can-leave/can-leave';
 import { Router, RouterStateSnapshot } from '@angular/router';
-import { DialogueService } from '../../modal/dialogue.service';
+import { DialogueService } from '../../modal/modal-dialogue/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
 
 export interface ReportReview {

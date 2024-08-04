@@ -5,7 +5,10 @@ import { PlayableService } from '../../playable/playable.service';
 import { Playable } from '../../models/playable/playable.model';
 import { Observable, Subject, first, takeUntil, tap } from 'rxjs';
 import { LeavePermission } from '../../guards/can-leave/can-leave';
-import { DialogueData, DialogueService } from '../../modal/dialogue.service';
+import {
+  DialogueData,
+  DialogueService,
+} from '../../modal/modal-dialogue/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({

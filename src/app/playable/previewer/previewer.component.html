@@ -1,0 +1,106 @@
+@switch (item.playableType) {
+  @case ("stopwatch") {
+    <ng-container
+      *ngTemplateOutlet="stopwatch; context: { item }"
+    ></ng-container>
+  }
+  @case ("countdown") {
+    <ng-container
+      *ngTemplateOutlet="countdown; context: { item }"
+    ></ng-container>
+  }
+  @case ("set") {
+    <ng-container
+      *ngTemplateOutlet="set; context: { set: item }"
+    ></ng-container>
+  }
+  @case ("superset") {
+    <div class="flex items-center justify-between gap-4">
+      <span class="font-bold text-secondary">{{ item.name }}</span>
+      <div class="flex items-center gap-2 text-sm">
+        <span class="border-2 border-secondary px-1 font-bold text-secondary"
+          >superset</span
+        >
+        <div
+          class="flex items-center rounded-r-lg border-2 border-secondary bg-secondary pl-1 font-bold text-container"
+        >
+          reps:
+          <span
+            class="border-1 ml-1 rounded-md border-secondary bg-container px-2 text-secondary"
+            >{{ item.repetitions }}</span
+          >
+        </div>
+      </div>
+    </div>
+    @for (sat of item.setsAndTimers; let ids = $index; track ids) {
+      @if (isSet(sat)) {
+        <div class="rounded-2xl border-2 border-secondary p-5">
+          <ng-container
+            *ngTemplateOutlet="set; context: { set: sat }"
+          ></ng-container>
+        </div>
+      } @else if (isTimer(sat)) {
+        <div class="mx-5 flex items-center justify-between gap-5">
+          <span>{{ sat.name }}</span>
+          @if (sat.timerType !== "countdown") {
+            <span>{{ sat.timerType }}</span>
+          } @else {
+            <span>{{ sat.value | timeStr: "mm:ss.sss" }}</span>
+          }
+        </div>
+      }
+    }
+  }
+}
+
+<!-- stopwatch -->
+<ng-template #stopwatch let-item="item">
+  <div class="flex items-center justify-between gap-4">
+    @if (item.timerType !== "stopwatch") {
+      <span>{{ item.timerType }}</span>
+    }
+    <span>{{ item.playableType }}</span>
+  </div>
+</ng-template>
+<!-- stopwatch -->
+
+<!-- countdown -->
+<ng-template #countdown let-item="item">
+  <div class="flex items-center justify-between gap-4">
+    <span>{{ item.playableType }}</span>
+    <span>{{ item.value | timeStr: "mm:ss.sss" }}</span>
+  </div>
+</ng-template>
+<!-- countdown -->
+
+<!-- set -->
+<ng-template #set let-set="set">
+  <div class="flex items-center justify-between gap-4">
+    <span class="font-bold text-secondary">{{ set.name }}</span>
+    <div class="flex items-center gap-2 text-sm">
+      <span class="border-2 border-secondary px-1 font-bold text-secondary"
+        >set</span
+      >
+      <div
+        class="flex items-center rounded-r-lg border-2 border-secondary bg-secondary pl-1 font-bold text-container"
+      >
+        reps:
+        <span
+          class="border-1 ml-1 rounded-md border-secondary bg-container px-2 text-secondary"
+          >{{ set.repetitions }}</span
+        >
+      </div>
+    </div>
+  </div>
+  @for (item of set.timers; let idx = $index; track idx) {
+    <div class="flex items-center justify-between gap-5">
+      <span>{{ item.name }}</span>
+      @if (item.timerType !== "countdown") {
+        <span>{{ item.timerType }}</span>
+      } @else {
+        <span>{{ item.value | timeStr: "mm:ss.sss" }}</span>
+      }
+    </div>
+  }
+</ng-template>
+<!-- set -->

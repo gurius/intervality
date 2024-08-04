@@ -1,6 +1,7 @@
 # Intervality
 
 A compositor and runner for sequences of timers(countdown/stopwatch) with sound notifications, ability to quickly adjust any timer on the go.
+Mobile screen is the primary target and adaptation for bigger screen is ignored for now but will be added in future.
 
 ## Implemented features
 
@@ -18,12 +19,11 @@ A compositor and runner for sequences of timers(countdown/stopwatch) with sound 
 12. Translations
 13. A simple dialogue
 14. History for each playable
+15. Previewer
 
 ## Features planned
 
-- Previewer
 - Import page with previewer and selection of imported entries
-- Notification
 - Animations and visual improvements when everything is working
 - Help or FAQ or both pages
 

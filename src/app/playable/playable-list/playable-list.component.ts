@@ -12,8 +12,9 @@ import { PlayableService } from '../playable.service';
 import { Observable, first, tap } from 'rxjs';
 import { DataService } from '../../shared/services/data/data.service';
 import { FileService } from '../../shared/services/file/file.service';
-import { DialogueService } from '../../modal/dialogue.service';
+import { DialogueService } from '../../modal/modal-dialogue/dialogue.service';
 import { TranslateService } from '@ngx-translate/core';
+import { PreviewerComponent } from '../previewer/previewer.component';
 
 @Component({
   selector: 'app-playable-list',
@@ -66,6 +67,19 @@ export class PlayableListComponent implements OnInit, OnDestroy {
           this.playableService.updateList();
         }
       });
+  }
+
+  openPreviewer(item: Playable) {
+    console.log(item);
+    const title =
+      item.playableType === 'stopwatch' || item.playableType === 'countdown'
+        ? item.name
+        : '';
+    this.dialogueService.open({
+      title,
+      component: PreviewerComponent,
+      inputs: { item },
+    });
   }
 
   export(item: Playable) {

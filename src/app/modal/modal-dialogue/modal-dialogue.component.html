@@ -1,24 +1,41 @@
-@if (dialogueData$ | async; as dialogue) {
-  <h1 class="mb-2 self-center text-primary">{{ dialogue.title }}</h1>
-  <p class="mb-5 self-center text-2xl text-on-surface">
-    {{ dialogue.content }}
-  </p>
-  <div class="flex justify-center gap-3">
-    <button
-      type="button"
-      (click)="cancel()"
-      class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary text-primary"
+<div class="dialog">
+  @if (dialogueData$ | async; as dialogue) {
+    <h1 *ngIf="dialogue.title" class="mb-2 self-center text-primary">
+      {{ dialogue.title }}
+    </h1>
+    @if (dialogue.content) {
+      <p class="mb-5 self-center text-2xl text-on-surface">
+        {{ dialogue.content }}
+      </p>
+    } @else if (dialogue.component) {
+      <ng-container
+        *ngComponentOutlet="
+          dialogue.component;
+          inputs: dialogue.inputs;
+          ngModule: dialogue.module
+        "
+      ></ng-container>
+    }
+    <div
+      *ngIf="dialogue.content || dialogue.actions"
+      class="flex justify-center gap-3"
     >
-      <fa-icon [icon]="['fas', 'xmark']"></fa-icon>
-    </button>
-    <button
-      type="button"
-      (click)="confirm()"
-      class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary text-primary"
-    >
-      <fa-icon [icon]="['fas', 'check']"></fa-icon>
-    </button>
-  </div>
-} @else {
-  <span>Something went wrong</span>
-}
+      <button
+        type="button"
+        (click)="cancel()"
+        class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary text-primary"
+      >
+        <fa-icon [icon]="['fas', 'xmark']"></fa-icon>
+      </button>
+      <button
+        type="button"
+        (click)="confirm()"
+        class="mx-3 h-12 w-20 rounded-2xl border-2 border-primary text-primary"
+      >
+        <fa-icon [icon]="['fas', 'check']"></fa-icon>
+      </button>
+    </div>
+  } @else {
+    <span>Something went wrong</span>
+  }
+</div>
