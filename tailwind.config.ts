@@ -7,7 +7,6 @@ export default {
       colors: {
         surface: 'hsl(var(--surface) / <alpha-value>)',
         'on-surface': 'hsl(var(--on-surface) / <alpha-value>)',
-
         'on-surface-dim': 'hsl(var(--on-surface-dim) / <alpha-value>)',
 
         primary: 'hsl(var(--primary) / <alpha-value>)',
@@ -18,6 +17,7 @@ export default {
 
         container: 'hsl(var(--container) / <alpha-value>)',
         'on-container': 'hsl(var(--on-container) / <alpha-value>)',
+        'on-container-dim': 'hsl(var(--on-container-dim) / <alpha-value>)',
       },
       fontFamily: {
         sans: [
