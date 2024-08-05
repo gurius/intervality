@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject, output } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, output } from '@angular/core';
 import {
   Playable,
   PlayableType,
@@ -35,7 +35,10 @@ export class AddMenuButtonComponent implements OnInit {
     type?: PlayableType;
   } | null = null;
 
-  dataService = inject(DataService);
+  constructor(
+    private elementRef: ElementRef,
+    private dataService: DataService,
+  ) {}
 
   ngOnInit(): void {
     this.existingItems = this.dataService
@@ -51,10 +54,21 @@ export class AddMenuButtonComponent implements OnInit {
   addNewItem(type: SupersetNestable) {
     this.onAddItem.emit({ type });
     this.showMenu = false;
+    this.adjustPosition();
   }
 
   openAddMenu() {
     this.showMenu = true;
+    this.adjustPosition();
+  }
+
+  adjustPosition() {
+    setTimeout(() => {
+      this.elementRef.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 100);
   }
 
   addExistingItem() {
